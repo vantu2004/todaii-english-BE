@@ -2,29 +2,56 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <!-- Kế thừa apps -->
   <parent>
     <groupId>com.todaii.english</groupId>
     <artifactId>apps</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+
   <artifactId>user-api</artifactId>
-  <name>user-api</name>
+  <packaging>jar</packaging>
 
   <dependencies>
+    <!-- Kéo core/infra/shared -->
     <dependency>
       <groupId>com.todaii.english</groupId>
       <artifactId>core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.todaii.english</groupId>
+      <artifactId>infra</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.todaii.english</groupId>
       <artifactId>shared</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
+
+    <!-- Web API -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    
+    <!-- Lombok -->
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<optional>true</optional>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+	</dependency>
   </dependencies>
 
   <build>
     <plugins>
+      <!-- Build runnable jar -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>

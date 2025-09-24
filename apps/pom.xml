@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Kế thừa root -->
   <parent>
     <groupId>com.todaii.english</groupId>
     <artifactId>todaii-english</artifactId>
@@ -10,44 +11,10 @@
   </parent>
 
   <artifactId>apps</artifactId>
-  <packaging>pom</packaging>
+  <packaging>pom</packaging> <!-- Chỉ gom app con -->
 
   <modules>
     <module>user-api</module>
     <module>admin-api</module>
   </modules>
-
-  <!-- Dependencies inherited ONLY by apps -->
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-devtools</artifactId>
-		<optional>true</optional>
-	</dependency>
-  </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>

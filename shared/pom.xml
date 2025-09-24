@@ -2,11 +2,41 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <!-- Kế thừa root -->
   <parent>
     <groupId>com.todaii.english</groupId>
     <artifactId>todaii-english</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+
   <artifactId>shared</artifactId>
-  <name>shared</name>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- Lombok để viết DTO/Response -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- Validation API -->
+    <dependency>
+        <groupId>jakarta.validation</groupId>
+        <artifactId>jakarta.validation-api</artifactId>
+    </dependency>
+
+    <!-- Hibernate Validator cho @Length -->
+    <dependency>
+        <groupId>org.hibernate.validator</groupId>
+        <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <!-- Jackson annotations cho @JsonProperty -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+    </dependency>
+  </dependencies>
 </project>

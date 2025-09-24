@@ -23,7 +23,7 @@ public class User {
 	private Long id;
 
 	// email tối đa 191 ký tự vì dùng unique index + utf8mb4
-	@Column(nullable = false, length = 191)
+	@Column(nullable = false, unique = true, length = 191)
 	private String email;
 
 	@Column(name = "password_hash", length = 191)

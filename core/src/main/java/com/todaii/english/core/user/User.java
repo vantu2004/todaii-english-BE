@@ -39,8 +39,11 @@ public class User {
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
 
+	@Builder.Default
+	private boolean enabled = false;
+
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false, length = 32)
 	private UserStatus status;
 
 	@Column(name = "email_verified_at")

@@ -1,4 +1,4 @@
-package com.todaii.english.core.user;
+package com.todaii.english.core.admin;
 
 import java.util.Optional;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-	public Optional<User> findByEmail(String email);
+public interface AdminRepository extends JpaRepository<Admin, Long> {
+	Optional<Admin> findByEmail(String email);
 	
 }

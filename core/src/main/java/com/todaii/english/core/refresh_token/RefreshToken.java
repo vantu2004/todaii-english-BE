@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.todaii.english.core.admin.admin.Admin;
 import com.todaii.english.core.user.user.User;
 
 @Entity
@@ -39,8 +40,8 @@ public class RefreshToken {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-//    // FK tới admin, chỉ set khi actor là ADMIN
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "admin_id")
-//    private Admin admin;
+	// FK tới admin, chỉ set khi actor là ADMIN
+	@ManyToOne
+	@JoinColumn(name = "admin_id")
+	private Admin admin;
 }

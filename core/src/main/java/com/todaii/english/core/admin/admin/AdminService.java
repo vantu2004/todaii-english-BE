@@ -105,7 +105,7 @@ public class AdminService {
 
 	private Set<AdminRole> getAdminRoles(Set<String> roleCodes) {
 		Set<AdminRole> roles = roleCodes.stream()
-				.map(code -> adminRoleRepository.findById(code)
+				.map(code -> this.adminRoleRepository.findById(code)
 						.orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)))
 				.collect(Collectors.toSet());
 		return roles;

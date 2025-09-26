@@ -1,4 +1,4 @@
-package com.todaii.english.core.setting;
+package com.todaii.english.core.admin.setting;
 
 import java.time.LocalDateTime;
 

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.user.User;
-import com.todaii.english.core.user.UserService;
+import com.todaii.english.core.user.user.User;
+import com.todaii.english.core.user.user.UserService;
 
 import lombok.RequiredArgsConstructor;
 

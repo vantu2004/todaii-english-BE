@@ -1,4 +1,4 @@
-package com.todaii.english.core.user;
+package com.todaii.english.core.user.user;
 
 import com.todaii.english.shared.enums.UserStatus;
 import jakarta.persistence.*;
@@ -38,6 +38,9 @@ public class User {
 
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
+
+	@Column(name = "otp", nullable = false, length = 16)
+	private String OTP;
 
 	@Builder.Default
 	private boolean enabled = false;

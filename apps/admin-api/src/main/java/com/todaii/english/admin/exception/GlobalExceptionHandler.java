@@ -1,4 +1,4 @@
-package com.todaii.english.user.exception;
+package com.todaii.english.admin.exception;
 
 import java.time.LocalDateTime;
 import java.util.List;

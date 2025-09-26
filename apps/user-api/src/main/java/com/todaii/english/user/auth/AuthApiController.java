@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.core.user.User;
-import com.todaii.english.core.user.UserService;
+import com.todaii.english.core.user.user.User;
+import com.todaii.english.core.user.user.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

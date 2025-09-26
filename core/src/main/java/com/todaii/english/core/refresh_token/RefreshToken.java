@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import com.todaii.english.core.user.User;
+import com.todaii.english.core.user.user.User;
 
 @Entity
 @Table(name = "refresh_tokens")

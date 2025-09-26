@@ -1,4 +1,4 @@
-package com.todaii.english.core.user;
+package com.todaii.english.core.user.user;
 
 import java.util.Optional;
 

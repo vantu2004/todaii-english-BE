@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
+import com.todaii.english.core.user.user.User;
+import com.todaii.english.core.user.user.UserRepository;
 import com.todaii.english.shared.enums.UserStatus;
 
 @DataJpaTest

@@ -1,10 +1,9 @@
-package com.todaii.english.core.user;
+package com.todaii.english.core.user.user;
 
 import com.todaii.english.core.security.PasswordHasher;
-import com.todaii.english.shared.enums.ErrorCode;
 import com.todaii.english.shared.enums.UserStatus;
-import com.todaii.english.shared.exceptions.user.BusinessException;
-import com.todaii.english.shared.exceptions.user.UserAlreadyExistException;
+import com.todaii.english.shared.enums.error_code.UserErrorCode;
+import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +21,9 @@ public class UserService {
 		return this.userRepository.findAll();
 	}
 
-	public User createUser(String email, String rawPassword, String displayName) throws UserAlreadyExistException {
+	public User createUser(String email, String rawPassword, String displayName) {
 		if (userRepository.findByEmail(email).isPresent()) {
-			throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS);
+			throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
 		}
 
 		User user = User.builder().email(email).passwordHash(this.passwordHasher.hash(rawPassword))

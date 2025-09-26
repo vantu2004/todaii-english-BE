@@ -1,4 +1,4 @@
-package com.todaii.english.core.admin;
+package com.todaii.english.core.admin.admin;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,6 +7,7 @@ import lombok.*;
 @Table(name = "admin_roles")
 @Getter
 @Setter
+@Builder
 public class AdminRole {
 
 	@Id

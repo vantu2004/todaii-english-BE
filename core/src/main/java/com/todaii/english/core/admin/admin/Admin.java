@@ -1,4 +1,4 @@
-package com.todaii.english.core.admin;
+package com.todaii.english.core.admin.admin;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -53,6 +53,9 @@ public class Admin {
 
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
+
+	@Column(name = "otp", nullable = false, length = 16)
+	private String OTP;
 
 	@Builder.Default
 	private boolean enabled = false;

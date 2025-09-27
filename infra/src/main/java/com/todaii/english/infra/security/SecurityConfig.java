@@ -68,16 +68,27 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
 				// Cấu hình EntryPoint cho lỗi xác thực
 				.exceptionHandling(exception -> exception
 						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**").permitAll()
-						// hasRole() tự thêm tiền tố ROLE_, vd read -> ROLE_read
+
+				// hasRole() tự thêm tiền tố ROLE_, vd read -> ROLE_read
+				.authorizeHttpRequests(auth -> auth
+						// AuthApiController
+						.requestMatchers("/api/v1/auth/**").permitAll()
+
+						// AdminApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.POST, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/api/v1/admin")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
-						.requestMatchers(HttpMethod.DELETE).hasAuthority("SUPER_ADMIN").anyRequest().authenticated());
+						.requestMatchers(HttpMethod.DELETE).hasAuthority("SUPER_ADMIN")
+
+						// SettingApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/setting").hasAuthority("SUPER_ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/setting").hasAuthority("SUPER_ADMIN").anyRequest()
+						.authenticated());
 
 		/*
 		 * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy
@@ -88,4 +99,13 @@ public class SecurityConfig {
 
 		return httpSecurity.build();
 	}
+	
+//	@Bean
+//	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//		httpSecurity.csrf(csrf -> csrf.disable())
+//				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//				.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+//
+//		return httpSecurity.build();
+//	}
 }

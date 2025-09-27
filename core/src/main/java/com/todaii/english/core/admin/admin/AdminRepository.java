@@ -17,4 +17,7 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
 	public Optional<Admin> findByEmail(String email);
 
+	@Query("SELECT a FROM Admin a WHERE a.email = ?1 AND a.isDeleted = false")
+	public Optional<Admin> findActiveByEmail(String email);
+
 }

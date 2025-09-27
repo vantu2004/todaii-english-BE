@@ -67,4 +67,22 @@ public class TokenService {
 
 		throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
 	}
+
+	public void revokeRefreshToken(RefreshTokenRequest refreshTokenRequest) {
+		List<RefreshToken> refreshTokens = this.refreshTokenRepository.findByAdminEmail(refreshTokenRequest.getEmail());
+
+		boolean found = false;
+		for (RefreshToken refreshToken : refreshTokens) {
+			if (this.passwordEncoder.matches(refreshTokenRequest.getRefreshToken(), refreshToken.getTokenHash())) {
+				this.refreshTokenRepository.delete(refreshToken);
+				found = true;
+				break;
+			}
+		}
+
+		if (!found) {
+			throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
+		}
+	}
+
 }

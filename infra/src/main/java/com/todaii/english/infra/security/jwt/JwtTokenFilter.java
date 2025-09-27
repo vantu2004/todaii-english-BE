@@ -40,12 +40,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 	private final JwtUtility jwtUtility;
 	private final AdminRoleRepository adminRoleRepository;
 
-	// chỉ rõ Spring nên dùng bean có tên là handlerExceptionResolver
-	@Qualifier("handlerExceptionResolver")
 	/*
-	 * HandlerExceptionResolver là một interface giúp xử lý ngoại lệ và chuyển đổi
-	 * thành HTTP response tương ứng.
+	 * vì filter chạy trước controller nên khi throw exception, Exception này không
+	 * đi qua cơ chế @ControllerAdvice / @ExceptionHandler của Spring MVC → Spring
+	 * không biết cách convert exception → browser/REST client sẽ nhận 500 Internal
+	 * Server Error mặc định. HandlerExceptionResolver giúp Spring sẽ chuyển
+	 * exception đó vào hệ thống xử lý exception (các
+	 * ExceptionHandler, @ControllerAdvice, hoặc GlobalExceptionHandler)
 	 */
+	@Qualifier("handlerExceptionResolver")
 	private final HandlerExceptionResolver handlerExceptionResolver;
 
 	@Override

@@ -19,11 +19,7 @@ public class CustomAdminDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Optional<Admin> user = this.adminRepository.findByEmail(email);
-		if (!user.isPresent()) {
-			throw new UsernameNotFoundException("No user found with the given user name!");
-		}
-
+		Optional<Admin> user = this.adminRepository.findActiveByEmail(email);
 		return new CustomAdminDetails(user.get());
 	}
 

@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -115,6 +117,36 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		LOGGER.error(ex.getMessage(), ex);
 
 		return new ResponseEntity<>(globalErrorDTO, headers, status);
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ResponseBody
+	public GlobalErrorDTO handleJwtValidationException(HttpServletRequest request, AuthenticationException ex) {
+		GlobalErrorDTO error = new GlobalErrorDTO();
+		error.setTimestamp(LocalDateTime.now());
+		error.setStatus(HttpStatus.UNAUTHORIZED.value());
+		error.addError(ex.getMessage());
+		error.setPath(request.getServletPath());
+
+		LOGGER.error("JWT validation failed: {}", ex.getMessage(), ex);
+
+		return error;
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public GlobalErrorDTO handleAccessDeniedException(HttpServletRequest request, AccessDeniedException ex) {
+		GlobalErrorDTO error = new GlobalErrorDTO();
+		error.setTimestamp(LocalDateTime.now());
+		error.setStatus(HttpStatus.FORBIDDEN.value());
+		error.addError("Bạn không có quyền truy cập tài nguyên này");
+		error.setPath(request.getServletPath());
+
+		LOGGER.warn("Access denied: {}", ex.getMessage());
+
+		return error;
 	}
 
 }

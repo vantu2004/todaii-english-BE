@@ -54,9 +54,12 @@ public class Admin {
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
 
-	@Column(name = "otp", nullable = false, length = 16)
+	@Column(name = "otp", length = 16)
 	private String OTP;
 
+    @Column(name = "otp_expired_at")
+    private LocalDateTime otpExpiredAt;
+	
 	@Builder.Default
 	private boolean enabled = false;
 

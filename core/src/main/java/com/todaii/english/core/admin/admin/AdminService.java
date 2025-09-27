@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.security.PasswordHasher;
+import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
@@ -24,6 +25,7 @@ public class AdminService {
 	private final AdminRepository adminRepository;
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
+	private final SmtpService smtpService;
 
 	public List<Admin> findAll() {
 		// chỉ lấy những admin chưa bị xóa
@@ -48,11 +50,13 @@ public class AdminService {
 		Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
 
 		String OTP = OtpUtils.generateOtp();
+		this.smtpService.sendVerifyEmail(request.getEmail(), OTP);
 
 		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
-				.displayName(request.getDisplayName()).OTP(OTP).status(AdminStatus.PENDING).roles(roles).build();
+				.displayName(request.getDisplayName()).OTP(OTP).otpExpiredAt(LocalDateTime.now().plusMinutes(15))
+				.status(AdminStatus.PENDING).roles(roles).build();
 
-		return adminRepository.save(admin);
+		return this.adminRepository.save(admin);
 	}
 
 	public Admin update(Long id, UpdateAdminRequest request) {
@@ -100,7 +104,7 @@ public class AdminService {
 		admin.setDisplayName(request.getDisplayName());
 		admin.setAvatarUrl(request.getAvatarUrl());
 
-		return adminRepository.save(admin);
+		return this.adminRepository.save(admin);
 	}
 
 	private Set<AdminRole> getAdminRoles(Set<String> roleCodes) {

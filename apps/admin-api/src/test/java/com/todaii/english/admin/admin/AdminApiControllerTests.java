@@ -16,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,12 +28,13 @@ import com.todaii.english.admin.security.TestSecurityConfig;
 import com.todaii.english.core.admin.admin.Admin;
 import com.todaii.english.core.admin.admin.AdminRole;
 import com.todaii.english.core.admin.admin.AdminService;
+import com.todaii.english.infra.security.jwt.JwtTokenFilter;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
 
-@WebMvcTest(controllers = AdminApiController.class)
+@WebMvcTest(controllers = AdminApiController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtTokenFilter.class))
 @Import(TestSecurityConfig.class)
 public class AdminApiControllerTests {
 
@@ -98,9 +101,9 @@ public class AdminApiControllerTests {
 	@DisplayName("POST /api/v1/admin - should create admin successfully")
 	void testCreateAdmin_success() throws Exception {
 		CreateAdminRequest request = new CreateAdminRequest();
-		request.setEmail("newadmin@test.com");
-		request.setPassword("password123");
-		request.setDisplayName("New Admin");
+		request.setEmail("nguyenvana@gmail.com");
+		request.setPassword("123456");
+		request.setDisplayName("Nguyen Van A");
 		request.setRoleCodes(Collections.singleton("SUPER_ADMIN"));
 
 		Admin admin = new Admin();
@@ -115,8 +118,8 @@ public class AdminApiControllerTests {
 
 		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
-				.andExpect(jsonPath("$.email").value("newadmin@test.com"))
-				.andExpect(jsonPath("$.displayName").value("New Admin"));
+				.andExpect(jsonPath("$.email").value("nguyenvana@gmail.com"))
+				.andExpect(jsonPath("$.displayName").value("Nguyen Van A"));
 	}
 
 	@Test

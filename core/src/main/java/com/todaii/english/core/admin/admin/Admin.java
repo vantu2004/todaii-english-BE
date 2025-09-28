@@ -55,7 +55,7 @@ public class Admin {
 	private String avatarUrl;
 
 	@Column(name = "otp", length = 16)
-	private String OTP;
+	private String otp;
 
     @Column(name = "otp_expired_at")
     private LocalDateTime otpExpiredAt;

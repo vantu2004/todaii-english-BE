@@ -5,26 +5,34 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.core.admin.admin.AdminService;
 import com.todaii.english.infra.security.admin.CustomAdminDetails;
 import com.todaii.english.infra.security.token.TokenService;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
+import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.response.admin.AuthResponse;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/auth")
 public class AuthApiController {
 	private final AuthenticationManager authenticationManager;
 	private final TokenService tokenService;
+	private final AdminService adminService;
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@RequestBody @Valid AuthRequest authRequest) {
@@ -37,10 +45,12 @@ public class AuthApiController {
 		CustomAdminDetails customAdminDetails = (CustomAdminDetails) result.getPrincipal();
 		AuthResponse authResponse = this.tokenService.generateToken(customAdminDetails.getAdmin());
 
+		this.adminService.updateLastLogin(email);
+
 		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
 	}
 
-	@PostMapping("/token/refresh")
+	@PostMapping("/new-token")
 	public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
 		AuthResponse authResponse = this.tokenService.refreshTokens(refreshTokenRequest);
 		return ResponseEntity.ok(authResponse);
@@ -51,35 +61,17 @@ public class AuthApiController {
 		this.tokenService.revokeRefreshToken(refreshTokenRequest);
 		return ResponseEntity.ok().build();
 	}
-//
-//	@GetMapping("/verify-email")
-//	public ResponseEntity<?> verifyEmail(@RequestParam("token") String token) {
-//		boolean success = this.tokenService.verifyEmailToken(token);
-//
-//		if (!success) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(Map.of("message", "Invalid or expired verification token"));
-//		}
-//		return ResponseEntity.ok(Map.of("message", "Email verified successfully"));
-//	}
-//
-//	@PostMapping("/forgot-password")
-//	public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> payload) {
-//		String email = payload.get("email");
-//		this.tokenService.sendResetPasswordEmail(email);
-//
-//		return ResponseEntity.ok(Map.of("message", "Password reset link has been sent to your email"));
-//	}
-//
-//	@PostMapping("/reset-password")
-//	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
-//		boolean success = this.tokenService.resetPassword(request.getToken(), request.getNewPassword());
-//
-//		if (!success) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(Map.of("message", "Invalid or expired reset token"));
-//		}
-//		return ResponseEntity.ok(Map.of("message", "Password reset successfully"));
-//	}
 
+	@PostMapping("/verify-otp")
+	public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest verifyOtpRequest) {
+		this.adminService.verifyOtp(verifyOtpRequest);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/resend-otp")
+	public ResponseEntity<?> resendOtp(
+			@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid") @RequestParam String email) {
+		this.adminService.resendOtp(email);
+		return ResponseEntity.ok().build();
+	}
 }

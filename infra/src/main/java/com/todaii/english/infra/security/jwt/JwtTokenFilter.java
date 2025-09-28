@@ -31,7 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
-//kế thừa OncePerRequestFilter để đảm bảo mỗi request chỉ xác thực qua filter 1 lần
+// kế thừa OncePerRequestFilter để đảm bảo mỗi request chỉ xác thực qua filter 1 lần
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
@@ -78,7 +78,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 		} catch (JwtValidationException e) {
 			LOGGER.error(e.getMessage(), e);
 
-			handlerExceptionResolver.resolveException(request, response, null, e);
+			// Trở lại như mặc định: ném exception ra ngoài để Spring Security xử lý
+			throw e;
 		}
 	}
 

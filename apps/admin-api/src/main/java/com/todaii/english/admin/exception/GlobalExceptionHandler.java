@@ -11,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -130,21 +129,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		error.setPath(request.getServletPath());
 
 		LOGGER.error("JWT validation failed: {}", ex.getMessage(), ex);
-
-		return error;
-	}
-
-	@ExceptionHandler(AccessDeniedException.class)
-	@ResponseStatus(HttpStatus.FORBIDDEN)
-	@ResponseBody
-	public GlobalErrorDTO handleAccessDeniedException(HttpServletRequest request, AccessDeniedException ex) {
-		GlobalErrorDTO error = new GlobalErrorDTO();
-		error.setTimestamp(LocalDateTime.now());
-		error.setStatus(HttpStatus.FORBIDDEN.value());
-		error.addError("Bạn không có quyền truy cập tài nguyên này");
-		error.setPath(request.getServletPath());
-
-		LOGGER.warn("Access denied: {}", ex.getMessage());
 
 		return error;
 	}

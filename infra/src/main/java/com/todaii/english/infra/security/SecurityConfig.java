@@ -1,10 +1,8 @@
 package com.todaii.english.infra.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,16 +14,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 import com.todaii.english.infra.security.admin.CustomAdminDetailsService;
+import com.todaii.english.infra.security.jwt.JwtAuthEntryPoint;
 import com.todaii.english.infra.security.jwt.JwtTokenFilter;
 
-@Configuration
-public class SecurityConfig {
+import lombok.RequiredArgsConstructor;
 
-	@Autowired
-	private JwtTokenFilter jwtTokenFilter;
+@Configuration
+@RequiredArgsConstructor
+public class SecurityConfig {
+	private final JwtTokenFilter jwtTokenFilter;
+	private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
 	@Bean
 	public UserDetailsService adminDetailsService() {
@@ -70,8 +70,7 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
 				// Cấu hình EntryPoint cho lỗi xác thực
-				.exceptionHandling(exception -> exception
-						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
 
 				// hasRole() tự thêm tiền tố ROLE_, vd read -> ROLE_read
 				.authorizeHttpRequests(auth -> auth
@@ -99,7 +98,7 @@ public class SecurityConfig {
 
 		return httpSecurity.build();
 	}
-	
+
 //	@Bean
 //	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 //		httpSecurity.csrf(csrf -> csrf.disable())

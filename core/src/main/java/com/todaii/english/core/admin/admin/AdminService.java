@@ -13,6 +13,7 @@ import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
 import com.todaii.english.shared.request.admin.UpdateAdminRequest;
 import com.todaii.english.shared.utils.OtpUtils;
@@ -49,11 +50,11 @@ public class AdminService {
 		// tìm role trong db
 		Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
 
-		String OTP = OtpUtils.generateOtp();
-		this.smtpService.sendVerifyEmail(request.getEmail(), OTP);
+		String otp = OtpUtils.generateOtp();
+		this.smtpService.sendVerifyEmail(request.getEmail(), otp);
 
 		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
-				.displayName(request.getDisplayName()).OTP(OTP).otpExpiredAt(LocalDateTime.now().plusMinutes(15))
+				.displayName(request.getDisplayName()).otp(otp).otpExpiredAt(LocalDateTime.now().plusMinutes(15))
 				.status(AdminStatus.PENDING).roles(roles).build();
 
 		return this.adminRepository.save(admin);
@@ -121,8 +122,57 @@ public class AdminService {
 
 		admin.setIsDeleted(true);
 		admin.setDeletedAt(LocalDateTime.now());
+		admin.setStatus(AdminStatus.LOCKED);
 
 		this.adminRepository.save(admin);
 	}
 
+	public void verifyOtp(VerifyOtpRequest verifyOtpRequest) {
+		Admin admin = this.adminRepository.findActiveByEmail(verifyOtpRequest.getEmail())
+				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		if (admin.getOtp() == null || admin.getOtpExpiredAt() == null) {
+			throw new BusinessException(AuthErrorCode.OTP_NOT_FOUND);
+		}
+		if (admin.getOtpExpiredAt().isBefore(LocalDateTime.now())) {
+			throw new BusinessException(AuthErrorCode.OTP_EXPIRED);
+		}
+		if (!verifyOtpRequest.getOtp().equals(admin.getOtp())) {
+			throw new BusinessException(AuthErrorCode.OTP_INVALID);
+		}
+
+		// Nếu hợp lệ thì clear OTP và active account
+		admin.setOtp(null);
+		admin.setOtpExpiredAt(null);
+		admin.setEnabled(true);
+		admin.setStatus(AdminStatus.ACTIVE);
+
+		this.adminRepository.save(admin);
+	}
+
+	public void resendOtp(String email) {
+		Admin admin = this.adminRepository.findActiveByEmail(email)
+				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		if (admin.isEnabled()) {
+			throw new BusinessException(AuthErrorCode.ALREADY_VERIFIED);
+		}
+
+		String otp = OtpUtils.generateOtp();
+
+		admin.setOtp(otp);
+		admin.setOtpExpiredAt(LocalDateTime.now().plusMinutes(15));
+		this.adminRepository.save(admin);
+
+		this.smtpService.sendVerifyEmail(email, otp);
+	}
+
+	public void updateLastLogin(String email) {
+		Admin admin = this.adminRepository.findActiveByEmail(email)
+				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		admin.setLastLoginAt(LocalDateTime.now());
+
+		this.adminRepository.save(admin);
+	}
 }

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
@@ -13,6 +14,7 @@ import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
 import com.todaii.english.shared.request.admin.UpdateAdminRequest;
@@ -60,50 +62,50 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin update(Long id, UpdateAdminRequest request) {
+	public Admin update(Long id, UpdateProfileRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		// check role
-		boolean isSuperAdmin = admin.getRoles().stream().anyMatch(r -> "SUPER_ADMIN".equals(r.getCode()));
-
-		if (isSuperAdmin) {
-			if (request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
-				if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
-					throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
-				}
-
-				admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
-			}
-
-			// SUPER_ADMIN có quyền chỉnh role
-			admin.setRoles(getAdminRoles(request.getRoleCodes()));
-		}
-
-		// 1. Xử lý password
-		if (request.getNewPassword() != null && !request.getNewPassword().isBlank()) {
+		if (StringUtils.hasText(request.getNewPassword())) {
 			if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
 				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
 			}
 
-			// nếu có oldPassword → verify
-			if (!passwordHasher.matches(request.getOldPassword(), admin.getPasswordHash())) {
+			if (!StringUtils.hasText(request.getOldPassword())
+					|| !passwordHasher.matches(request.getOldPassword(), admin.getPasswordHash())) {
 				throw new BusinessException(AuthErrorCode.PASSWORD_INCORRECT);
 			}
 
 			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
 		}
 
-		// 2. Xử lý role
-		if (isSuperAdmin) {
-
-		} else {
-			throw new BusinessException(AdminErrorCode.ADMIN_FORBIDDEN);
-		}
-
-		// 3. Update thông tin cơ bản
 		admin.setDisplayName(request.getDisplayName());
 		admin.setAvatarUrl(request.getAvatarUrl());
+
+		return this.adminRepository.save(admin);
+	}
+
+	public Admin updateAdminBySuperAdmin(Long id, UpdateAdminRequest request) {
+		Admin admin = this.adminRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		// 1. Xử lý password (super admin không cần oldPassword)
+		if (StringUtils.hasText(request.getNewPassword())) {
+			if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
+				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+			}
+			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
+		}
+
+		// 2. Update displayName + avatar
+		admin.setDisplayName(request.getDisplayName());
+		admin.setAvatarUrl(request.getAvatarUrl());
+
+		// 3. Update roles
+		if (request.getRoleCodes() != null && !request.getRoleCodes().isEmpty()) {
+			Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
+			admin.setRoles(roles);
+		}
 
 		return this.adminRepository.save(admin);
 	}
@@ -154,7 +156,7 @@ public class AdminService {
 		Admin admin = this.adminRepository.findActiveByEmail(email)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		if (admin.isEnabled()) {
+		if (admin.isEnabled() || !admin.getStatus().equals(AdminStatus.PENDING)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_VERIFIED);
 		}
 
@@ -172,6 +174,25 @@ public class AdminService {
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
 		admin.setLastLoginAt(LocalDateTime.now());
+
+		this.adminRepository.save(admin);
+	}
+
+	public void toggleEnabled(Long id) {
+		Admin admin = this.adminRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		// Đảo ngược trạng thái enable
+		admin.setEnabled(!admin.isEnabled());
+
+		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
+		if (admin.isEnabled()) {
+			admin.setStatus(AdminStatus.ACTIVE);
+			admin.setOtp(null);
+			admin.setOtpExpiredAt(null);
+		} else {
+			admin.setStatus(AdminStatus.LOCKED);
+		}
 
 		this.adminRepository.save(admin);
 	}

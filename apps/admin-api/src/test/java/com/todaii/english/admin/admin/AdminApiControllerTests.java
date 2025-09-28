@@ -32,7 +32,9 @@ import com.todaii.english.infra.security.jwt.JwtTokenFilter;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
+import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
+import com.todaii.english.shared.request.admin.UpdateAdminRequest;
 
 @WebMvcTest(controllers = AdminApiController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtTokenFilter.class))
 @Import(TestSecurityConfig.class)
@@ -154,4 +156,91 @@ public class AdminApiControllerTests {
 
 		mockMvc.perform(delete(END_POINT_PATH + "/{id}", 99L)).andExpect(status().isNotFound());
 	}
+
+	// ---------- UPDATE (NORMAL) ----------
+	@Test
+	@DisplayName("PUT /api/v1/admin/{id} - should update admin successfully")
+	void testUpdateAdmin_success() throws Exception {
+		UpdateProfileRequest request = new UpdateProfileRequest();
+		request.setDisplayName("Updated Name");
+		request.setAvatarUrl("https://example.com/avatar.png");
+		request.setOldPassword("oldpass");
+		request.setNewPassword("newpass123");
+
+		Admin updatedAdmin = sampleAdmin(1L);
+		updatedAdmin.setDisplayName("Updated Name");
+		updatedAdmin.setAvatarUrl("https://example.com/avatar.png");
+
+		given(this.adminService.update(any(Long.class), any(UpdateProfileRequest.class))).willReturn(updatedAdmin);
+
+		mockMvc.perform(put(END_POINT_PATH + "/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
+				.andExpect(jsonPath("$.displayName").value("Updated Name"))
+				.andExpect(jsonPath("$.avatarUrl").value("https://example.com/avatar.png"));
+	}
+
+	@Test
+	@DisplayName("PUT /api/v1/admin/{id} - should return 404 if admin not found")
+	void testUpdateAdmin_notFound() throws Exception {
+		UpdateProfileRequest request = new UpdateProfileRequest();
+		request.setDisplayName("Updated Name");
+
+		given(this.adminService.update(any(Long.class), any(UpdateProfileRequest.class)))
+				.willThrow(new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		mockMvc.perform(put(END_POINT_PATH + "/{id}", 99L).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isNotFound());
+	}
+
+	// ---------- UPDATE BY SUPER ADMIN ----------
+	@Test
+	@DisplayName("PUT /api/v1/admin/by-super-admin/{id} - should update admin successfully")
+	void testUpdateAdminBySuperAdmin_success() throws Exception {
+		UpdateAdminRequest request = new UpdateAdminRequest();
+		request.setDisplayName("Super Updated");
+		request.setAvatarUrl("https://example.com/super.png");
+		request.setRoleCodes(Set.of("SUPER_ADMIN"));
+
+		Admin updatedAdmin = sampleAdmin(2L);
+		updatedAdmin.setDisplayName("Super Updated");
+
+		given(this.adminService.updateAdminBySuperAdmin(any(Long.class), any(UpdateAdminRequest.class)))
+				.willReturn(updatedAdmin);
+
+		mockMvc.perform(put(END_POINT_PATH + "/by-super-admin/{id}", 2L).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
+				.andExpect(jsonPath("$.displayName").value("Super Updated"));
+	}
+
+	@Test
+	@DisplayName("PUT /api/v1/admin/by-super-admin/{id} - should return 404 if admin not found")
+	void testUpdateAdminBySuperAdmin_notFound() throws Exception {
+		UpdateAdminRequest request = new UpdateAdminRequest();
+		request.setDisplayName("Super Updated");
+		request.setRoleCodes(Set.of("SUPER_ADMIN"));
+
+		given(this.adminService.updateAdminBySuperAdmin(any(Long.class), any(UpdateAdminRequest.class)))
+				.willThrow(new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		mockMvc.perform(put(END_POINT_PATH + "/by-super-admin/{id}", 99L).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isNotFound());
+	}
+
+	// ---------- TOGGLE ENABLE ----------
+	@Test
+	@DisplayName("PUT /api/v1/admin/toggle-enabled/{id} - should toggle enabled successfully")
+	void testToggleEnabled_success() throws Exception {
+		doNothing().when(this.adminService).toggleEnabled(1L);
+
+		mockMvc.perform(put(END_POINT_PATH + "/toggle-enabled/{id}", 1L)).andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("PUT /api/v1/admin/toggle-enabled/{id} - should return 404 if admin not found")
+	void testToggleEnabled_notFound() throws Exception {
+		doThrow(new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND)).when(this.adminService).toggleEnabled(99L);
+
+		mockMvc.perform(put(END_POINT_PATH + "/toggle-enabled/{id}", 99L)).andExpect(status().isNotFound());
+	}
+
 }

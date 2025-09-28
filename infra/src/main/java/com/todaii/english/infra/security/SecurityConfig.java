@@ -79,10 +79,14 @@ public class SecurityConfig {
 
 						// AdminApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.POST, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/v1/admin")
+						.requestMatchers(HttpMethod.GET, "/api/v1/admin/*")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
-						.requestMatchers(HttpMethod.DELETE).hasAuthority("SUPER_ADMIN")
+						.requestMatchers(HttpMethod.POST, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/by-super-admin/*").hasAuthority("SUPER_ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/toggle-enabled/*").hasAuthority("SUPER_ADMIN")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/admin/*").hasAuthority("SUPER_ADMIN")
 
 						// SettingApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/setting").hasAuthority("SUPER_ADMIN")

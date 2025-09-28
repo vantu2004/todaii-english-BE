@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.admin.admin.Admin;
 import com.todaii.english.core.admin.admin.AdminService;
+import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
 import com.todaii.english.shared.request.admin.UpdateAdminRequest;
 
@@ -42,11 +43,23 @@ public class AdminApiController {
 		return ResponseEntity.ok(this.adminService.create(createAdminRequest));
 	}
 
-//	@PutMapping("/{id}")
-//	public ResponseEntity<?> updateAdmin(@PathVariable Long id,
-//			@Valid @RequestBody UpdateAdminRequest updateAdminRequest) {
-//		return ResponseEntity.ok(this.adminService.update(id, updateAdminRequest));
-//	}
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateAdmin(@PathVariable Long id,
+			@Valid @RequestBody UpdateProfileRequest updateProfileRequest) {
+		return ResponseEntity.ok(this.adminService.update(id, updateProfileRequest));
+	}
+
+	@PutMapping("/by-super-admin/{id}")
+	public ResponseEntity<?> updateAdminBySuperAdmin(@PathVariable Long id,
+			@Valid @RequestBody UpdateAdminRequest updateAdminRequest) {
+		return ResponseEntity.ok(this.adminService.updateAdminBySuperAdmin(id, updateAdminRequest));
+	}
+
+	@PutMapping("/toggle-enabled/{id}")
+	public ResponseEntity<?> toggleEnable(@PathVariable Long id) {
+		this.adminService.toggleEnabled(id);
+		return ResponseEntity.ok().build();
+	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteAdmin(@PathVariable Long id) {

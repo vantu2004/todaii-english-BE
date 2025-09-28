@@ -1,20 +1,19 @@
-package com.todaii.english.shared.request.admin;
-
-import java.util.Set;
+package com.todaii.english.shared.request;
 
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateAdminRequest {
+public class UpdateProfileRequest {
+	@JsonProperty("old_password")
+	private String oldPassword;
+	
 	@JsonProperty("new_password")
 	private String newPassword;
 
@@ -25,8 +24,4 @@ public class UpdateAdminRequest {
 
 	@JsonProperty("avatar_url")
 	private String avatarUrl;
-
-	@NotEmpty
-	@JsonProperty("role_codes")
-	private Set<@NotBlank String> roleCodes;
 }

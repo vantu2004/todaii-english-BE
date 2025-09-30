@@ -40,7 +40,10 @@ public class User {
 	private String avatarUrl;
 
 	@Column(name = "otp", nullable = false, length = 16)
-	private String OTP;
+	private String otp;
+
+	@Column(name = "otp_expired_at")
+	private LocalDateTime otpExpiredAt;
 
 	@Builder.Default
 	private boolean enabled = false;

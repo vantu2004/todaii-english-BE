@@ -1,4 +1,4 @@
-package com.todaii.english.infra.security.admin;
+package com.todaii.english.infra.security.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,21 +6,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.admin.admin.Admin;
-import com.todaii.english.core.admin.admin.AdminRepository;
-import com.todaii.english.shared.enums.error_code.AdminErrorCode;
+import com.todaii.english.core.user.user.User;
+import com.todaii.english.core.user.user.UserRepository;
+import com.todaii.english.shared.enums.error_code.UserErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 @Service
-public class CustomAdminDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
-	private AdminRepository adminRepository;
+	private UserRepository userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Admin admin = this.adminRepository.findActiveByEmail(email)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-		return new CustomAdminDetails(admin);
+		User user = this.userRepository.findActiveByEmail(email)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+		return new CustomUserDetails(user);
 	}
 
 }

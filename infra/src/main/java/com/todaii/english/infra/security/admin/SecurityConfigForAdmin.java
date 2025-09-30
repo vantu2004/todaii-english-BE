@@ -1,7 +1,8 @@
-package com.todaii.english.infra.security;
+package com.todaii.english.infra.security.admin;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 
-import com.todaii.english.infra.security.admin.CustomAdminDetailsService;
 import com.todaii.english.infra.security.jwt.JwtAuthEntryPoint;
 import com.todaii.english.infra.security.jwt.JwtTokenFilter;
 
@@ -23,7 +23,8 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+@Profile("admin")
+public class SecurityConfigForAdmin {
 	private final JwtTokenFilter jwtTokenFilter;
 	private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
@@ -36,22 +37,7 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-	/*
-	 * thay vì để cấu hình mặc định thì tự cấu hình lại AuthenticationProvider, tạo
-	 * và trả về một đối tượng DaoAuthenticationProvider chứa thông tin user đã đc
-	 * xác thực
-	 */
-	@Bean
-	public AuthenticationProvider authProvider() {
-		// là lớp triển khai của AuthenticationProvider dùng xác thực user
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(this.adminDetailsService());
-		provider.setPasswordEncoder(this.passwordEncoder());
-
-		return provider;
-	}
-
+	
 	/*
 	 * AuthenticationManager này được cấu hình dựa trên các cấu hình bảo mật đã khai
 	 * báo trước đó (ví dụ: UserDetailsService, PasswordEncoder, v.v.), có
@@ -64,8 +50,23 @@ public class SecurityConfig {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
+	/*
+	 * thay vì để cấu hình mặc định thì tự cấu hình lại AuthenticationProvider, tạo
+	 * và trả về một đối tượng DaoAuthenticationProvider chứa thông tin user đã đc
+	 * xác thực
+	 */
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	public AuthenticationProvider authProviderForAdmin() {
+		// là lớp triển khai của AuthenticationProvider dùng xác thực user
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(this.adminDetailsService());
+		provider.setPasswordEncoder(this.passwordEncoder());
+
+		return provider;
+	}
+
+	@Bean
+	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 

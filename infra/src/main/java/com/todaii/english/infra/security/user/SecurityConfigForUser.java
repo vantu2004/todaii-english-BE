@@ -3,6 +3,7 @@ package com.todaii.english.infra.security.user;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -71,7 +72,12 @@ public class SecurityConfigForUser {
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
 				.authorizeHttpRequests(auth -> auth
 						// AuthApiController
-						.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
+						.requestMatchers("/api/v1/auth/**").permitAll()
+
+						// UserApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/user/me").hasAuthority("USER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER").anyRequest()
+						.authenticated());
 
 		/*
 		 * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy

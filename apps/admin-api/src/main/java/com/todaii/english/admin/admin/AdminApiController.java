@@ -3,11 +3,13 @@ package com.todaii.english.admin.admin;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.admin.admin.Admin;
 import com.todaii.english.core.admin.admin.AdminService;
+import com.todaii.english.infra.security.admin.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.admin.CreateAdminRequest;
 import com.todaii.english.shared.request.admin.UpdateAdminRequest;
@@ -38,21 +40,32 @@ public class AdminApiController {
 		return ResponseEntity.ok(this.adminService.findById(id));
 	}
 
+	@GetMapping("/me")
+	public ResponseEntity<?> getProfile(Authentication authentication) {
+		CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
+		Long currentAdminId = principal.getAdmin().getId();
+
+		return ResponseEntity.ok(this.adminService.findById(currentAdminId));
+	}
+
 	@PostMapping
 	public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest createAdminRequest) {
 		return ResponseEntity.ok(this.adminService.create(createAdminRequest));
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateAdmin(@PathVariable Long id,
+	@PutMapping("/me")
+	public ResponseEntity<?> updateProfile(Authentication authentication,
 			@Valid @RequestBody UpdateProfileRequest updateProfileRequest) {
-		return ResponseEntity.ok(this.adminService.update(id, updateProfileRequest));
+		CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
+		Long currentAdminId = principal.getAdmin().getId();
+
+		return ResponseEntity.ok(this.adminService.updateProfile(currentAdminId, updateProfileRequest));
 	}
 
-	@PutMapping("/by-super-admin/{id}")
-	public ResponseEntity<?> updateAdminBySuperAdmin(@PathVariable Long id,
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateAdmin(@PathVariable Long id,
 			@Valid @RequestBody UpdateAdminRequest updateAdminRequest) {
-		return ResponseEntity.ok(this.adminService.updateAdminBySuperAdmin(id, updateAdminRequest));
+		return ResponseEntity.ok(this.adminService.updateAdmin(id, updateAdminRequest));
 	}
 
 	@PutMapping("/toggle-enabled/{id}")

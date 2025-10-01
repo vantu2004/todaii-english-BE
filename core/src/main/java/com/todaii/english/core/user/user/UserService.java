@@ -6,6 +6,7 @@ import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.request.user.RegisterRequest;
 import com.todaii.english.shared.request.user.ResetPasswordRequest;
@@ -14,9 +15,9 @@ import com.todaii.english.shared.utils.OtpUtils;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,10 +28,6 @@ public class UserService {
 	private final SmtpService smtpService;
 
 	private String CLIENT_URL = "http://localhost:5173";
-
-	public List<User> getAllUsers() {
-		return this.userRepository.findAll();
-	}
 
 	public User createUser(RegisterRequest request) {
 		if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -133,6 +130,38 @@ public class UserService {
 		user.setResetPasswordExpiredAt(null);
 
 		this.userRepository.save(user);
+	}
+
+	public User getUserById(Long id) {
+		User user = this.userRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+		return user;
+	}
+
+	public User updateProfile(Long id, UpdateProfileRequest request) {
+		User user = this.userRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+		// Xử lý đổi mật khẩu
+		if (StringUtils.hasText(request.getNewPassword())) {
+			if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
+				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+			}
+
+			if (!StringUtils.hasText(request.getOldPassword())
+					|| !passwordHasher.matches(request.getOldPassword(), user.getPasswordHash())) {
+				throw new BusinessException(AuthErrorCode.PASSWORD_INCORRECT);
+			}
+
+			user.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
+		}
+
+		// Cập nhật thông tin cơ bản
+		user.setDisplayName(request.getDisplayName());
+		user.setAvatarUrl(request.getAvatarUrl());
+
+		return this.userRepository.save(user);
 	}
 
 }

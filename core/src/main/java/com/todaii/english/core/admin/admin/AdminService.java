@@ -62,7 +62,7 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin update(Long id, UpdateProfileRequest request) {
+	public Admin updateProfile(Long id, UpdateProfileRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
@@ -85,7 +85,7 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin updateAdminBySuperAdmin(Long id, UpdateAdminRequest request) {
+	public Admin updateAdmin(Long id, UpdateAdminRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 

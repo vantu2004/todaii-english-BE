@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "admin_refresh_tokens")
@@ -19,6 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class AdminRefreshToken extends BaseRefreshToken {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "admin_id")

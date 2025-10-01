@@ -37,7 +37,7 @@ public class SecurityConfigForAdmin {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	/*
 	 * AuthenticationManager này được cấu hình dựa trên các cấu hình bảo mật đã khai
 	 * báo trước đó (ví dụ: UserDetailsService, PasswordEncoder, v.v.), có
@@ -80,12 +80,13 @@ public class SecurityConfigForAdmin {
 
 						// AdminApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.GET, "/api/v1/admin/*")
-						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/admin/me")
+						.hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/admin/*").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.POST, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/by-super-admin/*").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/*")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/me")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/*").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/api/v1/admin/toggle-enabled/*").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.DELETE, "/api/v1/admin/*").hasAuthority("SUPER_ADMIN")
 

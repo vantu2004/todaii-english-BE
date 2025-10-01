@@ -27,7 +27,7 @@ public class AdminTokenService {
 	private final PasswordEncoder passwordEncoder;
 
 	public AuthResponse generateToken(Admin admin) {
-		String accessToken = this.jwtUtility.generateAccessToken(admin);
+		String accessToken = this.jwtUtility.generateAccessToken(admin); // admin implement JwtPrincipal
 		String randomUUID = UUID.randomUUID().toString();
 
 		AdminRefreshToken adminRefreshToken = new AdminRefreshToken();

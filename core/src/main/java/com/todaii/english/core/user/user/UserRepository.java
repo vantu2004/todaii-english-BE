@@ -13,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT u FROM User u WHERE u.email = ?1 AND u.isDeleted = false")
 	public Optional<User> findActiveByEmail(String email);
 
+	@Query("SELECT u FROM User u WHERE u.resetPasswordToken = ?1 AND u.isDeleted = false")
+	public Optional<User> findByResetPasswordToken(String token);
+
 }

@@ -69,7 +69,9 @@ public class SecurityConfigForUser {
 		httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
-				.authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
+				.authorizeHttpRequests(auth -> auth
+						// AuthApiController
+						.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated());
 
 		/*
 		 * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy

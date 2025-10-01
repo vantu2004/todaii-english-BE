@@ -11,9 +11,15 @@ import lombok.RequiredArgsConstructor;
 public class SmtpService {
 	private final SmtpSenderPort smtpSenderPort;
 
-	public void sendVerifyEmail(String to, String OTP) {
+	public void sendVerifyEmail(String to, String otp) {
 		String subject = "Verify your email";
-		String content = MailTemplate.VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", OTP.toString());
+		String content = MailTemplate.VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", otp);
+		this.smtpSenderPort.send(to, subject, content);
+	}
+
+	public void sendForgotPasswordEmail(String to, String resetURL) {
+		String subject = "Verify your email";
+		String content = MailTemplate.PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL);
 		this.smtpSenderPort.send(to, subject, content);
 	}
 }

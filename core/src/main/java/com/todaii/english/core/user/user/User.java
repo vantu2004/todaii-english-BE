@@ -1,5 +1,6 @@
 package com.todaii.english.core.user.user;
 
+import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @ToString
-public class User {
+public class User implements JwtPrincipal {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,11 +40,17 @@ public class User {
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
 
-	@Column(name = "otp", nullable = false, length = 16)
+	@Column(name = "otp", length = 16)
 	private String otp;
 
 	@Column(name = "otp_expired_at")
 	private LocalDateTime otpExpiredAt;
+
+	@Column(name = "reset_pasword_token", length = 64)
+	private String resetPasswordToken;
+
+	@Column(name = "reset_password_expired_at")
+	private LocalDateTime resetPasswordExpiredAt;
 
 	@Builder.Default
 	private boolean enabled = false;
@@ -72,4 +79,9 @@ public class User {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+	@Override
+	public String getActorType() {
+		return "USER";
+	}
 }

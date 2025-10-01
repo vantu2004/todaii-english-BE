@@ -1,4 +1,4 @@
-package com.todaii.english.shared.response.admin;
+package com.todaii.english.shared.response;
 
 import lombok.Getter;
 import lombok.Setter;

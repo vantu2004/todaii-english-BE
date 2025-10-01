@@ -2,10 +2,12 @@ package com.todaii.english.core.admin.admin;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.AdminStatus;
 
 import jakarta.persistence.Column;
@@ -37,7 +39,7 @@ import java.util.HashSet;
 @AllArgsConstructor
 @Builder
 @ToString
-public class Admin {
+public class Admin implements JwtPrincipal {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -57,9 +59,9 @@ public class Admin {
 	@Column(name = "otp", length = 16)
 	private String otp;
 
-    @Column(name = "otp_expired_at")
-    private LocalDateTime otpExpiredAt;
-	
+	@Column(name = "otp_expired_at")
+	private LocalDateTime otpExpiredAt;
+
 	@Builder.Default
 	private boolean enabled = false;
 
@@ -94,6 +96,17 @@ public class Admin {
 
 	public void addRole(AdminRole adminRole) {
 		this.roles.add(adminRole);
+	}
+
+	// chuyển roles về tập string để dùng tạo jwt token
+	@Override
+	public Set<String> getRoleCodes() {
+		return roles.stream().map(AdminRole::getCode).collect(Collectors.toSet());
+	}
+
+	@Override
+	public String getActorType() {
+		return "ADMIN";
 	}
 
 }

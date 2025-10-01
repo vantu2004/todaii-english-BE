@@ -1,4 +1,4 @@
-package com.todaii.english.infra.security.token;
+package com.todaii.english.infra.security.admin;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,21 +8,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.admin.admin.Admin;
-import com.todaii.english.core.refresh_token.RefreshToken;
-import com.todaii.english.core.refresh_token.RefreshTokenRepository;
+import com.todaii.english.core.refresh_token.AdminRefreshToken;
+import com.todaii.english.core.refresh_token.AdminRefreshTokenRepository;
 import com.todaii.english.infra.security.jwt.JwtUtility;
 import com.todaii.english.shared.constants.SecurityConstants;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.RefreshTokenRequest;
-import com.todaii.english.shared.response.admin.AuthResponse;
+import com.todaii.english.shared.response.AuthResponse;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class TokenService {
-	private final RefreshTokenRepository refreshTokenRepository;
+public class AdminTokenService {
+	private final AdminRefreshTokenRepository adminRefreshTokenRepository;
 	private final JwtUtility jwtUtility;
 	private final PasswordEncoder passwordEncoder;
 
@@ -30,15 +30,15 @@ public class TokenService {
 		String accessToken = this.jwtUtility.generateAccessToken(admin);
 		String randomUUID = UUID.randomUUID().toString();
 
-		// lưu refresh token của admin vào db
-		RefreshToken refreshToken = new RefreshToken();
-		refreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
-		refreshToken.setAdmin(admin);
+		AdminRefreshToken adminRefreshToken = new AdminRefreshToken();
+		adminRefreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
+		adminRefreshToken.setAdmin(admin);
 
 		// set thời gian hết hạn là 7 ngày
-		refreshToken.setExpiresAt(LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES));
+		adminRefreshToken
+				.setExpiresAt(LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES));
 
-		this.refreshTokenRepository.save(refreshToken);
+		this.adminRefreshTokenRepository.save(adminRefreshToken);
 
 		AuthResponse authResponse = new AuthResponse();
 		authResponse.setAccessToken(accessToken);
@@ -50,18 +50,19 @@ public class TokenService {
 	public AuthResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
 		String rawRefreshToken = refreshTokenRequest.getRefreshToken();
 
-		List<RefreshToken> refreshTokens = this.refreshTokenRepository.findByAdminEmail(refreshTokenRequest.getEmail());
+		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository
+				.findByAdminEmail(refreshTokenRequest.getEmail());
 
-		for (RefreshToken refreshToken : refreshTokens) {
-			if (this.passwordEncoder.matches(rawRefreshToken, refreshToken.getTokenHash())) {
+		for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
+			if (this.passwordEncoder.matches(rawRefreshToken, adminRefreshToken.getTokenHash())) {
 				LocalDateTime currentDate = LocalDateTime.now();
-				if (refreshToken.getExpiresAt().isBefore(currentDate)) {
+				if (adminRefreshToken.getExpiresAt().isBefore(currentDate)) {
 					throw new BusinessException(AuthErrorCode.TOKEN_EXPIRED);
 				}
 
-				this.refreshTokenRepository.delete(refreshToken);
+				this.adminRefreshTokenRepository.delete(adminRefreshToken);
 
-				return this.generateToken(refreshToken.getAdmin());
+				return this.generateToken(adminRefreshToken.getAdmin());
 			}
 		}
 
@@ -69,12 +70,13 @@ public class TokenService {
 	}
 
 	public void revokeRefreshToken(RefreshTokenRequest refreshTokenRequest) {
-		List<RefreshToken> refreshTokens = this.refreshTokenRepository.findByAdminEmail(refreshTokenRequest.getEmail());
+		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository
+				.findByAdminEmail(refreshTokenRequest.getEmail());
 
 		boolean found = false;
-		for (RefreshToken refreshToken : refreshTokens) {
-			if (this.passwordEncoder.matches(refreshTokenRequest.getRefreshToken(), refreshToken.getTokenHash())) {
-				this.refreshTokenRepository.delete(refreshToken);
+		for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
+			if (this.passwordEncoder.matches(refreshTokenRequest.getRefreshToken(), adminRefreshToken.getTokenHash())) {
+				this.adminRefreshTokenRepository.delete(adminRefreshToken);
 				found = true;
 				break;
 			}

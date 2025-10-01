@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.admin.admin.AdminService;
+import com.todaii.english.infra.security.admin.AdminTokenService;
 import com.todaii.english.infra.security.admin.CustomAdminDetails;
-import com.todaii.english.infra.security.token.TokenService;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;
-import com.todaii.english.shared.response.admin.AuthResponse;
+import com.todaii.english.shared.response.AuthResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/auth")
 public class AuthApiController {
 	private final AuthenticationManager authenticationManager;
-	private final TokenService tokenService;
+	private final AdminTokenService adminTokenService;
 	private final AdminService adminService;
 
 	@PostMapping("/login")
@@ -43,7 +43,7 @@ public class AuthApiController {
 		Authentication result = authenticationManager.authenticate(authentication);
 
 		CustomAdminDetails customAdminDetails = (CustomAdminDetails) result.getPrincipal();
-		AuthResponse authResponse = this.tokenService.generateToken(customAdminDetails.getAdmin());
+		AuthResponse authResponse = this.adminTokenService.generateToken(customAdminDetails.getAdmin());
 
 		this.adminService.updateLastLogin(email);
 
@@ -52,13 +52,13 @@ public class AuthApiController {
 
 	@PostMapping("/new-token")
 	public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
-		AuthResponse authResponse = this.tokenService.refreshTokens(refreshTokenRequest);
+		AuthResponse authResponse = this.adminTokenService.refreshTokens(refreshTokenRequest);
 		return ResponseEntity.ok(authResponse);
 	}
 
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-		this.tokenService.revokeRefreshToken(refreshTokenRequest);
+		this.adminTokenService.revokeRefreshToken(refreshTokenRequest);
 		return ResponseEntity.ok().build();
 	}
 

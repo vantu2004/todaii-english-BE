@@ -2,6 +2,7 @@ package com.todaii.english.user.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,12 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.core.admin.admin.AdminService;
 import com.todaii.english.core.user.user.User;
 import com.todaii.english.core.user.user.UserService;
+import com.todaii.english.infra.security.admin.AdminTokenService;
 import com.todaii.english.infra.security.admin.CustomAdminDetails;
+import com.todaii.english.infra.security.user.UserTokenService;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.user.RegisterRequest;
-import com.todaii.english.shared.response.admin.AuthResponse;
+import com.todaii.english.shared.response.AuthResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +27,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthApiController {
+	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
+	private final UserTokenService userTokenService;
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
@@ -40,9 +46,9 @@ public class AuthApiController {
 //		Authentication result = authenticationManager.authenticate(authentication);
 //
 //		CustomAdminDetails customAdminDetails = (CustomAdminDetails) result.getPrincipal();
-//		AuthResponse authResponse = this.tokenService.generateToken(customAdminDetails.getAdmin());
+//		AuthResponse authResponse = this.userTokenService.generateToken(customAdminDetails.getAdmin());
 //
-//		this.adminService.updateLastLogin(email);
+//		this.userService.updateLastLogin(email);
 //
 //		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
 //	}

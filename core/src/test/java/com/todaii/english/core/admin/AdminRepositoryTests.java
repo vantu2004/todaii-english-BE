@@ -1,8 +1,8 @@
 package com.todaii.english.core.admin;
 
-import com.todaii.english.core.admin.admin.Admin;
-import com.todaii.english.core.admin.admin.AdminRepository;
-import com.todaii.english.core.admin.admin.AdminRole;
+import com.todaii.english.core.entity.Admin;
+import com.todaii.english.core.entity.AdminRole;
+import com.todaii.english.core.server.admin.AdminRepository;
 import com.todaii.english.shared.enums.AdminStatus;
 
 import jakarta.persistence.EntityManager;

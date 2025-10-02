@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.todaii.english.core.admin.setting.Setting;
-import com.todaii.english.core.admin.setting.SettingService;
+import com.todaii.english.core.entity.Setting;
+import com.todaii.english.core.server.setting.SettingService;
 import com.todaii.english.shared.enums.SettingCategory;
 
 import lombok.RequiredArgsConstructor;

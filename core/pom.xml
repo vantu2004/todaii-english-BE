@@ -14,30 +14,17 @@
   <packaging>jar</packaging>
 
   <dependencies>
+    <!-- dùng lại entity/enum/constant từ shared -->
+    <dependency>
+        <groupId>com.todaii.english</groupId>
+        <artifactId>shared</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    
     <!-- Business logic cần JPA -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-
-    <!-- MySQL driver -->
-    <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- Validation -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-validation</artifactId>
-    </dependency>
-
-    <!-- Test -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
     </dependency>
 
     <!-- Lombok -->

@@ -21,7 +21,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -91,7 +90,6 @@ public class Admin implements JwtPrincipal {
 	@ManyToMany
 	@JoinTable(name = "admins_roles", joinColumns = @JoinColumn(name = "admin_id"), inverseJoinColumns = @JoinColumn(name = "role_code"))
 	@Builder.Default
-	@NotEmpty(message = "Role cannot be empty")
 	private Set<AdminRole> roles = new HashSet<>();
 
 	public void addRole(AdminRole adminRole) {

@@ -1,10 +1,9 @@
 package com.todaii.english.client.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.client.security.TestSecurityConfig;
-import com.todaii.english.core.client.user.UserService;
 import com.todaii.english.core.entity.User;
-import com.todaii.english.infra.security.client.CustomUserDetails;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;

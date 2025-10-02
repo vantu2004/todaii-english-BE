@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Setting;
-import com.todaii.english.core.server.setting.SettingService;
 import com.todaii.english.shared.enums.SettingCategory;
 import com.todaii.english.shared.request.server.SettingRequest;
 

@@ -53,6 +53,20 @@
 		<optional>true</optional>
 	</dependency>
 
+	<!-- Security test -->
+	<dependency>
+	  <groupId>org.springframework.security</groupId>
+	  <artifactId>spring-security-test</artifactId>
+	  <scope>test</scope>
+	</dependency>
+	
+	<!-- MySql -->
+	<dependency>
+	    <groupId>com.mysql</groupId>
+	    <artifactId>mysql-connector-j</artifactId>
+	    <scope>runtime</scope>
+	</dependency>
+
   </dependencies>
 
   <build>

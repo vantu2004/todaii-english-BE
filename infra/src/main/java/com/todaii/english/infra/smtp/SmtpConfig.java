@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.todaii.english.core.entity.Setting;
-import com.todaii.english.core.server.setting.SettingService;
+import com.todaii.english.core.setting.SettingQueryPort;
 import com.todaii.english.shared.enums.SettingCategory;
 
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 public class SmtpConfig {
-	private final SettingService settingService;
+	private final SettingQueryPort settingQueryPort;
 
 	@Bean
 	public JavaMailSender createMailSender() {
-		List<Setting> settings = this.settingService.getSettingsByCategory(SettingCategory.MAIL_SERVER);
+		List<Setting> settings = this.settingQueryPort.getSettingsByCategory(SettingCategory.MAIL_SERVER);
 
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		Properties props = mailSender.getJavaMailProperties();

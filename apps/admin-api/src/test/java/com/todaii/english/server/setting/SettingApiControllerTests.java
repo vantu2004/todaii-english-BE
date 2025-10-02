@@ -16,22 +16,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Setting;
-import com.todaii.english.core.server.setting.SettingService;
-import com.todaii.english.infra.security.jwt.JwtTokenFilter;
 import com.todaii.english.server.security.TestSecurityConfig;
 import com.todaii.english.shared.enums.SettingCategory;
 import com.todaii.english.shared.request.server.SettingRequest;
 
 // bản chất @WebMvcTest sẽ load Controller/Filter/Security -> phải exclude filter
-@WebMvcTest(controllers = SettingApiController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtTokenFilter.class))
+@WebMvcTest(controllers = SettingApiController.class)
 @Import(TestSecurityConfig.class)
 public class SettingApiControllerTests {
 	private static final String END_POINT_PATH = "/api/v1/setting";

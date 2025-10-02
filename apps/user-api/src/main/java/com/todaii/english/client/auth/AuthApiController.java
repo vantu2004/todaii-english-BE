@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.client.user.UserService;
+import com.todaii.english.client.security.CustomUserDetails;
+import com.todaii.english.client.security.UserTokenService;
+import com.todaii.english.client.user.UserService;
 import com.todaii.english.core.entity.User;
-import com.todaii.english.infra.security.client.CustomUserDetails;
-import com.todaii.english.infra.security.client.UserTokenService;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;

@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.client.user.UserService;
-import com.todaii.english.infra.security.client.CustomUserDetails;
+import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 
 import jakarta.validation.Valid;

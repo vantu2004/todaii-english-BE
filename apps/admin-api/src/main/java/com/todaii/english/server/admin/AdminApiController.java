@@ -8,8 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.Admin;
-import com.todaii.english.core.server.admin.AdminService;
-import com.todaii.english.infra.security.server.CustomAdminDetails;
+import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.server.CreateAdminRequest;
 import com.todaii.english.shared.request.server.UpdateAdminRequest;

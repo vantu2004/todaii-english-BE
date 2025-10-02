@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.server.admin.AdminService;
-import com.todaii.english.infra.security.server.AdminTokenService;
-import com.todaii.english.infra.security.server.CustomAdminDetails;
+import com.todaii.english.server.admin.AdminService;
+import com.todaii.english.server.security.AdminTokenService;
+import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;

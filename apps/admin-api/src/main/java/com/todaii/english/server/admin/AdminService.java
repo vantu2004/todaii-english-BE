@@ -126,6 +126,7 @@ public class AdminService {
 
 		admin.setIsDeleted(true);
 		admin.setDeletedAt(LocalDateTime.now());
+		admin.setEnabled(false);
 		admin.setStatus(AdminStatus.LOCKED);
 
 		this.adminRepository.save(admin);

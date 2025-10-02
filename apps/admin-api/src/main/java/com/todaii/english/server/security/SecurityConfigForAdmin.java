@@ -90,8 +90,20 @@ public class SecurityConfigForAdmin {
 
 						// SettingApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/setting").hasAuthority("SUPER_ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/v1/setting").hasAuthority("SUPER_ADMIN").anyRequest()
-						.authenticated());
+						.requestMatchers(HttpMethod.PUT, "/api/v1/setting").hasAuthority("SUPER_ADMIN")
+
+						// UserApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/user").hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/user/*")
+						.hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/user/*")
+						.hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
+						.requestMatchers(HttpMethod.PATCH, "/api/v1/user/*/enabled")
+						.hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/user/*")
+						.hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
+
+						.anyRequest().authenticated());
 
 		/*
 		 * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy

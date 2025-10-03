@@ -62,7 +62,7 @@ public class Admin implements JwtPrincipal {
 	private LocalDateTime otpExpiredAt;
 
 	@Builder.Default
-	private boolean enabled = false;
+	private Boolean enabled = false;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 32)

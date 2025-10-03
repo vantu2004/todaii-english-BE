@@ -26,7 +26,6 @@ import com.todaii.english.server.security.TestSecurityConfig;
 import com.todaii.english.shared.enums.SettingCategory;
 import com.todaii.english.shared.request.server.SettingRequest;
 
-// bản chất @WebMvcTest sẽ load Controller/Filter/Security -> phải exclude filter
 @WebMvcTest(controllers = SettingApiController.class)
 @Import(TestSecurityConfig.class)
 public class SettingApiControllerTests {

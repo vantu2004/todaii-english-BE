@@ -55,7 +55,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		GlobalErrorDTO error = new GlobalErrorDTO();
 		error.setTimestamp(LocalDateTime.now());
 		error.setStatus(ex.getStatus());
-		error.addError(ex.getMessageText());
+		error.addError(ex.getMessage());
 		error.setPath(request.getServletPath());
 
 		return ResponseEntity.status(ex.getStatus()).body(error);

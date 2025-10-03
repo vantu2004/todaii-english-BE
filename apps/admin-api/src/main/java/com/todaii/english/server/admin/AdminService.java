@@ -159,7 +159,7 @@ public class AdminService {
 		Admin admin = this.adminRepository.findActiveByEmail(email)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		if (admin.isEnabled() || !admin.getStatus().equals(AdminStatus.PENDING)) {
+		if (admin.getEnabled() || !admin.getStatus().equals(AdminStatus.PENDING)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_VERIFIED);
 		}
 
@@ -186,10 +186,10 @@ public class AdminService {
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
 		// Đảo ngược trạng thái enable
-		admin.setEnabled(!admin.isEnabled());
+		admin.setEnabled(!admin.getEnabled());
 
 		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
-		if (admin.isEnabled()) {
+		if (admin.getEnabled()) {
 			admin.setStatus(AdminStatus.ACTIVE);
 			admin.setOtp(null);
 			admin.setOtpExpiredAt(null);

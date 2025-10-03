@@ -3,7 +3,7 @@ package com.todaii.english.shared.enums.error_code;
 import lombok.Getter;
 
 @Getter
-public enum AuthErrorCode {
+public enum AuthErrorCode implements ErrorCode {
 	PASSWORD_INVALID_LENGTH(400, "Password length must be between 6 and 20"),
 	PASSWORD_INCORRECT(400, "Password is incorrect"), TOKEN_EXPIRED(401, "Token expired"),
 	TOKEN_NOT_FOUND(404, "Token not found"), INVALID_TOKEN(401, "Invalid token"), OTP_INVALID(401, "Otp invalid"),

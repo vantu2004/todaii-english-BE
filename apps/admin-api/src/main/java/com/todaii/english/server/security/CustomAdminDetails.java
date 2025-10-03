@@ -65,7 +65,7 @@ public class CustomAdminDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return this.admin.isEnabled();
+		return this.admin.getEnabled();
 	}
 
 	public Admin getAdmin() {

@@ -30,6 +30,7 @@ public class UserEvent {
 	private EventOutcome outcome = EventOutcome.SUCCESS;
 
 	@CreationTimestamp
+	@Column(name = "created_at", nullable = false)
 	private LocalDateTime createdAt;
 
 	@ManyToOne

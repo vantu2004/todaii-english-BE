@@ -53,10 +53,10 @@ public class UserService {
 		User user = findById(id);
 
 		// Đảo ngược trạng thái enable
-		user.setEnabled(!user.isEnabled());
+		user.setEnabled(!user.getEnabled());
 
 		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
-		if (user.isEnabled()) {
+		if (user.getEnabled()) {
 			user.setStatus(UserStatus.ACTIVE);
 			user.setOtp(null);
 			user.setOtpExpiredAt(null);

@@ -53,7 +53,7 @@ public class User implements JwtPrincipal {
 	private LocalDateTime resetPasswordExpiredAt;
 
 	@Builder.Default
-	private boolean enabled = false;
+	private Boolean enabled = false;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 32)

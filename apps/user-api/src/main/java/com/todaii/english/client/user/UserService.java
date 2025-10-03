@@ -75,7 +75,7 @@ public class UserService {
 		User user = this.userRepository.findActiveByEmail(email)
 				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
-		if (user.isEnabled() || !user.getStatus().equals(UserStatus.PENDING)) {
+		if (user.getEnabled() || !user.getStatus().equals(UserStatus.PENDING)) {
 			throw new BusinessException(AuthErrorCode.ALREADY_VERIFIED);
 		}
 
@@ -101,7 +101,7 @@ public class UserService {
 		User user = this.userRepository.findActiveByEmail(email)
 				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
-		if (!user.isEnabled()) {
+		if (!user.getEnabled()) {
 			throw new BusinessException(AuthErrorCode.USER_NOT_ENABLED);
 		}
 

@@ -49,7 +49,7 @@ public class AdminApiController {
 
 	@PostMapping
 	public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest createAdminRequest) {
-		return ResponseEntity.ok(this.adminService.create(createAdminRequest));
+		return ResponseEntity.status(201).body(this.adminService.create(createAdminRequest));
 	}
 
 	@PutMapping("/me")

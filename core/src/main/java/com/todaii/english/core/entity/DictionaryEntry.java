@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,15 +31,12 @@ public class DictionaryEntry {
 	@Column(name = "audio_url", length = 1024)
 	private String audioUrl; // audio phát âm
 
-	@Column(name = "is_deleted")
-	@Builder.Default
-	private Boolean isDeleted = false;
-
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
 	// Quan hệ 1-N: 1 entry có nhiều sense
 	@OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<DictionarySense> senses;
+	@Builder.Default
+	private List<DictionarySense> senses = new ArrayList<DictionarySense>();
 }

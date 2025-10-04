@@ -1,5 +1,7 @@
 package com.todaii.english.server.dictionary;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,8 +14,10 @@ import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.enums.PartOfSpeech;
+import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,32 +26,39 @@ public class DictionaryService {
 	private final DictionaryPort dictionaryPort;
 	private final GeminiPort geminiPort;
 	private final ObjectMapper objectMapper;
-	private final DictionaryEntryReposiroty dictionaryEntryReposiroty;
-	private final DictionarySenseRepository dictionarySenseRepository;
+	private final DictionaryEntryRepository dictionaryEntryRepository;
 
 	public DictionaryApiResponse[] lookupWord(String word) {
 		return dictionaryPort.lookupWord(word);
 	}
 
-	public List<DictionaryEntry> search(String word) throws Exception {
-		// 1. Tìm trong DB trước
-		List<DictionaryEntry> existing = dictionaryEntryReposiroty.findByHeadwordContainingIgnoreCase(word.trim());
+	public List<DictionaryEntry> createWordByGemini(String word) throws Exception {
+		// 1️ Tìm trong DB trước
+//		List<DictionaryEntry> existing = dictionaryEntryRepository.findByHeadwordContainingIgnoreCase(word.trim());
+//		if (!existing.isEmpty()) {
+//			return existing;
+//		}
 
-		if (!existing.isEmpty()) {
-			return existing; // trả tất cả từ gần giống
+		boolean existed = dictionaryEntryRepository.existsByHeadword(word);
+		if (existed) {
+			throw new BusinessException(409, "The word '" + word + "' already exists in the system.");
 		}
 
-		// 2. Nếu DB không có, gọi AI tạo entry mới
+		// 2️ Gọi Free Dictionary API
 		DictionaryApiResponse[] rawData = lookupWord(word);
 		String rawJson = objectMapper.writeValueAsString(rawData);
 
+		// 3️ Gọi Gemini (luôn trả về mảng JSON)
 		String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
 		String json = cleanJson(geminiPort.generateText(prompt));
 
-		DictionaryEntryDTO dto = parseJson(json);
-		DictionaryEntry newEntry = toEntity(dto);
+		// 4️ Parse mảng DTO
+		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(json, DictionaryEntryDTO[].class);
 
-		return List.of(newEntry);
+		List<DictionaryEntry> entries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryEntryRepository::save)
+				.toList();
+
+		return entries;
 	}
 
 	public String cleanJson(String raw) {
@@ -62,19 +73,72 @@ public class DictionaryService {
 		DictionaryEntry entry = DictionaryEntry.builder().headword(dto.getHeadword()).ipa(dto.getIpa())
 				.audioUrl(dto.getAudioUrl()).build();
 
-		List<DictionarySense> senses = dto.getSenses().stream().map(s -> {
+		List<DictionarySense> senses = buildDictionarySense(dto, entry);
+
+		entry.setSenses(senses);
+
+		dictionaryEntryRepository.save(entry);
+
+		return entry;
+	}
+
+	private List<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
+		List<DictionarySense> senses = new ArrayList<DictionarySense>(dto.getSenses().stream().map(s -> {
 			DictionarySense sense = DictionarySense.builder().pos(PartOfSpeech.valueOf(s.getPos()))
 					.meaning(s.getMeaning()).definition(s.getDefinition()).example(s.getExample())
 					.synonyms(s.getSynonyms()).collocations(s.getCollocations()).entry(entry) // gán back-reference
 					.build();
 			return sense;
-		}).toList();
+		}).toList());
+		return senses;
+	}
 
-		entry.setSenses(senses);
+	public List<DictionaryEntry> findAll() {
+		return dictionaryEntryRepository.findAll();
+	}
 
-		dictionaryEntryReposiroty.save(entry);
+	public DictionaryEntry findById(Long id) {
+		return dictionaryEntryRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Word not found"));
+	}
 
-		return entry;
+	public DictionaryEntry createWord(DictionaryEntryDTO dto) {
+		boolean existed = dictionaryEntryRepository.existsByHeadword(dto.getHeadword());
+		if (existed) {
+			throw new BusinessException(409, "The word '" + dto.getHeadword() + "' already exists in the system.");
+		}
+
+		DictionaryEntry dictionaryEntry = toEntity(dto);
+
+		return dictionaryEntryRepository.save(dictionaryEntry);
+	}
+
+	public DictionaryEntry updateWord(Long id, @Valid DictionaryEntryDTO dto) {
+		// 1️ Kiểm tra tồn tại
+		DictionaryEntry entry = findById(id);
+
+		// 2️ Cập nhật thông tin chính
+		entry.setHeadword(dto.getHeadword());
+		entry.setIpa(dto.getIpa());
+		entry.setAudioUrl(dto.getAudioUrl());
+
+		// 3️ Xử lý senses
+		// Xóa toàn bộ sense cũ (orphanRemoval = true đảm bảo tự động xóa trong DB)
+		entry.getSenses().clear();
+
+		List<DictionarySense> senses = buildDictionarySense(dto, entry);
+
+		entry.getSenses().addAll(senses);
+
+		// 4️ Lưu vào DB
+		return dictionaryEntryRepository.save(entry);
+	}
+
+	public void deleteWord(Long id) {
+		if (!dictionaryEntryRepository.existsById(id)) {
+			throw new BusinessException(404, "Word not found with id: " + id);
+		}
+
+		dictionaryEntryRepository.deleteById(id);
 	}
 
 }

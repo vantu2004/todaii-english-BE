@@ -15,22 +15,27 @@ public class Gemini {
 			  4. Include 2–3 synonyms and 1–2 common collocations if possible.
 			  5. Always include headword, ipa, audio_url.
 
-			Return JSON only in this format:
-			{
-			  "headword": "<string>",
-			  "ipa": "<string>",
-			  "audio_url": "<string>",
-			  "senses": [
-			    {
-			      "pos": "<string>",
-			      "meaning": "<string>",       // Vietnamese
-			      "definition": "<string>",    // English
-			      "example": "<string>",       // English
-			      "synonyms": ["..."],         // English
-			      "collocations": ["..."]      // English
-			    }
-			  ]
-			}
+				Return JSON as an array of objects.
+				Always return an array, even if there is only one entry.
+
+				Each object must strictly follow this format:
+				[
+				  {
+				    "headword": "<string>",
+				    "ipa": "<string>",
+				    "audio_url": "<string>",
+				    "senses": [
+				      {
+				        "pos": "<string>",
+				        "meaning": "<string>",       // Vietnamese
+				        "definition": "<string>",    // English
+				        "example": "<string>",       // English
+				        "synonyms": ["..."],		 // English
+				        "collocations": ["..."]		 // English
+				      }
+				    ]
+				  }
+				]
 
 			Raw data:
 			%s

@@ -38,7 +38,7 @@ public class AuthApiController {
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
 		User user = this.userService.createUser(registerRequest);
-		return ResponseEntity.ok(user);
+		return ResponseEntity.status(201).body(user);
 	}
 
 	@PostMapping("/login")
@@ -60,7 +60,7 @@ public class AuthApiController {
 	@PostMapping("/new-token")
 	public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
 		AuthResponse authResponse = this.userTokenService.refreshTokens(refreshTokenRequest);
-		return ResponseEntity.ok(authResponse);
+		return ResponseEntity.status(201).body(authResponse);
 	}
 
 	@PostMapping("/logout")

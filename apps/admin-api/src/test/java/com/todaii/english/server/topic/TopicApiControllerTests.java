@@ -83,7 +83,7 @@ class TopicApiControllerTests {
 		given(topicService.create(anyString())).willReturn(t1);
 
 		mockMvc.perform(post(END_POINT_PATH).param("name", "News").contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.alias").value("news"));
+				.andExpect(status().isCreated()).andExpect(jsonPath("$.alias").value("news"));
 	}
 
 	@Test

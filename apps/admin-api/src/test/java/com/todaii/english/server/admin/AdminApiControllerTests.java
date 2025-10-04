@@ -130,7 +130,7 @@ class AdminApiControllerTests {
 	// 4. POST /api/v1/admin
 	// ------------------------------------------------------------------
 	@Test
-	@DisplayName("TC-POST-001: Tạo thành công -> 200 OK")
+	@DisplayName("TC-POST-001: Tạo thành công -> 201 CREATED")
 	void createAdmin_success() throws Exception {
 		CreateAdminRequest req = CreateAdminRequest.builder().email("new@test.com").displayName("New Admin")
 				.password("123456").roleCodes(Set.of("SUPER_ADMIN")).build();
@@ -138,7 +138,7 @@ class AdminApiControllerTests {
 		when(adminService.create(any(CreateAdminRequest.class))).thenReturn(admin1);
 
 		mockMvc.perform(post(BASE_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(req))).andExpect(status().isOk())
+				.content(objectMapper.writeValueAsString(req))).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.email", is("admin1@test.com")));
 	}
 

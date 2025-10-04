@@ -43,7 +43,7 @@ public class TopicApiController {
 
 	@PostMapping
 	public ResponseEntity<?> create(@RequestParam @NotNull @Length(min = 2, max = 191) String name) {
-		return ResponseEntity.ok(topicService.create(name));
+		return ResponseEntity.status(201).body(topicService.create(name));
 	}
 
 	@PutMapping("/{id}")

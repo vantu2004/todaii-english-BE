@@ -1,13 +1,24 @@
 package com.todaii.english.server.dictionary;
 
+import java.util.List;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.shared.dto.DictionaryEntryDTO;
+
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
@@ -18,14 +29,46 @@ import lombok.RequiredArgsConstructor;
 public class DictionaryApiController {
 	private final DictionaryService dictionaryService;
 
-	@GetMapping("/raw-word")
-	public ResponseEntity<?> getVocabFromDictionaryApi(@NotNull @Length(min = 1, max = 191) String word) {
-		return ResponseEntity.ok(dictionaryService.lookupWord(word));
+//	@GetMapping("/raw-word")
+//	public ResponseEntity<?> getVocabFromDictionaryApi(@NotNull @Length(min = 1, max = 191) String word) {
+//		return ResponseEntity.ok(dictionaryService.lookupWord(word));
+//	}
+
+	@GetMapping("/gemini")
+	public ResponseEntity<?> createWordByGemini(@RequestParam @NotNull @Length(min = 1, max = 64) String word)
+			throws Exception {
+		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
 	}
 
-	@GetMapping("/search")
-	public ResponseEntity<?> enrichDictionary(@RequestParam @NotNull @Length(min = 1, max = 64) String word)
-			throws Exception {
-		return ResponseEntity.ok(dictionaryService.search(word));
+	@GetMapping
+	public ResponseEntity<?> getAllWords() {
+		List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
+		if (dictionaryEntries.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+
+		return ResponseEntity.ok(dictionaryEntries);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getWord(@PathVariable Long id) {
+		return ResponseEntity.ok(dictionaryService.findById(id));
+	}
+
+	@PostMapping
+	public ResponseEntity<?> createWord(@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
+		return ResponseEntity.status(201).body(dictionaryService.createWord(dictionaryEntryDTO));
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updateWord(@PathVariable Long id,
+			@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
+		return ResponseEntity.ok(dictionaryService.updateWord(id, dictionaryEntryDTO));
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteWord(@PathVariable Long id) {
+		dictionaryService.deleteWord(id);
+		return ResponseEntity.noContent().build();
 	}
 }

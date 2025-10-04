@@ -14,18 +14,18 @@ import com.todaii.english.infra.security.jwt.JwtUtility;
 @TestConfiguration
 public class TestSecurityConfig {
 
-	@Bean
-	public JwtUtility jwtUtility() {
+    @Bean
+    JwtUtility jwtUtility() {
 		return Mockito.mock(JwtUtility.class);
 	}
 
-	@Bean
-	public JwtAuthEntryPoint jwtAuthEntryPoint() {
+    @Bean
+    JwtAuthEntryPoint jwtAuthEntryPoint() {
 		return new JwtAuthEntryPoint(); // hoặc Mockito.mock(JwtAuthEntryPoint.class) nếu chỉ cần dummy
 	}
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthEntryPoint())) // <<< rất quan trọng

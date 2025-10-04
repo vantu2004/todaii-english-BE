@@ -27,12 +27,12 @@ public class SecurityConfigForAdmin {
 	private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
 	@Bean
-	public UserDetailsService adminDetailsService() {
+	UserDetailsService adminDetailsService() {
 		return new CustomAdminDetailsService();
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
@@ -43,7 +43,7 @@ public class SecurityConfigForAdmin {
 	 * dụ: controller xử lý đăng nhập, custom filter xác thực JWT.
 	 */
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+	AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
 			throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
@@ -54,7 +54,7 @@ public class SecurityConfigForAdmin {
 	 * xác thực
 	 */
 	@Bean
-	public AuthenticationProvider authProviderForAdmin() {
+	AuthenticationProvider authProviderForAdmin() {
 		// là lớp triển khai của AuthenticationProvider dùng xác thực user
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(this.adminDetailsService());
@@ -64,7 +64,7 @@ public class SecurityConfigForAdmin {
 	}
 
 	@Bean
-	public SecurityFilterChain adminSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	SecurityFilterChain adminSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -115,6 +115,20 @@ public class SecurityConfigForAdmin {
 						.requestMatchers(HttpMethod.PATCH, "/api/v1/topic/*/enabled")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 						.requestMatchers(HttpMethod.DELETE, "/api/v1/topic/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
+						// DictionaryApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/dictionary/gemini")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/dictionary")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/dictionary/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/dictionary")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/dictionary/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/dictionary/*")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
 						.anyRequest().authenticated());

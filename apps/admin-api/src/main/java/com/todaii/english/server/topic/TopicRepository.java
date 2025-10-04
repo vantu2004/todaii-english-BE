@@ -13,5 +13,5 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 	@Query("SELECT t FROM Topic t WHERE t.id = ?1 AND t.isDeleted = false")
 	public Optional<Topic> findById(Long id);
 
-	boolean existsByAlias(String alias);
+	public boolean existsByAlias(String alias);
 }

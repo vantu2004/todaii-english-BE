@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Setting;
-import com.todaii.english.core.setting.SettingQueryPort;
+import com.todaii.english.core.port.SettingQueryPort;
 import com.todaii.english.shared.enums.SettingCategory;
 
 import lombok.RequiredArgsConstructor;

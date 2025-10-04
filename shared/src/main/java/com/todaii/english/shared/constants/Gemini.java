@@ -1,0 +1,41 @@
+package com.todaii.english.shared.constants;
+
+public class Gemini {
+	public static final String MODEL = "gemini-2.5-flash";
+
+	public static final String DICTIONARY_PROMPT = """
+			You are an English-Vietnamese dictionary assistant.
+			Task:
+			- Input: raw dictionary data (headword, IPA, audio, part of speech, definitions, examples, synonyms).
+			- Output: normalized JSON with only essential fields.
+			- Rules:
+			  1. Keep only the most relevant senses (max 3).
+			  2. For each sense: one short definition (English), one natural example (English).
+			  3. Add a simple Vietnamese meaning in "meaning".
+			  4. Include 2–3 synonyms and 1–2 common collocations if possible.
+			  5. Always include headword, ipa, audio_url.
+
+			Return JSON only in this format:
+			{
+			  "headword": "<string>",
+			  "ipa": "<string>",
+			  "audio_url": "<string>",
+			  "senses": [
+			    {
+			      "pos": "<string>",
+			      "meaning": "<string>",       // Vietnamese
+			      "definition": "<string>",    // English
+			      "example": "<string>",       // English
+			      "synonyms": ["..."],         // English
+			      "collocations": ["..."]      // English
+			    }
+			  ]
+			}
+
+			Raw data:
+			%s
+
+			Target word: %s
+			""";
+
+}

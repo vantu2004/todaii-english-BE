@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class DictionaryEntry {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

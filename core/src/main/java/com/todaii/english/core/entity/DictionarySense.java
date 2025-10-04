@@ -2,6 +2,7 @@ package com.todaii.english.core.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.PartOfSpeech;
 
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "dictionary_senses")
@@ -29,6 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class DictionarySense {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +39,11 @@ public class DictionarySense {
 
 	@Enumerated(EnumType.STRING)
 	private PartOfSpeech pos;
-	
+
 	@Lob
-	private String definition; 
+	private String meaning;
+	@Lob
+	private String definition;
 	@Lob
 	private String example;
 
@@ -48,6 +53,7 @@ public class DictionarySense {
 
 	@ManyToOne
 	@JoinColumn(name = "entry_id", nullable = false)
+	@JsonIgnore
 	private DictionaryEntry entry;
 
 	// Quan hệ N-N với topic

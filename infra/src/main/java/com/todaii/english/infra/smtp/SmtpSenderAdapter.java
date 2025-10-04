@@ -5,7 +5,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.core.smtp.SmtpSenderPort;
+import com.todaii.english.core.port.SmtpSenderPort;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

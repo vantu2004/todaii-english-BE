@@ -67,5 +67,17 @@
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-mail</artifactId>
 	</dependency>
+	
+	<!-- Webflux -->
+	<dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-webflux</artifactId>
+	</dependency>
+
+	<!-- Gemini -->
+	<dependency>
+	    <groupId>com.google.genai</groupId>
+	    <artifactId>google-genai</artifactId>
+	</dependency>
   </dependencies>
 </project>

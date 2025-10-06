@@ -11,7 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class AdminRole {
-
 	@Id
 	@Column(length = 64, nullable = false, unique = true)
 	private String code; // ví dụ: SUPER_ADMIN, CONTENT_MANAGER

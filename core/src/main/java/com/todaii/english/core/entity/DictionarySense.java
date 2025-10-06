@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.PartOfSpeech;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,10 +42,15 @@ public class DictionarySense {
 	private PartOfSpeech pos;
 
 	@Lob
+	@Column(columnDefinition = "LONGTEXT")
 	private String meaning;
+
 	@Lob
+	@Column(columnDefinition = "LONGTEXT")
 	private String definition;
+
 	@Lob
+	@Column(columnDefinition = "LONGTEXT")
 	private String example;
 
 	private List<String> synonyms;

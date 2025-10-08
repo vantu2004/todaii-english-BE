@@ -1,5 +1,6 @@
 package com.todaii.english.server.topic;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -20,9 +21,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 import com.todaii.english.shared.enums.error_code.CommonErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.server.CreateTopicRequest;
 import com.todaii.english.server.security.TestSecurityConfig;
 
 @WebMvcTest(controllers = TopicApiController.class)
@@ -36,6 +40,9 @@ class TopicApiControllerTests {
 
 	@MockBean
 	private TopicService topicService;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Test
 	@DisplayName("GET /topic trả về danh sách khi có dữ liệu")
@@ -78,26 +85,42 @@ class TopicApiControllerTests {
 	@Test
 	@DisplayName("POST /topic tạo thành công")
 	void testCreate_ok() throws Exception {
-		Topic t1 = Topic.builder().id(1L).name("News").alias("news").build();
+		CreateTopicRequest request = new CreateTopicRequest();
+		request.setName("News");
+		request.setTopicType(TopicType.ARTICLE);
 
-		given(topicService.create(anyString())).willReturn(t1);
+		Topic topic = Topic.builder().id(1L).name("News").alias("news").topicType(TopicType.ARTICLE).enabled(true)
+				.build();
 
-		mockMvc.perform(post(END_POINT_PATH).param("name", "News").contentType(MediaType.APPLICATION_FORM_URLENCODED))
-				.andExpect(status().isCreated()).andExpect(jsonPath("$.alias").value("news"));
+		given(topicService.create(any(CreateTopicRequest.class))).willReturn(topic);
+
+		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isCreated())
+				.andExpect(jsonPath("$.alias").value("news")).andExpect(jsonPath("$.topicType").value("ARTICLE"));
 	}
 
 	@Test
 	@DisplayName("POST /topic alias trùng")
 	void testCreate_conflict() throws Exception {
-		given(topicService.create(anyString())).willThrow(new BusinessException(409, "Alias exists"));
+		CreateTopicRequest request = new CreateTopicRequest();
+		request.setName("News");
+		request.setTopicType(TopicType.ARTICLE);
 
-		mockMvc.perform(post(END_POINT_PATH).param("name", "News")).andExpect(status().isConflict());
+		given(topicService.create(any(CreateTopicRequest.class))).willThrow(new BusinessException(409, "Alias exists"));
+
+		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request))).andExpect(status().isConflict());
 	}
 
 	@Test
 	@DisplayName("POST /topic validation lỗi")
 	void testCreate_validationError() throws Exception {
-		mockMvc.perform(post(END_POINT_PATH).param("name", "")).andExpect(status().isBadRequest());
+		CreateTopicRequest invalidRequest = new CreateTopicRequest();
+		invalidRequest.setName(""); // @NotBlank vi phạm
+		invalidRequest.setTopicType(TopicType.ARTICLE);
+
+		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(invalidRequest))).andExpect(status().isBadRequest());
 	}
 
 	@Test
@@ -137,16 +160,15 @@ class TopicApiControllerTests {
 	@Test
 	@DisplayName("PATCH /topic/{id}/toggle thành công")
 	void testToggle_ok() throws Exception {
-		Topic toggled = Topic.builder().id(1L).name("News").alias("news").enabled(false).build();
-		given(topicService.toggleEnabled(1L)).willReturn(toggled);
+		doNothing().when(topicService).toggleEnabled(1L);
 
-		mockMvc.perform(patch(END_POINT_PATH + "/1/toggle")).andExpect(status().isOk());
+		mockMvc.perform(patch(END_POINT_PATH + "/1/enabled")).andExpect(status().isOk());
 	}
 
 	@Test
 	@DisplayName("PATCH /topic/{id}/toggle không tìm thấy")
 	void testToggle_notFound() throws Exception {
-		given(topicService.toggleEnabled(anyLong())).willThrow(new BusinessException(CommonErrorCode.NOT_FOUND));
+		doThrow(new BusinessException(CommonErrorCode.NOT_FOUND)).when(topicService).toggleEnabled(anyLong());
 
 		mockMvc.perform(patch(END_POINT_PATH + "/99/toggle")).andExpect(status().isNotFound());
 	}

@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 import com.todaii.english.shared.enums.error_code.CommonErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.server.CreateTopicRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,13 +25,13 @@ public class TopicService {
 		return topicRepository.findById(id).orElseThrow(() -> new BusinessException(CommonErrorCode.NOT_FOUND));
 	}
 
-	public Topic create(String name) {
-		String alias = toAlias(name);
+	public Topic create(CreateTopicRequest request) {
+		String alias = toAlias(request.getName(), request.getTopicType());
 		if (topicRepository.existsByAlias(alias)) {
 			throw new BusinessException(409, "Alias already exists: " + alias);
 		}
 
-		Topic topic = Topic.builder().name(name).alias(alias).build();
+		Topic topic = Topic.builder().name(request.getName()).alias(alias).topicType(request.getTopicType()).build();
 
 		return topicRepository.save(topic);
 	}
@@ -43,7 +45,7 @@ public class TopicService {
 		}
 
 		// Sinh alias mới từ name
-		String alias = toAlias(name);
+		String alias = toAlias(name, topic.getTopicType());
 
 		// Check trùng alias với topic khác
 		boolean aliasExists = topicRepository.existsByAlias(alias);
@@ -58,8 +60,8 @@ public class TopicService {
 		return topicRepository.save(topic);
 	}
 
-	private String toAlias(String name) {
-		return name.trim().toLowerCase().replaceAll("\\s+", "-"); // thay nhiều khoảng trắng bằng 1 dấu -
+	private String toAlias(String name, TopicType topicType) {
+		return topicType.toString().toLowerCase() + "-" + name.trim().toLowerCase().replaceAll("\\s+", "-");
 	}
 
 	public void softDelete(Long id) {
@@ -69,10 +71,10 @@ public class TopicService {
 		topicRepository.save(topic);
 	}
 
-	public Topic toggleEnabled(Long id) {
+	public void toggleEnabled(Long id) {
 		Topic topic = findById(id);
 		topic.setEnabled(!topic.getEnabled());
 
-		return topicRepository.save(topic);
+		topicRepository.save(topic);
 	}
 }

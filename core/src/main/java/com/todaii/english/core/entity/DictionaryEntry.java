@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -38,5 +38,5 @@ public class DictionaryEntry {
 	// Quan hệ 1-N: 1 entry có nhiều sense
 	@OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
-	private List<DictionarySense> senses = new ArrayList<DictionarySense>();
+	private Set<DictionarySense> senses = new HashSet();
 }

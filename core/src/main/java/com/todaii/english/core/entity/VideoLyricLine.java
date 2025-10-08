@@ -1,5 +1,7 @@
 package com.todaii.english.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,8 +34,9 @@ public class VideoLyricLine {
 	@Column(name = "text_vi", columnDefinition = "MEDIUMTEXT")
 	private String textVi; // dịch tiếng Việt
 
-	// Liên kết với bảng videos
+	// Liên kết với bảng videos (1 chiều)
 	@ManyToOne
 	@JoinColumn(name = "video_id", nullable = false)
+	@JsonIgnore
 	private Video video;
 }

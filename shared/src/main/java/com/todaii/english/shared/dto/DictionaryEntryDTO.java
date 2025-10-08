@@ -1,6 +1,6 @@
 package com.todaii.english.shared.dto;
 
-import java.util.List;
+import java.util.Set;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
@@ -9,9 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class DictionaryEntryDTO {
 	@NotNull
 	@Length(min = 1, max = 191)
@@ -26,5 +28,5 @@ public class DictionaryEntryDTO {
 	private String audioUrl;
 
 	@Valid
-	private List<DictionarySenseDTO> senses;
+	private Set<DictionarySenseDTO> senses;
 }

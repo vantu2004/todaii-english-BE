@@ -1,8 +1,9 @@
 package com.todaii.english.server.dictionary;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -73,7 +74,7 @@ public class DictionaryService {
 		DictionaryEntry entry = DictionaryEntry.builder().headword(dto.getHeadword()).ipa(dto.getIpa())
 				.audioUrl(dto.getAudioUrl()).build();
 
-		List<DictionarySense> senses = buildDictionarySense(dto, entry);
+		Set<DictionarySense> senses = buildDictionarySense(dto, entry);
 
 		entry.setSenses(senses);
 
@@ -82,8 +83,8 @@ public class DictionaryService {
 		return entry;
 	}
 
-	private List<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
-		List<DictionarySense> senses = new ArrayList<DictionarySense>(dto.getSenses().stream().map(s -> {
+	private Set<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
+		Set<DictionarySense> senses = new HashSet<DictionarySense>(dto.getSenses().stream().map(s -> {
 			DictionarySense sense = DictionarySense.builder().pos(PartOfSpeech.valueOf(s.getPos()))
 					.meaning(s.getMeaning()).definition(s.getDefinition()).example(s.getExample())
 					.synonyms(s.getSynonyms()).collocations(s.getCollocations()).entry(entry) // gán back-reference
@@ -125,7 +126,7 @@ public class DictionaryService {
 		// Xóa toàn bộ sense cũ (orphanRemoval = true đảm bảo tự động xóa trong DB)
 		entry.getSenses().clear();
 
-		List<DictionarySense> senses = buildDictionarySense(dto, entry);
+		Set<DictionarySense> senses = buildDictionarySense(dto, entry);
 
 		entry.getSenses().addAll(senses);
 

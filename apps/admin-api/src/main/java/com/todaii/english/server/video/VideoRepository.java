@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.todaii.english.core.entity.Video;
 
 @Repository
-public interface VideoRepository extends JpaRepository<Video, Long>{
-
+public interface VideoRepository extends JpaRepository<Video, Long> {
+	public boolean existsByVideoUrl(String videoUrl);
 }

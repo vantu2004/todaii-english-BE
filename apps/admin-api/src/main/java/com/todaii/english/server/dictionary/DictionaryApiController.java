@@ -34,12 +34,6 @@ public class DictionaryApiController {
 //		return ResponseEntity.ok(dictionaryService.lookupWord(word));
 //	}
 
-	@GetMapping("/gemini")
-	public ResponseEntity<?> createWordByGemini(@RequestParam @NotNull @Length(min = 1, max = 64) String word)
-			throws Exception {
-		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
-	}
-
 	@GetMapping
 	public ResponseEntity<?> getAllWords() {
 		List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
@@ -53,6 +47,12 @@ public class DictionaryApiController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getWord(@PathVariable Long id) {
 		return ResponseEntity.ok(dictionaryService.findById(id));
+	}
+
+	@PostMapping("/gemini")
+	public ResponseEntity<?> createWordByGemini(@RequestParam @NotNull @Length(min = 1, max = 64) String word)
+			throws Exception {
+		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
 	}
 
 	@PostMapping

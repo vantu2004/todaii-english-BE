@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +73,7 @@ public class DictionaryApiControllerTests {
 		dto.setHeadword("run");
 		dto.setIpa("/rʌn/");
 		dto.setAudioUrl("https://cdn.todaii.vn/audio/run.mp3");
-		dto.setSenses(List.of(senseDTO));
+		dto.setSenses(Set.of(senseDTO));
 
 		return dto;
 	}
@@ -241,7 +242,8 @@ public class DictionaryApiControllerTests {
 	@DisplayName("POST /api/v1/dictionary → 400 Bad Request when senses missing")
 	void testCreateWord_validation_missingSenses() throws Exception {
 		DictionaryEntryDTO dto = createSampleDTO();
-		dto.getSenses().get(0).setPos("");
+		DictionarySenseDTO sense = dto.getSenses().iterator().next();
+		sense.setPos(""); // giả lập dữ liệu thiếu để test validation
 
 		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());

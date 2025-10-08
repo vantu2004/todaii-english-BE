@@ -13,9 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -62,8 +60,4 @@ public class DictionarySense {
 	@JsonIgnore
 	private DictionaryEntry entry;
 
-	// Quan hệ N-N với topic
-	@ManyToMany
-	@JoinTable(name = "sense_topics", joinColumns = @JoinColumn(name = "sense_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))
-	private List<Topic> topics;
 }

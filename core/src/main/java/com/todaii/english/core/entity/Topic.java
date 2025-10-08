@@ -1,7 +1,10 @@
 package com.todaii.english.core.entity;
 
-import java.util.Set;
-import java.util.HashSet;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import com.todaii.english.shared.enums.TopicType;
+
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,18 +24,22 @@ public class Topic {
 	@Column(length = 191, unique = true, nullable = false)
 	private String name;
 
-	@Column(length = 191, unique = true)
+	@Column(length = 191, unique = true, nullable = false)
 	private String alias;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "topic_type", length = 32, nullable = false)
+	private TopicType topicType;
+
 	@Builder.Default
-	private Boolean enabled = true;
+	private Boolean enabled = false;
 
 	@Builder.Default
 	@Column(name = "is_deleted")
 	private Boolean isDeleted = false;
 
-	// Quan hệ N-N với DictionarySense
-	@ManyToMany(mappedBy = "topics")
-	@Builder.Default
-	private Set<DictionarySense> senses = new HashSet<>();
+	@UpdateTimestamp
+	@Column(name = "updated_at", nullable = false)
+	private LocalDateTime updatedAt;
+
 }

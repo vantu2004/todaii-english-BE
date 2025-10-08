@@ -67,6 +67,12 @@
 	    <scope>runtime</scope>
 	</dependency>
 
+	<!-- Model mapper -->
+	<dependency>
+	    <groupId>org.modelmapper</groupId>
+	    <artifactId>modelmapper</artifactId>
+	</dependency>
+
   </dependencies>
 
   <build>

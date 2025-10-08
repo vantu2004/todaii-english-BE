@@ -79,5 +79,11 @@
 	    <groupId>com.google.genai</groupId>
 	    <artifactId>google-genai</artifactId>
 	</dependency>
+	
+	<!-- Model mapper -->
+	<dependency>
+	    <groupId>org.modelmapper</groupId>
+	    <artifactId>modelmapper</artifactId>
+	</dependency>
   </dependencies>
 </project>

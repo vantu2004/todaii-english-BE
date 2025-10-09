@@ -1,5 +1,9 @@
 package com.todaii.english.server.video;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -8,7 +12,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Video;
+import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.YoutubeOEmbed;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
@@ -22,6 +28,7 @@ public class VideoService {
 	private final VideoRepository videoRepository;
 	private final ObjectMapper objectMapper;
 	private final ModelMapper modelMapper;
+	private final TopicRepository topicRepository;
 
 	public Video importFromYoutube(String youtubeUrl) throws BadRequestException {
 		String requestUri = YoutubeOEmbed.BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
@@ -54,13 +61,57 @@ public class VideoService {
 		}
 	}
 
-//	public Video createVideo(VideoDTO videoDTO) {
-//		if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())) {
-//			throw new BusinessException(409, "Video already exists with this URL.");
-//		}
-//
-//		Video video = modelMapper.map(videoDTO, Video.class);
-//
-//		return video;
-//	}
+	public Video findById(Long id) {
+		return videoRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Video not found"));
+	}
+
+	public List<Video> findAll() {
+		return videoRepository.findAll();
+	}
+
+	public Video createVideo(VideoDTO videoDTO) {
+		if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())) {
+			throw new BusinessException(409, "Video already exists with this URL.");
+		}
+
+		Video video = modelMapper.map(videoDTO, Video.class);
+
+		Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
+		if (topics.size() != videoDTO.getTopicIds().size()) {
+			throw new BusinessException(404, "One or more topics not found");
+		}
+
+		video.setTopics(topics);
+		return videoRepository.save(video);
+	}
+
+	public Video updateVideo(Long id, VideoDTO videoDTO) {
+		Video existingVideo = findById(id);
+		if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())
+				&& !existingVideo.getVideoUrl().equals(videoDTO.getVideoUrl())) {
+			throw new BusinessException(409, "Another video already exists with this URL.");
+		}
+
+		modelMapper.map(videoDTO, existingVideo);
+
+		Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
+		if (topics.size() != videoDTO.getTopicIds().size()) {
+			throw new BusinessException(404, "One or more topics not found");
+		}
+		existingVideo.setTopics(topics);
+
+		return videoRepository.save(existingVideo);
+	}
+
+	public void toggleEnabled(Long id) {
+		Video video = findById(id);
+		video.setEnabled(!video.getEnabled());
+
+		videoRepository.save(video);
+	}
+
+	public void deleteVideo(Long id) {
+
+	}
+
 }

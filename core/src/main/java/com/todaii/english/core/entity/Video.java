@@ -46,7 +46,8 @@ public class Video {
 	@Column(name = "video_url", length = 1024, nullable = false)
 	private String videoUrl;
 
-	private Integer views;
+	@Builder.Default
+	private Integer views = 0;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "cefr_level", length = 32, nullable = false)

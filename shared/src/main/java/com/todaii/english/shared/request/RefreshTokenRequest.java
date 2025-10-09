@@ -2,8 +2,6 @@ package com.todaii.english.shared.request;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -17,6 +15,5 @@ public class RefreshTokenRequest {
 
 	@NotNull
 	@Length(min = 36, max = 64)
-	@JsonProperty("refresh_token")
 	private String refreshToken;
 }

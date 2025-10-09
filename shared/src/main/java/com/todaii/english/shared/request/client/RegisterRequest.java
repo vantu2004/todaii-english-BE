@@ -2,8 +2,6 @@ package com.todaii.english.shared.request.client;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -21,6 +19,5 @@ public class RegisterRequest {
 
 	@NotNull
 	@Length(min = 1, max = 191)
-	@JsonProperty("display_name")
 	private String displayName;
 }

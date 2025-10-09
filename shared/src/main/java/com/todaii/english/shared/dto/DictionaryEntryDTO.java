@@ -5,8 +5,6 @@ import java.util.Set;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -24,7 +22,6 @@ public class DictionaryEntryDTO {
 
 	@URL
 	@Length(max = 1024)
-	@JsonProperty("audio_url")
 	private String audioUrl;
 
 	@Valid

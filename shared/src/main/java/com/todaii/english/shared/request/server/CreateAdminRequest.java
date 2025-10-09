@@ -4,8 +4,6 @@ import java.util.Set;
 
 import org.hibernate.validator.constraints.Length;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -26,10 +24,8 @@ public class CreateAdminRequest {
 
 	@NotNull
 	@Length(min = 1, max = 191)
-	@JsonProperty("display_name")
 	private String displayName;
 
 	@NotEmpty
-	@JsonProperty("role_codes")
 	private Set<String> roleCodes;
 }

@@ -1,4 +1,4 @@
-package com.todaii.english.infra.smtp;
+package com.todaii.english.infra.config;
 
 import java.util.List;
 import java.util.Properties;

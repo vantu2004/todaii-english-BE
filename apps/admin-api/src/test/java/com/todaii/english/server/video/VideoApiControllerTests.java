@@ -68,11 +68,11 @@ public class VideoApiControllerTests {
 	@Test
 	@DisplayName("GET /fetch - import video thành công")
 	void testImportFromYoutubeSuccess() throws Exception {
-		Video video = mockVideo(1L);
-		given(videoService.importFromYoutube(anyString())).willReturn(video);
+		VideoDTO videoDTO = mockVideoDTO();
+		given(videoService.importFromYoutube(anyString())).willReturn(videoDTO);
 
 		mockMvc.perform(get(ENDPOINT + "/fetch").param("url", "https://youtube.com/watch?v=abc"))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.title").value("Mock Video"));
+				.andExpect(status().isOk()).andExpect(jsonPath("$.title").value("Mock Title"));
 
 		then(videoService).should().importFromYoutube(anyString());
 	}

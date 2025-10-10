@@ -1,38 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <!-- Kế thừa root -->
-  <parent>
-    <groupId>com.todaii.english</groupId>
-    <artifactId>todaii-english</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<!-- Kế thừa root -->
+	<parent>
+		<groupId>com.todaii.english</groupId>
+		<artifactId>todaii-english</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>core</artifactId>
-  <packaging>jar</packaging>
+	<artifactId>core</artifactId>
+	<packaging>jar</packaging>
 
-  <dependencies>
-    <!-- dùng lại entity/enum/constant từ shared -->
-    <dependency>
-        <groupId>com.todaii.english</groupId>
-        <artifactId>shared</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-    
-    <!-- Business logic cần JPA -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
+	<dependencies>
+		<!-- dùng lại entity/enum/constant từ shared -->
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <!-- Lombok -->
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-  </dependencies>
+		<!-- Business logic cần JPA -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
 </project>

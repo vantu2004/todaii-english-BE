@@ -20,17 +20,19 @@ import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class VideoService {
 	private final VideoRepository videoRepository;
+	private final VideoLyricLineRepository videoLyricLineRepository;
 	private final ObjectMapper objectMapper;
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
 
-	public Video importFromYoutube(String youtubeUrl) throws BadRequestException {
+	public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
 		String requestUri = YoutubeOEmbed.BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
 
 		try {
@@ -47,11 +49,11 @@ public class VideoService {
 			String embedHtml = json.path("html").asText().replace("width=\"200\"", "width=\"100%\"")
 					.replace("height=\"113\"", "height=\"100%\"");
 
-			Video video = Video.builder().title(title).authorName(authorName).providerName(providerName)
+			VideoDTO videoDTO = VideoDTO.builder().title(title).authorName(authorName).providerName(providerName)
 					.providerUrl(providerUrl).thumbnailUrl(thumbnailUrl).embedHtml(embedHtml).videoUrl(youtubeUrl)
-					.views(0).cefrLevel(CefrLevel.A1).build();
+					.cefrLevel(CefrLevel.A1).topicIds(null).build();
 
-			return video;
+			return videoDTO;
 
 		} catch (HttpClientErrorException e) {
 			throw new BusinessException(e.getStatusCode().value(), e.getStatusText());
@@ -110,8 +112,10 @@ public class VideoService {
 		videoRepository.save(video);
 	}
 
+	@Transactional
 	public void deleteVideo(Long id) {
-
+		videoLyricLineRepository.deleteAllByVideoId(id);
+		videoRepository.deleteById(id);
 	}
 
 }

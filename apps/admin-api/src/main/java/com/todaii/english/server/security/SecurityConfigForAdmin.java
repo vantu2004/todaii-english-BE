@@ -147,6 +147,22 @@ public class SecurityConfigForAdmin {
 						.requestMatchers(HttpMethod.DELETE, "/api/v1/video/*")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
+						// VideoLyricLineApiController
+						.requestMatchers(HttpMethod.POST, "/api/v1/lyric/import")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/lyric/video/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/lyric/video/*/line/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/lyric/video/*/batch")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/lyric/video/*/line/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/lyric/video/*/line/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/lyric/video/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
 						.anyRequest().authenticated());
 
 		/*

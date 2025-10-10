@@ -27,11 +27,11 @@ public class VideoLyricLine {
 	private Integer endMs; // thời gian kết thúc (ms)
 
 	@Lob
-	@Column(name = "text_en", columnDefinition = "MEDIUMTEXT")
+	@Column(name = "text_en", columnDefinition = "MEDIUMTEXT", nullable = false)
 	private String textEn; // câu lyric tiếng Anh
 
 	@Lob
-	@Column(name = "text_vi", columnDefinition = "MEDIUMTEXT")
+	@Column(name = "text_vi", columnDefinition = "MEDIUMTEXT", nullable = false)
 	private String textVi; // dịch tiếng Việt
 
 	// Liên kết với bảng videos (1 chiều)

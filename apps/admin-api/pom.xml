@@ -1,87 +1,93 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <!-- Kế thừa apps -->
-  <parent>
-    <groupId>com.todaii.english</groupId>
-    <artifactId>apps</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<!-- Kế thừa apps -->
+	<parent>
+		<groupId>com.todaii.english</groupId>
+		<artifactId>apps</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>admin-api</artifactId>
-  <packaging>jar</packaging>
+	<artifactId>admin-api</artifactId>
+	<packaging>jar</packaging>
 
-  <dependencies>
-    <!-- Kéo core/infra/shared -->
-    <dependency>
-      <groupId>com.todaii.english</groupId>
-      <artifactId>core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.todaii.english</groupId>
-      <artifactId>infra</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.todaii.english</groupId>
-      <artifactId>shared</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+	<dependencies>
+		<!-- Kéo core/infra/shared -->
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>infra</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <!-- Web API -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-test</artifactId>
-		<scope>test</scope>
-	</dependency>
-    <dependency>
-    	<groupId>org.springframework.boot</groupId>
-    	<artifactId>spring-boot-devtools</artifactId>
-    </dependency>
-    
-    <!-- Lombok -->
-	<dependency>
-		<groupId>org.projectlombok</groupId>
-		<artifactId>lombok</artifactId>
-		<optional>true</optional>
-	</dependency>
+		<!-- Web API -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
 
-	<!-- Security test -->
-	<dependency>
-	  <groupId>org.springframework.security</groupId>
-	  <artifactId>spring-security-test</artifactId>
-	  <scope>test</scope>
-	</dependency>
-	
-	<!-- MySql -->
-	<dependency>
-	    <groupId>com.mysql</groupId>
-	    <artifactId>mysql-connector-j</artifactId>
-	    <scope>runtime</scope>
-	</dependency>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 
-	<!-- Model mapper -->
-	<dependency>
-	    <groupId>org.modelmapper</groupId>
-	    <artifactId>modelmapper</artifactId>
-	</dependency>
+		<!-- Security test -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-  </dependencies>
+		<!-- MySql -->
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 
-  <build>
-    <plugins>
-      <!-- Build runnable jar -->
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+		<!-- Model mapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+		</dependency>
+
+		<!-- Submerge -->
+		<dependency>
+			<groupId>com.github.dnbn.submerge</groupId>
+			<artifactId>submerge-api</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Build runnable jar -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>

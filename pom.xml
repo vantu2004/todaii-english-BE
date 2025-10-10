@@ -1,113 +1,120 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <!-- Thông tin cơ bản -->
-  <groupId>com.todaii.english</groupId>
-  <artifactId>todaii-english</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging> <!-- Root chỉ gom module, không build jar -->
+	<!-- Thông tin cơ bản -->
+	<groupId>com.todaii.english</groupId>
+	<artifactId>todaii-english</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging> <!-- Root chỉ gom module, không build jar -->
 
-  <!-- Gom các module con -->
-  <modules>
-    <module>apps</module>
-    <module>core</module>
-    <module>infra</module>
-    <module>shared</module>
-  </modules>
+	<!-- Gom các module con -->
+	<modules>
+		<module>apps</module>
+		<module>core</module>
+		<module>infra</module>
+		<module>shared</module>
+	</modules>
 
-  <!-- Đặt biến dùng chung -->
-  <properties>
-    <java.version>21</java.version>
-    <spring-boot.version>3.3.4</spring-boot.version>
-  </properties>
+	<!-- Đặt biến dùng chung -->
+	<properties>
+		<java.version>21</java.version>
+		<spring-boot.version>3.3.4</spring-boot.version>
+	</properties>
 
-  <!-- Quản lý version tập trung -->
-  <dependencyManagement>
-    <dependencies>
-      <!-- BOM Spring Boot: giúp không cần khai báo version cho starter -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
+	<!-- Quản lý version tập trung -->
+	<dependencyManagement>
+		<dependencies>
+			<!-- BOM Spring Boot: giúp không cần khai báo version cho starter -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 
-      <!-- Lib ngoài BOM thì phải khai version -->
-      <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-        <version>9.4.0</version>
-      </dependency>
+			<!-- Lib ngoài BOM thì phải khai version -->
+			<dependency>
+				<groupId>com.mysql</groupId>
+				<artifactId>mysql-connector-j</artifactId>
+				<version>9.4.0</version>
+			</dependency>
 
-      <!-- Lombok: chỉ cần khi compile -->
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.34</version>
-        <scope>provided</scope>
-      </dependency>
-      
-      	<!-- JWT (jjwt) 0.12.x -->
-	    <dependency>
-	        <groupId>io.jsonwebtoken</groupId>
-	        <artifactId>jjwt-api</artifactId>
-	        <version>0.12.6</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>io.jsonwebtoken</groupId>
-	        <artifactId>jjwt-impl</artifactId>
-	        <version>0.12.6</version>
-	        <scope>runtime</scope>
-	    </dependency>
-	    <dependency>
-	        <groupId>io.jsonwebtoken</groupId>
-	        <artifactId>jjwt-jackson</artifactId>
-	        <version>0.12.6</version>
-	        <scope>runtime</scope>
-	    </dependency>
-	    
-	    <!-- Gemini -->
-	    <dependency>
-		    <groupId>com.google.genai</groupId>
-		    <artifactId>google-genai</artifactId>
-		    <version>1.0.0</version>
-		</dependency>
+			<!-- Lombok: chỉ cần khi compile -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.18.34</version>
+				<scope>provided</scope>
+			</dependency>
 
-		<!-- Model mapper -->
-		<dependency>
-		    <groupId>org.modelmapper</groupId>
-		    <artifactId>modelmapper</artifactId>
-		    <version>3.2.0</version>
-		</dependency>
+			<!-- JWT (jjwt) 0.12.x -->
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-api</artifactId>
+				<version>0.12.6</version>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-impl</artifactId>
+				<version>0.12.6</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt-jackson</artifactId>
+				<version>0.12.6</version>
+				<scope>runtime</scope>
+			</dependency>
 
-    </dependencies>
-  </dependencyManagement>
+			<!-- Gemini -->
+			<dependency>
+				<groupId>com.google.genai</groupId>
+				<artifactId>google-genai</artifactId>
+				<version>1.0.0</version>
+			</dependency>
 
-  <!-- Quản lý plugin tập trung -->
-  <build>
-    <pluginManagement>
-      <plugins>
-        <!-- Biên dịch Java -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
-          <configuration>
-            <release>${java.version}</release>
-            <parameters>true</parameters>
-          </configuration>
-        </plugin>
+			<!-- Model mapper -->
+			<dependency>
+				<groupId>org.modelmapper</groupId>
+				<artifactId>modelmapper</artifactId>
+				<version>3.2.0</version>
+			</dependency>
 
-        <!-- Spring Boot plugin để build fat-jar -->
-        <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot.version}</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+			<!-- Submerge -->
+			<dependency>
+				<groupId>com.github.dnbn.submerge</groupId>
+				<artifactId>submerge-api</artifactId>
+				<version>1.9.2</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- Quản lý plugin tập trung -->
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- Biên dịch Java -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.11.0</version>
+					<configuration>
+						<release>${java.version}</release>
+						<parameters>true</parameters>
+					</configuration>
+				</plugin>
+
+				<!-- Spring Boot plugin để build fat-jar -->
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>${spring-boot.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>

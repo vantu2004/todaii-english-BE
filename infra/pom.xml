@@ -1,89 +1,89 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <!-- Kế thừa root -->
-  <parent>
-    <groupId>com.todaii.english</groupId>
-    <artifactId>todaii-english</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<!-- Kế thừa root -->
+	<parent>
+		<groupId>com.todaii.english</groupId>
+		<artifactId>todaii-english</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>infra</artifactId>
-  <packaging>jar</packaging>
+	<artifactId>infra</artifactId>
+	<packaging>jar</packaging>
 
-  <dependencies>
-    <!-- Phụ thuộc core để implement interface -->
-    <dependency>
-      <groupId>com.todaii.english</groupId>
-      <artifactId>core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+	<dependencies>
+		<!-- Phụ thuộc core để implement interface -->
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <!-- Phụ thuộc shared -->
-    <dependency>
-      <groupId>com.todaii.english</groupId>
-      <artifactId>shared</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+		<!-- Phụ thuộc shared -->
+		<dependency>
+			<groupId>com.todaii.english</groupId>
+			<artifactId>shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
-    <!-- Security -->
-	<dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-security</artifactId>
-    </dependency>
+		<!-- Security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
 
-    <!-- Lombok -->
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    
-    <!-- JWT (jjwt) 0.12.x -->
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-api</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-impl</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-jackson</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-configuration-processor</artifactId>
-		<optional>true</optional>
-	</dependency>
-	
-	<!-- Mail -->
-	<dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-mail</artifactId>
-	</dependency>
-	
-	<!-- Webflux -->
-	<dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-webflux</artifactId>
-	</dependency>
+		<!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
-	<!-- Gemini -->
-	<dependency>
-	    <groupId>com.google.genai</groupId>
-	    <artifactId>google-genai</artifactId>
-	</dependency>
-	
-	<!-- Model mapper -->
-	<dependency>
-	    <groupId>org.modelmapper</groupId>
-	    <artifactId>modelmapper</artifactId>
-	</dependency>
-  </dependencies>
+		<!-- JWT (jjwt) 0.12.x -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Webflux -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<!-- Gemini -->
+		<dependency>
+			<groupId>com.google.genai</groupId>
+			<artifactId>google-genai</artifactId>
+		</dependency>
+
+		<!-- Model mapper -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+		</dependency>
+	</dependencies>
 </project>

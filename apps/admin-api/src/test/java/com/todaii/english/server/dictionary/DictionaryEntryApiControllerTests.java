@@ -32,9 +32,9 @@ import com.todaii.english.shared.dto.DictionarySenseDTO;
 import com.todaii.english.shared.enums.PartOfSpeech;
 import com.todaii.english.shared.exceptions.BusinessException;
 
-@WebMvcTest(controllers = DictionaryApiController.class)
+@WebMvcTest(controllers = DictionaryEntryApiController.class)
 @Import(TestSecurityConfig.class)
-public class DictionaryApiControllerTests {
+public class DictionaryEntryApiControllerTests {
 
 	private static final String END_POINT_PATH = "/api/v1/dictionary";
 
@@ -45,7 +45,7 @@ public class DictionaryApiControllerTests {
 	private ObjectMapper objectMapper;
 
 	@MockBean
-	private DictionaryService dictionaryService;
+	private DictionaryEntryService dictionaryService;
 
 	// ============================
 	// 🔹 MOCK DATA

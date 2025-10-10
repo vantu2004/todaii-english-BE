@@ -22,7 +22,7 @@ public class TopicService {
 	}
 
 	public Topic findById(Long id) {
-		return topicRepository.findById(id).orElseThrow(() -> new BusinessException(CommonErrorCode.NOT_FOUND));
+		return topicRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Topic not found"));
 	}
 
 	public Topic create(CreateTopicRequest request) {

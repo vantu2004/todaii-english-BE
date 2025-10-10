@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +15,6 @@ import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
-import com.todaii.english.shared.enums.PartOfSpeech;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 
@@ -23,11 +23,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class DictionaryService {
+public class DictionaryEntryService {
 	private final DictionaryPort dictionaryPort;
 	private final GeminiPort geminiPort;
-	private final ObjectMapper objectMapper;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
+	private final ObjectMapper objectMapper;
+	private final ModelMapper modelMapper;
 
 	public DictionaryApiResponse[] lookupWord(String word) {
 		return dictionaryPort.lookupWord(word);
@@ -66,10 +67,6 @@ public class DictionaryService {
 		return raw.replaceAll("```json", "").replaceAll("```", "").trim();
 	}
 
-	public DictionaryEntryDTO parseJson(String json) throws Exception {
-		return objectMapper.readValue(json, DictionaryEntryDTO.class);
-	}
-
 	public DictionaryEntry toEntity(DictionaryEntryDTO dto) {
 		DictionaryEntry entry = DictionaryEntry.builder().headword(dto.getHeadword()).ipa(dto.getIpa())
 				.audioUrl(dto.getAudioUrl()).build();
@@ -85,10 +82,9 @@ public class DictionaryService {
 
 	private Set<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
 		Set<DictionarySense> senses = new HashSet<DictionarySense>(dto.getSenses().stream().map(s -> {
-			DictionarySense sense = DictionarySense.builder().pos(PartOfSpeech.valueOf(s.getPos()))
-					.meaning(s.getMeaning()).definition(s.getDefinition()).example(s.getExample())
-					.synonyms(s.getSynonyms()).collocations(s.getCollocations()).entry(entry) // gán back-reference
-					.build();
+			DictionarySense sense = modelMapper.map(s, DictionarySense.class);
+			sense.setEntry(entry);
+
 			return sense;
 		}).toList());
 		return senses;

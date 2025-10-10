@@ -26,13 +26,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/v1/dictionary")
-public class DictionaryApiController {
-	private final DictionaryService dictionaryService;
-
-//	@GetMapping("/raw-word")
-//	public ResponseEntity<?> getVocabFromDictionaryApi(@NotNull @Length(min = 1, max = 191) String word) {
-//		return ResponseEntity.ok(dictionaryService.lookupWord(word));
-//	}
+public class DictionaryEntryApiController {
+	private final DictionaryEntryService dictionaryService;
 
 	@GetMapping
 	public ResponseEntity<?> getAllWords() {

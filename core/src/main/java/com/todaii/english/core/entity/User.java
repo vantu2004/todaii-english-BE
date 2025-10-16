@@ -56,7 +56,7 @@ public class User implements JwtPrincipal {
 	private Boolean enabled = false;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false, length = 32)
+	@Column(length = 32)
 	private UserStatus status;
 
 	@Column(name = "email_verified_at")

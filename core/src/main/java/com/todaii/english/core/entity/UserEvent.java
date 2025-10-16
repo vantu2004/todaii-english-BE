@@ -20,12 +20,15 @@ public class UserEvent {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	private UserEventModule module;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	private UserEventAction action;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	@Builder.Default
 	private EventOutcome outcome = EventOutcome.SUCCESS;
 

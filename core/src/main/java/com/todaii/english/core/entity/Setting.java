@@ -39,7 +39,7 @@ public class Setting {
 
 	// @Enumerated(EnumType.STRING) giúp lưu Enum dưới dạng chuỗi.
 	@Enumerated(EnumType.STRING)
-	@Column(name = "setting_category", nullable = false, length = 32)
+	@Column(name = "setting_category", length = 32)
 	private SettingCategory settingCategory;
 
 	@CreationTimestamp

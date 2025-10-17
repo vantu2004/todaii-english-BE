@@ -68,6 +68,7 @@ public class VocabDeck {
 	@JsonIgnore
 	private Set<VocabGroup> groups = new HashSet<>();
 
+	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "deck_words", joinColumns = @JoinColumn(name = "deck_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
 	@Builder.Default

@@ -1,0 +1,69 @@
+package com.todaii.english.server.vocabulary;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.todaii.english.core.entity.VocabDeck;
+import com.todaii.english.shared.request.server.DeckRequest;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/vocab-deck")
+public class VocabDeckController {
+	private final VocabDeckService vocabDeckService;
+
+	@GetMapping
+	public ResponseEntity<List<VocabDeck>> getAllVocabDecks() {
+		return ResponseEntity.ok(vocabDeckService.findAll());
+	}
+
+	@GetMapping("/{deckId}")
+	public ResponseEntity<VocabDeck> getVocabDeck(@PathVariable Long deckId) {
+		return ResponseEntity.ok(vocabDeckService.findById(deckId));
+	}
+
+	@PostMapping
+	public ResponseEntity<VocabDeck> createDraftDeck(@Valid @RequestBody DeckRequest deckRequest) {
+		return ResponseEntity.ok(vocabDeckService.createDraftDeck(deckRequest));
+	}
+
+	@PostMapping("/{deckId}/word/{wordId}")
+	public ResponseEntity<VocabDeck> addWordToDeck(@PathVariable Long deckId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(vocabDeckService.addWordToDeck(deckId, wordId));
+	}
+
+	@DeleteMapping("/{deckId}/word/{wordId}")
+	public ResponseEntity<VocabDeck> removeWordFromDeck(@PathVariable Long deckId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
+	}
+
+	@PutMapping("/{deckId}")
+	public ResponseEntity<VocabDeck> updateVocabDeck(@PathVariable Long deckId,
+			@Valid @RequestBody DeckRequest deckRequest) {
+		return ResponseEntity.ok(vocabDeckService.updateVocabDeck(deckId, deckRequest));
+	}
+
+	@PutMapping("/{deckId}/enabled")
+	public ResponseEntity<Void> toggleEnabled(@PathVariable Long deckId) {
+		vocabDeckService.toggleEnabled(deckId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@DeleteMapping("/{deckId}")
+	public ResponseEntity<Void> deleteVocabDeck(@PathVariable Long deckId) {
+		vocabDeckService.deleteById(deckId);
+		return ResponseEntity.noContent().build();
+	}
+}

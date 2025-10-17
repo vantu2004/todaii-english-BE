@@ -1,4 +1,4 @@
-package com.todaii.english.infra.dictionary;
+package com.todaii.english.infra.client;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;

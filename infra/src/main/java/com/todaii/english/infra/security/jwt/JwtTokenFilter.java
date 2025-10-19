@@ -23,9 +23,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 // kế thừa OncePerRequestFilter để đảm bảo mỗi request chỉ xác thực qua filter 1 lần
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
@@ -50,6 +52,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 
 		try {
+			long start = System.nanoTime();
+
 			// 1. Nếu không có Authorization header → cho đi luôn
 			if (!hasAuthorizationBearer(request)) {
 				filterChain.doFilter(request, response);
@@ -79,6 +83,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
 			// 5. Cho request tiếp tục
 			filterChain.doFilter(request, response);
+
+			/*
+			 * đo tổng tg phản hồi 1 request cả middleware, security, exception, còn AOP là
+			 * chỉ tính riêng business logic trong JVM
+			 */
+			long end = System.nanoTime();
+			double durationMs = (end - start) / 1_000_000.0;
+			log.info("🌐 [{} {}] completed in {} ms", request.getMethod(), request.getRequestURI(),
+					String.format("%.3f", durationMs));
 
 		} catch (Exception ex) {
 			LOGGER.error("JWT filter error: {}", ex.getMessage(), ex);

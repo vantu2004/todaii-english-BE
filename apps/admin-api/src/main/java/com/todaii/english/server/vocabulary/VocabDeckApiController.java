@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/vocab-deck")
-public class VocabDeckController {
+public class VocabDeckApiController {
 	private final VocabDeckService vocabDeckService;
 
 	@GetMapping

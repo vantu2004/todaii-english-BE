@@ -17,7 +17,7 @@ public class DictionaryApiClient implements DictionaryPort {
 	private final WebClient webClient;
 
 	public DictionaryApiClient(WebClient.Builder builder) {
-		this.webClient = builder.baseUrl(DictionaryApiUrl.BASE_URL).build();
+		this.webClient = builder.baseUrl(DictionaryApiUrl.BASE_URL_v100).build();
 	}
 
 	@Override

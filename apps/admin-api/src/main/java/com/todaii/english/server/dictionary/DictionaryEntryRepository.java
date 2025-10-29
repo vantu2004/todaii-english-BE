@@ -12,8 +12,5 @@ public interface DictionaryEntryRepository extends JpaRepository<DictionaryEntry
 	// Tìm kiếm theo headword (Spring Data tự hiểu)
 	List<DictionaryEntry> findByHeadwordContainingIgnoreCase(String keyword);
 
-	// Các hàm cơ bản đã có sẵn trong JpaRepository:
-	// findAll(), findById(), save(), deleteById(), existsById() ...
-
 	boolean existsByHeadword(String headword);
 }

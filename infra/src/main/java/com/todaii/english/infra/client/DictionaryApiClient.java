@@ -9,9 +9,11 @@ import com.todaii.english.shared.constants.DictionaryApiUrl;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class DictionaryApiClient implements DictionaryPort {
 
 	private final WebClient webClient;
@@ -22,12 +24,33 @@ public class DictionaryApiClient implements DictionaryPort {
 
 	@Override
 	public DictionaryApiResponse[] lookupWord(String word) {
-		return webClient.get().uri("/{word}", word).retrieve()
-				.onStatus(HttpStatusCode::is4xxClientError,
-						clientResponse -> Mono.error(new BusinessException(404, "Word not found: " + word)))
-				.onStatus(HttpStatusCode::is5xxServerError,
-						clientResponse -> Mono.error(new BusinessException(500, "Dictionary API error")))
-				.bodyToMono(DictionaryApiResponse[].class).block();
+		try {
+			return webClient.get()
+					.uri("/{word}", word)
+					.retrieve()
+					.onStatus(HttpStatusCode::is4xxClientError, clientResponse -> 
+						clientResponse.bodyToMono(String.class)
+							.doOnNext(body -> log.warn("❌ 4xx error for word '{}': status={} body={}", word, clientResponse.statusCode(), body))
+							.flatMap(body -> Mono.error(new BusinessException(404, "Word not found: " + word + " | Response: " + body)))
+					)
+					.onStatus(HttpStatusCode::is5xxServerError, clientResponse -> 
+						clientResponse.bodyToMono(String.class)
+							.doOnNext(body -> log.error("💥 5xx error for word '{}': status={} body={}", word, clientResponse.statusCode(), body))
+							.flatMap(body -> Mono.error(new BusinessException(500, "Dictionary API error: " + body)))
+					)
+					.bodyToMono(DictionaryApiResponse[].class)
+					.block();
+
+		} catch (BusinessException e) {
+			// Đã xử lý trong onStatus, chỉ log thêm nếu cần
+			log.warn("BusinessException for word '{}': {}", word, e.getMessage());
+			throw e;
+		} catch (Exception e) {
+			// Các lỗi bất ngờ (timeout, network, parsing,…)
+			log.error("⚠️ Unexpected error while looking up '{}': {}", word, e.getMessage(), e);
+			throw new BusinessException(500, "Unexpected error while calling dictionary API for: " + word);
+		}
 	}
+
 
 }

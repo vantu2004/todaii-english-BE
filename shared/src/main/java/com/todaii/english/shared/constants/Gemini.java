@@ -43,4 +43,13 @@ public class Gemini {
 			Target word: %s
 			""";
 
+	public static final String DECK_WORDS_PROMPT = """
+			    Generate a list of %d English vocabulary words suitable for CEFR level %s.
+			    The topic is about: "%s".
+			    Focus on words that are relevant to this description: "%s".
+			    Each item must be a SINGLE English word (not a phrase, not a sentence, not a collocation).
+			    Avoid multi-word expressions, idioms, or compound nouns.
+			    Return ONLY a valid JSON array of words, like: ["word1", "word2", ...].
+			""";
+
 }

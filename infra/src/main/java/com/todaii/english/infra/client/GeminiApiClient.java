@@ -31,7 +31,9 @@ public class GeminiApiClient implements GeminiPort {
 				throw new BusinessException(204, "Gemini API: no content returned");
 			}
 
-			return response.text();
+			String responseText = response.text().replaceAll("```json", "").replaceAll("```", "").trim();
+
+			return responseText;
 
 		} catch (Exception e) {
 			// Ghi log lỗi chi tiết

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
+import com.todaii.english.shared.response.DictionaryApiResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/dictionary")
 public class DictionaryEntryApiController {
 	private final DictionaryEntryService dictionaryService;
+
+	@GetMapping("/raw-word")
+	public ResponseEntity<?> getRawWord(@RequestParam String word) {
+		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(word);
+		return ResponseEntity.ok(dictionaryApiResponses);
+	}
 
 	@GetMapping
 	public ResponseEntity<?> getAllWords() {

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,8 @@ import com.todaii.english.shared.enums.PartOfSpeech;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Rollback
-public class DictionaryRepositoryTests {
+@Rollback(true)
+public class DictionaryEntryRepositoryTests {
 
 	@Autowired
 	private DictionaryEntryRepository dictionaryEntryRepository;
@@ -78,6 +79,17 @@ public class DictionaryRepositoryTests {
 
 		assertThat(results).isNotEmpty();
 		assertThat(results.get(0).getHeadword()).isEqualTo("run");
+	}
+
+	@Test
+	@DisplayName("READ - should find entry by headword in ignore case")
+	void testFindByHeadwordInIgnoreCase() {
+		Set<String> headwords = Set.of("RUN", "COMMON");
+		List<DictionaryEntry> results = dictionaryEntryRepository.findByHeadwordInIgnoreCase(headwords);
+
+		assertThat(results).isNotEmpty();
+		assertThat(results.get(0).getHeadword()).isEqualTo("run");
+		assertThat(results.get(1).getHeadword()).isEqualTo("common");
 	}
 
 	// ============================================================

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -61,7 +62,7 @@ public class VocabDeckApiController {
 		return ResponseEntity.ok(vocabDeckService.updateVocabDeck(deckId, deckRequest));
 	}
 
-	@PutMapping("/{deckId}/enabled")
+	@PatchMapping("/{deckId}/enabled")
 	public ResponseEntity<Void> toggleEnabled(@PathVariable Long deckId) {
 		vocabDeckService.toggleEnabled(deckId);
 		return ResponseEntity.noContent().build();

@@ -21,7 +21,7 @@ public interface DictionaryEntryRepository extends JpaRepository<DictionaryEntry
 	 * ko
 	 */
 	@Query("SELECT e FROM DictionaryEntry e WHERE LOWER(e.headword) IN ?1")
-	List<DictionaryEntry> findByHeadwordInIgnoreCase(Collection<String> words);
+	public List<DictionaryEntry> findByHeadwordInIgnoreCase(Collection<String> words);
 
 	public boolean existsByHeadword(String headword);
 }

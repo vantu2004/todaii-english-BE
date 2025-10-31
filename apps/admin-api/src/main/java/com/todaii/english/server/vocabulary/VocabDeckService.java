@@ -45,19 +45,15 @@ public class VocabDeckService {
 		return vocabDeckRepository.findById(deckId).orElseThrow(() -> new BusinessException(404, "Deck not found"));
 	}
 
+	// ko check trùng vì có nhiều từ giống nhau
 	public VocabDeck addWordToDeck(Long deckId, Long wordId) {
 		VocabDeck vocabDeck = findById(deckId);
+
 		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
 				.orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-		// kiểm tra trùng
-		boolean exists = vocabDeck.getWords().stream().anyMatch(w -> w.getId().equals(wordId));
-		if (!exists) {
-			vocabDeck.getWords().add(dictionaryEntry);
-			vocabDeckRepository.save(vocabDeck);
-		}
-
-		return vocabDeck;
+		vocabDeck.getWords().add(dictionaryEntry);
+		return vocabDeckRepository.save(vocabDeck);
 	}
 
 	public VocabDeck removeWordFromDeck(Long deckId, Long wordId) {

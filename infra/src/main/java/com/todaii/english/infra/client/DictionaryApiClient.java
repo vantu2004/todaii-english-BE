@@ -60,7 +60,7 @@ public class DictionaryApiClient implements DictionaryPort {
 			throw e;
 		} catch (Exception e) {
 			// Bắt các lỗi không mong muốn khác: timeout, network, parsing,...
-			log.error("⚠️ Unexpected error while looking up '{}': {}", word, e.getMessage(), e);
+			log.error("Unexpected error while looking up '{}': {}", word, e.getMessage(), e);
 			throw new BusinessException(500, "Unexpected error while calling dictionary API for: " + word);
 		}
 	}

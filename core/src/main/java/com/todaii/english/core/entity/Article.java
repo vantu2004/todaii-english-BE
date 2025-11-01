@@ -73,6 +73,7 @@ public class Article {
 	@Builder.Default
 	private Set<ArticleParagraph> paragraphs = new HashSet<>();
 
+	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "article_dictionary_entries", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
 	@Builder.Default

@@ -36,9 +36,7 @@ public class GeminiApiClient implements GeminiPort {
 			return responseText;
 
 		} catch (Exception e) {
-			// Ghi log lỗi chi tiết
 			log.error("Lỗi khi gọi Gemini API với prompt: {}", prompt, e);
-			// Trả về fallback message (tuỳ logic của bạn)
 			throw e;
 		}
 	}

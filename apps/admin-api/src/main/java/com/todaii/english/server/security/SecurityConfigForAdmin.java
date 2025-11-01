@@ -163,6 +163,40 @@ public class SecurityConfigForAdmin {
 						.requestMatchers(HttpMethod.DELETE, "/api/v1/lyric/video/*")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
+						// VocabGroupApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/vocab-group")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/vocab-group/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/vocab-group*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/vocab-group/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-group/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PATCH, "/api/v1/vocab-group/*/enabled")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
+						// VocabDeckApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/vocab-deck")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/vocab-deck/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck/*/word/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-deck/*/word/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/vocab-deck/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PATCH, "/api/v1/vocab-deck/*/enabled")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-deck/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
 						.anyRequest().authenticated());
 
 		/*

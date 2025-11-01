@@ -1,7 +1,9 @@
 package com.todaii.english.shared.constants;
 
 public class Gemini {
-	public static final String MODEL = "gemini-2.5-flash";
+	public static final String CHAT_MODEL = "gemini-2.5-flash";
+
+	public static final String TTS_MODEL = "gemini-2.5-flash-tts";
 
 	public static final String DICTIONARY_PROMPT = """
 			You are an English-Vietnamese dictionary assistant.

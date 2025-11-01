@@ -24,7 +24,7 @@ public class GeminiApiClient implements GeminiPort {
 	@Override
 	public String generateText(String prompt) {
 		try {
-			GenerateContentResponse response = client.models.generateContent(Gemini.MODEL, prompt, null);
+			GenerateContentResponse response = client.models.generateContent(Gemini.CHAT_MODEL, prompt, null);
 
 			if (response == null || response.text() == null) {
 				log.warn("Gemini API trả về phản hồi rỗng hoặc không có text cho prompt: {}", prompt);

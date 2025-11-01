@@ -23,6 +23,15 @@
 		<spring-boot.version>3.3.4</spring-boot.version>
 	</properties>
 
+	<!-- Mặc đinh Maven chỉ tìm trong MVNRepository, repositories dưới cho phép
+	tìm trong cả github... -->
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
 	<!-- Quản lý version tập trung -->
 	<dependencyManagement>
 		<dependencies>
@@ -88,6 +97,13 @@
 				<groupId>com.github.dnbn.submerge</groupId>
 				<artifactId>submerge-api</artifactId>
 				<version>1.9.2</version>
+			</dependency>
+
+			<!-- News API -->
+			<dependency>
+				<groupId>com.github.KwabenBerko</groupId>
+				<artifactId>News-API-Java</artifactId>
+				<version>1.0.2</version>
 			</dependency>
 
 		</dependencies>

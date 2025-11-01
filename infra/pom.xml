@@ -85,5 +85,11 @@
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
 		</dependency>
+
+		<!-- News API -->
+		<dependency>
+			<groupId>com.github.KwabenBerko</groupId>
+			<artifactId>News-API-Java</artifactId>
+		</dependency>
 	</dependencies>
 </project>

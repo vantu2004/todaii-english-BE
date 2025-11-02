@@ -68,8 +68,8 @@ public class VideoLyricLineService {
 		return videoLyricLineRepository.findAll(videoId);
 	}
 
-	public VideoLyricLine findByVideoIdAndLineId(Long videoId, Long lineId) {
-		return videoLyricLineRepository.findByIdAndVideoId(lineId, videoId)
+	public VideoLyricLine findByVideoIdAndLineId(Long videoId, Long lyricId) {
+		return videoLyricLineRepository.findByIdAndVideoId(lyricId, videoId)
 				.orElseThrow(() -> new BusinessException(404, "Lyric not found in this video"));
 	}
 
@@ -89,8 +89,8 @@ public class VideoLyricLineService {
 		return videoLyricLineRepository.saveAll(videoLyricLines);
 	}
 
-	public VideoLyricLine updateLyric(Long videoId, Long lineId, VideoLyricLineDTO videoLyricLineDTO) {
-		VideoLyricLine videoLyricLine = findByVideoIdAndLineId(videoId, lineId);
+	public VideoLyricLine updateLyric(Long videoId, Long lyricId, VideoLyricLineDTO videoLyricLineDTO) {
+		VideoLyricLine videoLyricLine = findByVideoIdAndLineId(videoId, lyricId);
 
 		modelMapper.map(videoLyricLineDTO, videoLyricLine);
 
@@ -98,12 +98,12 @@ public class VideoLyricLineService {
 	}
 
 	@Transactional
-	public void deleteLyric(Long videoId, Long lineId) {
-		if (!videoLyricLineRepository.existsByIdAndVideoId(lineId, videoId)) {
+	public void deleteLyric(Long videoId, Long lyricId) {
+		if (!videoLyricLineRepository.existsByIdAndVideoId(lyricId, videoId)) {
 			throw new BusinessException(404, "Lyric not found in this video");
 		}
 
-		videoLyricLineRepository.deleteByIdAndVideoId(lineId, videoId);
+		videoLyricLineRepository.deleteByIdAndVideoId(lyricId, videoId);
 	}
 
 	@Transactional

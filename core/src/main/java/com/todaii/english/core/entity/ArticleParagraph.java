@@ -2,12 +2,8 @@ package com.todaii.english.core.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "article_paragraphs")
@@ -16,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "article")
+@ToString
 public class ArticleParagraph {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,14 +28,6 @@ public class ArticleParagraph {
 	@Lob
 	@Column(name = "text_vi_system", columnDefinition = "MEDIUMTEXT")
 	private String textViSystem;
-
-	@CreationTimestamp
-	@Column(name = "created_at", nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-
-	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
 
 	@ManyToOne
 	@JoinColumn(name = "article_id")

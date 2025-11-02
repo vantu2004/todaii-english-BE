@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class VideoApiController {
 	private final VideoService videoService;
 
-	@GetMapping("/fetch")
+	@GetMapping("/youtube")
 	public ResponseEntity<?> importFromYoutube(@RequestParam @NotNull @Length(max = 1024) String url)
 			throws BadRequestException {
 		return ResponseEntity.ok(videoService.importFromYoutube(url));

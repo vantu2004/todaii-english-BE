@@ -60,7 +60,7 @@ public class VideoLyricLineService {
 			return result;
 
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to parse SRT file", e);
+			throw new BusinessException(400, "Failed to parse SRT file");
 		}
 	}
 
@@ -68,8 +68,8 @@ public class VideoLyricLineService {
 		return videoLyricLineRepository.findAll(videoId);
 	}
 
-	public VideoLyricLine findByVideoIdAndLineId(Long videoId, Long lyricId) {
-		return videoLyricLineRepository.findByIdAndVideoId(lyricId, videoId)
+	public VideoLyricLine findById(Long lyricId) {
+		return videoLyricLineRepository.findById(lyricId)
 				.orElseThrow(() -> new BusinessException(404, "Lyric not found in this video"));
 	}
 
@@ -89,8 +89,8 @@ public class VideoLyricLineService {
 		return videoLyricLineRepository.saveAll(videoLyricLines);
 	}
 
-	public VideoLyricLine updateLyric(Long videoId, Long lyricId, VideoLyricLineDTO videoLyricLineDTO) {
-		VideoLyricLine videoLyricLine = findByVideoIdAndLineId(videoId, lyricId);
+	public VideoLyricLine updateLyric(Long lyricId, VideoLyricLineDTO videoLyricLineDTO) {
+		VideoLyricLine videoLyricLine = findById(lyricId);
 
 		modelMapper.map(videoLyricLineDTO, videoLyricLine);
 
@@ -98,12 +98,12 @@ public class VideoLyricLineService {
 	}
 
 	@Transactional
-	public void deleteLyric(Long videoId, Long lyricId) {
-		if (!videoLyricLineRepository.existsByIdAndVideoId(lyricId, videoId)) {
+	public void deleteLyric(Long lyricId) {
+		if (!videoLyricLineRepository.existsById(lyricId)) {
 			throw new BusinessException(404, "Lyric not found in this video");
 		}
 
-		videoLyricLineRepository.deleteByIdAndVideoId(lyricId, videoId);
+		videoLyricLineRepository.deleteById(lyricId);
 	}
 
 	@Transactional

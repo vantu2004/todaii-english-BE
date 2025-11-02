@@ -33,19 +33,6 @@ import lombok.RequiredArgsConstructor;
 public class ArticleApiController {
 	private final ArticleService articleService;
 
-	@GetMapping("/news-api")
-	public ResponseEntity<NewsApiResponse> fetchArticles(@RequestParam(defaultValue = "bitcoin") @NotBlank String query,
-			@RequestParam(defaultValue = "10") @Min(1) @Max(100) int pageSize,
-			@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "publishedAt") String sortBy) {
-		if (page * pageSize > 100) {
-			throw new BusinessException(400, "Your account is limited to a max of 100 results");
-		}
-
-		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(query, pageSize, page, sortBy);
-		return ResponseEntity.ok(newsApiResponse);
-	}
-
 	@GetMapping
 	public ResponseEntity<List<Article>> getAllArticles() {
 		List<Article> articles = articleService.findAll();
@@ -61,6 +48,19 @@ public class ArticleApiController {
 		return ResponseEntity.ok(articleService.findById(id));
 	}
 
+	@PostMapping("/news-api")
+	public ResponseEntity<NewsApiResponse> fetchArticles(@RequestParam(defaultValue = "bitcoin") @NotBlank String query,
+			@RequestParam(defaultValue = "10") @Min(1) @Max(100) int pageSize,
+			@RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "publishedAt") String sortBy) {
+		if (page * pageSize > 100) {
+			throw new BusinessException(400, "Your account is limited to a max of 100 results");
+		}
+
+		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(query, pageSize, page, sortBy);
+		return ResponseEntity.ok(newsApiResponse);
+	}
+	
 	@PostMapping
 	public ResponseEntity<Article> createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
 		return ResponseEntity.status(201).body(articleService.create(articleRequest));

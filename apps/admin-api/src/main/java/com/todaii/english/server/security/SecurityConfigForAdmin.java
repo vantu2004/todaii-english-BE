@@ -197,6 +197,34 @@ public class SecurityConfigForAdmin {
 						.requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-deck/*")
 						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
+						// ArticleApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/article")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/v1/article/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/article/news-api")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/article")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/article/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/article/*/enabled")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/article/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
+						// ArticleParagraphApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/article/*/paragraph")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/article/*/paragraph")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.POST, "/api/v1/article/paragraph/translate")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/article/paragraph/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/article/paragraph/*")
+						.hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+
 						.anyRequest().authenticated());
 
 		/*

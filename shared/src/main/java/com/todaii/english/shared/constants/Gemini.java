@@ -55,4 +55,11 @@ public class Gemini {
 			Return ONLY a valid JSON array of words, like: ["word1", "word2", ...].
 			""";
 
+	public static final String TRANSLATE_PROMPT = """
+			Translate the following English paragraph into natural, fluent Vietnamese:
+			---
+			%s
+			---
+			Only return the Vietnamese translation.
+			""";
 }

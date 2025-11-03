@@ -110,7 +110,7 @@ public class UserService {
 		user.setResetPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
 		this.userRepository.save(user);
 
-		String resetURL = CLIENT_URL + "/reset-pasword/" + token;
+		String resetURL = CLIENT_URL + "/reset-password/" + token;
 
 		this.smtpService.sendForgotPasswordEmail(email, resetURL);
 	}

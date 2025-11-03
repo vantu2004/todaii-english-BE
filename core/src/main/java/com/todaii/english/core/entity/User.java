@@ -46,7 +46,7 @@ public class User implements JwtPrincipal {
 	@Column(name = "otp_expired_at")
 	private LocalDateTime otpExpiredAt;
 
-	@Column(name = "reset_pasword_token", length = 64)
+	@Column(name = "reset_password_token", length = 64)
 	private String resetPasswordToken;
 
 	@Column(name = "reset_password_expired_at")

@@ -52,19 +52,15 @@ public class DictionaryEntryService {
 
 		// 3️ Gọi Gemini (luôn trả về mảng JSON)
 		String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
-		String json = cleanJson(geminiPort.generateText(prompt));
+		String rawResponseText = geminiPort.generateText(prompt);
 
 		// 4️ Parse mảng DTO
-		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(json, DictionaryEntryDTO[].class);
+		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(rawResponseText, DictionaryEntryDTO[].class);
 
 		List<DictionaryEntry> entries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryEntryRepository::save)
 				.toList();
 
 		return entries;
-	}
-
-	public String cleanJson(String raw) {
-		return raw.replaceAll("```json", "").replaceAll("```", "").trim();
 	}
 
 	public DictionaryEntry toEntity(DictionaryEntryDTO dto) {

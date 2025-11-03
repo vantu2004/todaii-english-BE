@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Video;
 import com.todaii.english.server.topic.TopicRepository;
-import com.todaii.english.shared.constants.YoutubeOEmbed;
+import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -33,7 +33,7 @@ public class VideoService {
 	private final TopicRepository topicRepository;
 
 	public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
-		String requestUri = YoutubeOEmbed.BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
+		String requestUri = ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
 
 		try {
 			RestTemplate restTemplate = new RestTemplate();
@@ -107,6 +107,11 @@ public class VideoService {
 
 	public void toggleEnabled(Long id) {
 		Video video = findById(id);
+
+		if (!videoLyricLineRepository.existsByVideoId(id)) {
+			throw new BusinessException(400, "Cannot enable video without lyrics");
+		}
+
 		video.setEnabled(!video.getEnabled());
 
 		videoRepository.save(video);

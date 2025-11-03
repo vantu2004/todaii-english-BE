@@ -20,12 +20,15 @@ public class AdminEvent {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	private AdminEventModule module;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	private AdminEventAction action;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	@Builder.Default
 	private EventOutcome outcome = EventOutcome.SUCCESS;
 

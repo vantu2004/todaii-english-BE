@@ -1,6 +1,8 @@
 package com.todaii.english.core.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +47,9 @@ public class VocabGroup {
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
+
+	@ManyToMany(mappedBy = "groups")
+	@Builder.Default
+	private Set<VocabDeck> decks = new HashSet<>();
 
 }

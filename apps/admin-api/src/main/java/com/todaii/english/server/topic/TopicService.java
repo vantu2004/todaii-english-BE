@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.shared.enums.TopicType;
-import com.todaii.english.shared.enums.error_code.CommonErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.CreateTopicRequest;
 

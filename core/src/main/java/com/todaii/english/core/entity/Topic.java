@@ -28,7 +28,7 @@ public class Topic {
 	private String alias;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "topic_type", length = 32, nullable = false)
+	@Column(name = "topic_type", length = 32)
 	private TopicType topicType;
 
 	@Builder.Default

@@ -37,6 +37,7 @@ public class DictionarySense {
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
+	@Column(length = 32)
 	private PartOfSpeech pos;
 
 	@Lob

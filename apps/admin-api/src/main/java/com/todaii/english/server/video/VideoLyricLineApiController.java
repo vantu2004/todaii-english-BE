@@ -22,17 +22,17 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/lyric")
+@RequestMapping("/api/v1/video")
 public class VideoLyricLineApiController {
 	private final VideoLyricLineService videoLyricLineService;
 
-	@PostMapping("/import")
-	public ResponseEntity<?> importLyrics(@RequestParam("file") MultipartFile file) {
+	@PostMapping("/lyric/import")
+	public ResponseEntity<List<VideoLyricLineDTO>> importLyrics(@RequestParam("file") MultipartFile file) {
 		return ResponseEntity.ok(videoLyricLineService.importFromSrt(file));
 	}
 
-	@GetMapping("/video/{videoId}")
-	public ResponseEntity<?> getAllLyrics(@PathVariable Long videoId) {
+	@GetMapping("/{videoId}/lyric")
+	public ResponseEntity<List<VideoLyricLine>> getAllLyrics(@PathVariable Long videoId) {
 		List<VideoLyricLine> videoLyricLines = videoLyricLineService.findAll(videoId);
 		if (videoLyricLines.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -41,30 +41,30 @@ public class VideoLyricLineApiController {
 		return ResponseEntity.ok(videoLyricLines);
 	}
 
-	@GetMapping("video/{videoId}/line/{lineId}")
-	public ResponseEntity<?> getLyric(@PathVariable Long videoId, @PathVariable Long lineId) {
-		return ResponseEntity.ok(videoLyricLineService.findByVideoIdAndLineId(videoId, lineId));
+	@GetMapping("/lyric/{lyricId}")
+	public ResponseEntity<VideoLyricLine> getLyric(@PathVariable Long lyricId) {
+		return ResponseEntity.ok(videoLyricLineService.findById(lyricId));
 	}
 
-	@PostMapping("/video/{videoId}/batch")
-	public ResponseEntity<?> createMultipleLyrics(@PathVariable Long videoId,
+	@PostMapping("/{videoId}/lyric/batch")
+	public ResponseEntity<List<VideoLyricLine>> createMultipleLyrics(@PathVariable Long videoId,
 			@Valid @RequestBody List<VideoLyricLineDTO> videoLyricLineDTOs) {
 		return ResponseEntity.status(201).body(videoLyricLineService.createBatch(videoId, videoLyricLineDTOs));
 	}
 
-	@PutMapping("/video/{videoId}/line/{lineId}")
-	public ResponseEntity<?> updateLyric(@PathVariable Long videoId, @PathVariable Long lineId,
+	@PutMapping("/lyric/{lyricId}")
+	public ResponseEntity<VideoLyricLine> updateLyric(@PathVariable Long lyricId,
 			@Valid @RequestBody VideoLyricLineDTO videoLyricLineDTOs) {
-		return ResponseEntity.ok(videoLyricLineService.updateLyric(videoId, lineId, videoLyricLineDTOs));
+		return ResponseEntity.ok(videoLyricLineService.updateLyric(lyricId, videoLyricLineDTOs));
 	}
 
-	@DeleteMapping("/video/{videoId}/line/{lineId}")
-	public ResponseEntity<?> deleteLyric(@PathVariable Long videoId, @PathVariable Long lineId) {
-		videoLyricLineService.deleteLyric(videoId, lineId);
+	@DeleteMapping("/lyric/{lyricId}")
+	public ResponseEntity<?> deleteLyric(@PathVariable Long lyricId) {
+		videoLyricLineService.deleteLyric(lyricId);
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping("/video/{videoId}")
+	@DeleteMapping("/{videoId}/lyric")
 	public ResponseEntity<?> deleteAllLyrics(@PathVariable Long videoId) {
 		videoLyricLineService.deleteAllLyrics(videoId);
 		return ResponseEntity.noContent().build();

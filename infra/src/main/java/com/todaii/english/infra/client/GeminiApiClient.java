@@ -1,4 +1,4 @@
-package com.todaii.english.infra.gemini;
+package com.todaii.english.infra.client;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,19 +24,19 @@ public class GeminiApiClient implements GeminiPort {
 	@Override
 	public String generateText(String prompt) {
 		try {
-			GenerateContentResponse response = client.models.generateContent(Gemini.MODEL, prompt, null);
+			GenerateContentResponse response = client.models.generateContent(Gemini.CHAT_MODEL, prompt, null);
 
 			if (response == null || response.text() == null) {
 				log.warn("Gemini API trả về phản hồi rỗng hoặc không có text cho prompt: {}", prompt);
 				throw new BusinessException(204, "Gemini API: no content returned");
 			}
 
-			return response.text();
+			String responseText = response.text().replaceAll("```json", "").replaceAll("```", "").trim();
+
+			return responseText;
 
 		} catch (Exception e) {
-			// Ghi log lỗi chi tiết
 			log.error("Lỗi khi gọi Gemini API với prompt: {}", prompt, e);
-			// Trả về fallback message (tuỳ logic của bạn)
 			throw e;
 		}
 	}

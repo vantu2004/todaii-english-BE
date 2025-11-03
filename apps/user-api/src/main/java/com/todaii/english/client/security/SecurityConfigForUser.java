@@ -74,6 +74,7 @@ public class SecurityConfigForUser {
 		            corsConfig.setAllowCredentials(true);
 		            return corsConfig;
 		        }))
+				
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
 				.authorizeHttpRequests(auth -> auth

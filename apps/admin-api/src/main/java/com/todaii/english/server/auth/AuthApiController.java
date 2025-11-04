@@ -1,6 +1,8 @@
 package com.todaii.english.server.auth;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.response.AuthResponse;
+import com.todaii.english.shared.utils.CookieUtils;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
@@ -30,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/auth")
 public class AuthApiController {
+	private static final String USER_TYPE = "admin";
+
 	private final AuthenticationManager authenticationManager;
 	private final AdminTokenService adminTokenService;
 	private final AdminService adminService;
@@ -47,7 +52,14 @@ public class AuthApiController {
 
 		this.adminService.updateLastLogin(email);
 
-		return ResponseEntity.status(HttpStatus.OK).body(authResponse);
+		// Create cookies
+		ResponseCookie accessTokenCookie = CookieUtils.createAccessTokenCookie(authResponse.getAccessToken(),
+				USER_TYPE);
+		ResponseCookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(authResponse.getRefreshToken(),
+				USER_TYPE);
+
+		return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()).body(authResponse);
 	}
 
 	@PostMapping("/new-token")
@@ -59,7 +71,12 @@ public class AuthApiController {
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 		this.adminTokenService.revokeRefreshToken(refreshTokenRequest);
-		return ResponseEntity.ok().build();
+
+		ResponseCookie removedAccessToken = CookieUtils.removeCookie("admin_access_token");
+		ResponseCookie removedRefreshToken = CookieUtils.removeCookie("admin_refresh_token");
+
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, removedAccessToken.toString())
+				.header(HttpHeaders.SET_COOKIE, removedRefreshToken.toString()).build();
 	}
 
 	@PostMapping("/verify-otp")

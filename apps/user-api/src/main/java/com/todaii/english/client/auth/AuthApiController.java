@@ -78,6 +78,7 @@ public class AuthApiController {
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 		this.userTokenService.revokeRefreshToken(refreshTokenRequest);
+
 		ResponseCookie removedAccessToken = CookieUtils.removeCookie("user_access_token");
 		ResponseCookie removedRefreshToken = CookieUtils.removeCookie("user_refresh_token");
 

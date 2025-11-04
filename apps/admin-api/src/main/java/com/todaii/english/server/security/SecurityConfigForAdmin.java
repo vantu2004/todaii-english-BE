@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +23,10 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
+//log list filter
+@EnableWebSecurity(debug = true)
 public class SecurityConfigForAdmin {
+	private final AdminCookieAuthFilter adminCookieAuthFilter;
 	private final JwtTokenFilter jwtTokenFilter;
 	private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
@@ -232,6 +236,12 @@ public class SecurityConfigForAdmin {
 		 * AuthorizationFilter nằm cuối -> add jwtTokenFilter để check token trc khi xác
 		 * thực bởi AuthorizationFilter
 		 */
+		/*
+		 * thêm filter xử lý token từ cookie lấy từ request trước khi thêm filter thực
+		 * hiện decode token phía dưới
+		 */
+		httpSecurity.addFilterBefore(adminCookieAuthFilter, AuthorizationFilter.class);
+
 		httpSecurity.addFilterBefore(this.jwtTokenFilter, AuthorizationFilter.class);
 
 		return httpSecurity.build();

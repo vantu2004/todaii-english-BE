@@ -26,8 +26,8 @@ public class CookieUtils {
 				 * nên đặt false.
 				 */
 				.secure(SECURE)
-				// Cookie được gửi cho mọi endpoint của domain
-				.path(PATH).maxAge(ACCESS_TOKEN_EXPIRY)
+				// Cookie được gửi cho mọi endpoint của domain, chuyển về giây
+				.path(PATH).maxAge(ACCESS_TOKEN_EXPIRY * 60L)
 				/*
 				 * dùng None khi FE/BE chạy khác domain, mặc dù đang dev và khác domain rồi
 				 * nhưng nó lại chỉ dùng khi gửi qua HTTPS -> tắt
@@ -39,7 +39,8 @@ public class CookieUtils {
 	public static ResponseCookie createRefreshTokenCookie(String token, String userType) {
 		String name = userType + "_" + REFRESH_TOKEN_NAME;
 
-		return ResponseCookie.from(name, token).httpOnly(true).secure(SECURE).path(PATH).maxAge(REFRESH_TOKEN_EXPIRY)
+		return ResponseCookie.from(name, token).httpOnly(true).secure(SECURE).path(PATH)
+				.maxAge(REFRESH_TOKEN_EXPIRY * 60L)
 				// .sameSite("None")
 				.build();
 	}

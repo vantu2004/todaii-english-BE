@@ -1,6 +1,5 @@
 package com.todaii.english.client.auth;
 
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -35,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthApiController {
+	private static final String USER_TYPE = "user";
+
 	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
 	private final UserTokenService userTokenService;
@@ -57,15 +58,15 @@ public class AuthApiController {
 		AuthResponse authResponse = this.userTokenService.generateToken(customUserDetails.getUser());
 
 		this.userService.updateLastLogin(email);
-		
-		// Create cookies
-		ResponseCookie accessTokenCookie = CookieUtils.createAccessTokenCookie(authResponse.getAccessToken());
-		ResponseCookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(authResponse.getRefreshToken());
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
-				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-				.body(authResponse);
+		// Create cookies
+		ResponseCookie accessTokenCookie = CookieUtils.createAccessTokenCookie(authResponse.getAccessToken(),
+				USER_TYPE);
+		ResponseCookie refreshTokenCookie = CookieUtils.createRefreshTokenCookie(authResponse.getRefreshToken(),
+				USER_TYPE);
+
+		return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString()).body(authResponse);
 	}
 
 	@PostMapping("/new-token")
@@ -77,13 +78,11 @@ public class AuthApiController {
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 		this.userTokenService.revokeRefreshToken(refreshTokenRequest);
-		ResponseCookie removedAccessToken = CookieUtils.removeCookie("access_token");
-		ResponseCookie removedRefreshToken = CookieUtils.removeCookie("refresh_token");
+		ResponseCookie removedAccessToken = CookieUtils.removeCookie("user_access_token");
+		ResponseCookie removedRefreshToken = CookieUtils.removeCookie("user_refresh_token");
 
-		return ResponseEntity.ok()
-				.header(HttpHeaders.SET_COOKIE, removedAccessToken.toString())
-				.header(HttpHeaders.SET_COOKIE, removedRefreshToken.toString())
-				.build();
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, removedAccessToken.toString())
+				.header(HttpHeaders.SET_COOKIE, removedRefreshToken.toString()).build();
 	}
 
 	@PostMapping("/verify-otp")
@@ -102,7 +101,7 @@ public class AuthApiController {
 	@GetMapping("forgot-password")
 	public ResponseEntity<?> forgotPassword(
 			@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid") @RequestParam String email) {
-		this.userService.forgotPassword(email);		
+		this.userService.forgotPassword(email);
 		return ResponseEntity.ok().build();
 	}
 

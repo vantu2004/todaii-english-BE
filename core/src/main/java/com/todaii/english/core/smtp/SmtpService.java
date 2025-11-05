@@ -19,7 +19,7 @@ public class SmtpService {
 	}
 
 	public void sendForgotPasswordEmail(String to, String resetURL) {
-		String subject = "Verify your email";
+		String subject = "Reset your password";
 		String content = MailTemplate.PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}", resetURL);
 		this.smtpSenderPort.send(to, subject, content);
 	}

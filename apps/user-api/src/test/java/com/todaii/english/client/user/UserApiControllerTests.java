@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.client.security.TestSecurityConfig;
 import com.todaii.english.core.entity.User;
+import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -12,6 +13,7 @@ import com.todaii.english.shared.request.UpdateProfileRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,11 +47,16 @@ class UserApiControllerTests {
 	private UserService userService;
 
 	private User user1;
+	private UserDTO userDTO;
+
+	@Autowired
+	private ModelMapper modelMapper;
 
 	@BeforeEach
 	void setup() {
 		user1 = User.builder().id(1L).email("test@example.com").displayName("Test User").enabled(true)
 				.status(UserStatus.ACTIVE).build();
+		userDTO = modelMapper.map(user1, UserDTO.class);
 	}
 
 	// ===== Helper method tạo Authentication giả =====
@@ -65,7 +72,7 @@ class UserApiControllerTests {
 	@Test
 	@DisplayName("TC-GET-ME-001: Token hợp lệ -> 200 OK + JSON")
 	void getProfile_success() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(user1);
+		when(userService.getUserById(1L)).thenReturn(userDTO);
 
 		mockMvc.perform(get(ENDPOINT).with(authentication(authUser(user1)))).andExpect(status().isOk())
 				.andExpect(jsonPath("$.email").value("test@example.com"))
@@ -96,8 +103,9 @@ class UserApiControllerTests {
 		UpdateProfileRequest req = UpdateProfileRequest.builder().displayName("New Name").build();
 
 		User updatedUser = User.builder().displayName("New Name").build();
+		UserDTO updatedUserDTO = modelMapper.map(updatedUser, UserDTO.class);
 
-		when(userService.updateProfile(eq(1L), any(UpdateProfileRequest.class))).thenReturn(updatedUser);
+		when(userService.updateProfile(eq(1L), any(UpdateProfileRequest.class))).thenReturn(updatedUserDTO);
 
 		mockMvc.perform(put(ENDPOINT).with(authentication(authUser(user1))).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(req))).andExpect(status().isOk())

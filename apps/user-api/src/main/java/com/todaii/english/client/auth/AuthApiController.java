@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.client.security.UserTokenService;
 import com.todaii.english.client.user.UserService;
-import com.todaii.english.core.entity.User;
+import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
 import com.todaii.english.shared.request.VerifyOtpRequest;
@@ -42,8 +42,8 @@ public class AuthApiController {
 
 	@PostMapping("/register")
 	public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
-		User user = this.userService.createUser(registerRequest);
-		return ResponseEntity.status(201).body(user);
+		UserDTO userDTO = this.userService.createUser(registerRequest);
+		return ResponseEntity.status(201).body(userDTO);
 	}
 
 	@PostMapping("/login")

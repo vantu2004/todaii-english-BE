@@ -3,6 +3,7 @@ package com.todaii.english.client.user;
 import com.todaii.english.core.entity.User;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -15,6 +16,7 @@ import com.todaii.english.shared.utils.OtpUtils;
 
 import lombok.RequiredArgsConstructor;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,10 +29,11 @@ public class UserService {
 	private final PasswordHasher passwordHasher;
 	private final UserRepository userRepository;
 	private final SmtpService smtpService;
+	private final ModelMapper modelMapper;
 
 	private String CLIENT_URL = "http://localhost:5173";
 
-	public User createUser(RegisterRequest request) {
+	public UserDTO createUser(RegisterRequest request) {
 		if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
 		}
@@ -44,7 +47,10 @@ public class UserService {
 				.displayName(request.getDisplayName()).otp(otp).otpExpiredAt(LocalDateTime.now().plusMinutes(15))
 				.status(UserStatus.PENDING).build();
 
-		return this.userRepository.save(user);
+		User savedUser = this.userRepository.save(user);
+		UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
+
+		return userDTO;
 	}
 
 	public void verifyOtp(VerifyOtpRequest verifyOtpRequest) {
@@ -133,14 +139,14 @@ public class UserService {
 		this.userRepository.save(user);
 	}
 
-	public User getUserById(Long id) {
+	public UserDTO getUserById(Long id) {
 		User user = this.userRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
-		return user;
+		return modelMapper.map(user, UserDTO.class);
 	}
 
-	public User updateProfile(Long id, UpdateProfileRequest request) {
+	public UserDTO updateProfile(Long id, UpdateProfileRequest request) {
 		User user = this.userRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
@@ -162,7 +168,10 @@ public class UserService {
 		user.setDisplayName(request.getDisplayName());
 		user.setAvatarUrl(request.getAvatarUrl());
 
-		return this.userRepository.save(user);
+		User savedUser = this.userRepository.save(user);
+		UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
+
+		return userDTO;
 	}
 
 }

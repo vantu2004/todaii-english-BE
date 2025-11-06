@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.AdminStatus;
 
@@ -55,12 +56,6 @@ public class Admin implements JwtPrincipal {
 	@Column(name = "avatar_url", length = 512)
 	private String avatarUrl;
 
-	@Column(name = "otp", length = 16)
-	private String otp;
-
-	@Column(name = "otp_expired_at")
-	private LocalDateTime otpExpiredAt;
-
 	@Builder.Default
 	private Boolean enabled = false;
 
@@ -97,11 +92,17 @@ public class Admin implements JwtPrincipal {
 	}
 
 	// chuyển roles về tập string để dùng tạo jwt token
+	/*
+	 * dùng jsonIgnore vì Jackson (thư viện JSON mặc định trong Spring Boot) khi gặp
+	 * class có getter public, nó sẽ coi đó là property cần serialize.
+	 */
+	@JsonIgnore
 	@Override
 	public Set<String> getRoleCodes() {
 		return roles.stream().map(AdminRole::getCode).collect(Collectors.toSet());
 	}
 
+	@JsonIgnore
 	@Override
 	public String getActorType() {
 		return "ADMIN";

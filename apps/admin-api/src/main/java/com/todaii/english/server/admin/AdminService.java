@@ -11,16 +11,13 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.AdminRole;
 import com.todaii.english.core.security.PasswordHasher;
-import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.UpdateProfileRequest;
-import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.request.server.CreateAdminRequest;
 import com.todaii.english.shared.request.server.UpdateAdminRequest;
-import com.todaii.english.shared.utils.OtpUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +27,6 @@ public class AdminService {
 	private final AdminRepository adminRepository;
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
-	private final SmtpService smtpService;
 
 	public List<Admin> findAll() {
 		// chỉ lấy những admin chưa bị xóa
@@ -54,12 +50,8 @@ public class AdminService {
 		// tìm role trong db
 		Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
 
-		String otp = OtpUtils.generateOtp();
-		this.smtpService.sendVerifyEmail(request.getEmail(), otp);
-
 		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
-				.displayName(request.getDisplayName()).otp(otp).otpExpiredAt(LocalDateTime.now().plusMinutes(15))
-				.status(AdminStatus.PENDING).roles(roles).build();
+				.displayName(request.getDisplayName()).status(AdminStatus.PENDING).roles(roles).build();
 
 		return this.adminRepository.save(admin);
 	}
@@ -132,46 +124,6 @@ public class AdminService {
 		this.adminRepository.save(admin);
 	}
 
-	public void verifyOtp(VerifyOtpRequest verifyOtpRequest) {
-		Admin admin = this.adminRepository.findActiveByEmail(verifyOtpRequest.getEmail())
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-
-		if (admin.getOtp() == null || admin.getOtpExpiredAt() == null) {
-			throw new BusinessException(AuthErrorCode.OTP_NOT_FOUND);
-		}
-		if (admin.getOtpExpiredAt().isBefore(LocalDateTime.now())) {
-			throw new BusinessException(AuthErrorCode.OTP_EXPIRED);
-		}
-		if (!verifyOtpRequest.getOtp().equals(admin.getOtp())) {
-			throw new BusinessException(AuthErrorCode.OTP_INVALID);
-		}
-
-		// Nếu hợp lệ thì clear OTP và active account
-		admin.setOtp(null);
-		admin.setOtpExpiredAt(null);
-		admin.setEnabled(true);
-		admin.setStatus(AdminStatus.ACTIVE);
-
-		this.adminRepository.save(admin);
-	}
-
-	public void resendOtp(String email) {
-		Admin admin = this.adminRepository.findActiveByEmail(email)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-
-		if (admin.getEnabled() || !admin.getStatus().equals(AdminStatus.PENDING)) {
-			throw new BusinessException(AuthErrorCode.ALREADY_VERIFIED);
-		}
-
-		String otp = OtpUtils.generateOtp();
-
-		admin.setOtp(otp);
-		admin.setOtpExpiredAt(LocalDateTime.now().plusMinutes(15));
-		this.adminRepository.save(admin);
-
-		this.smtpService.sendVerifyEmail(email, otp);
-	}
-
 	public void updateLastLogin(String email) {
 		Admin admin = this.adminRepository.findActiveByEmail(email)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
@@ -191,8 +143,6 @@ public class AdminService {
 		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
 		if (admin.getEnabled()) {
 			admin.setStatus(AdminStatus.ACTIVE);
-			admin.setOtp(null);
-			admin.setOtpExpiredAt(null);
 		} else {
 			admin.setStatus(AdminStatus.LOCKED);
 		}

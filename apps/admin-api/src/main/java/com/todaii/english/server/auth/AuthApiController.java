@@ -8,11 +8,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.server.admin.AdminService;
@@ -20,12 +18,10 @@ import com.todaii.english.server.security.AdminTokenService;
 import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.AuthRequest;
 import com.todaii.english.shared.request.RefreshTokenRequest;
-import com.todaii.english.shared.request.VerifyOtpRequest;
 import com.todaii.english.shared.response.AuthResponse;
 import com.todaii.english.shared.utils.CookieUtils;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -79,16 +75,4 @@ public class AuthApiController {
 				.header(HttpHeaders.SET_COOKIE, removedRefreshToken.toString()).build();
 	}
 
-	@PostMapping("/verify-otp")
-	public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest verifyOtpRequest) {
-		this.adminService.verifyOtp(verifyOtpRequest);
-		return ResponseEntity.ok().build();
-	}
-
-	@GetMapping("/resend-otp")
-	public ResponseEntity<?> resendOtp(
-			@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid") @RequestParam String email) {
-		this.adminService.resendOtp(email);
-		return ResponseEntity.ok().build();
-	}
 }

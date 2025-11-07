@@ -51,10 +51,19 @@ public class ArticleService {
 	}
 
 	public Page<Article> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		return search(null, page, size, sortBy, direction, keyword);
+	}
+
+	public Page<Article> findByTopicId(Long topicId, int page, int size, String sortBy, String direction,
+			String keyword) {
+		return search(topicId, page, size, sortBy, direction, keyword);
+	}
+
+	private Page<Article> search(Long topicId, int page, int size, String sortBy, String direction, String keyword) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return articleRepository.search(keyword, pageable);
+		return articleRepository.search(topicId, keyword, pageable);
 	}
 
 	public Article findById(Long id) {
@@ -93,4 +102,5 @@ public class ArticleService {
 	public void deleteById(Long id) {
 		articleRepository.deleteById(id);
 	}
+
 }

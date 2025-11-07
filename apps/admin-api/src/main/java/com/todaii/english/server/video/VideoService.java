@@ -79,7 +79,16 @@ public class VideoService {
 	public Page<Video> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
-		Page<Video> videos = videoRepository.search(keyword, pageable);
+		Page<Video> videos = videoRepository.search(null, keyword, pageable);
+
+		return videos;
+	}
+
+	public Page<Video> findByTopicId(Long topicId, int page, int size, String sortBy, String direction,
+			String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+		Page<Video> videos = videoRepository.search(topicId, keyword, pageable);
 
 		return videos;
 	}

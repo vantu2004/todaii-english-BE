@@ -7,7 +7,6 @@ import java.util.Set;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import jakarta.persistence.Column;
@@ -66,13 +65,11 @@ public class VocabDeck {
 	@ManyToMany
 	@JoinTable(name = "deck_groups", joinColumns = @JoinColumn(name = "deck_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
 	@Builder.Default
-	@JsonIgnore
 	private Set<VocabGroup> groups = new HashSet<>();
 
 	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "deck_words", joinColumns = @JoinColumn(name = "deck_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
 	@Builder.Default
-	@JsonIgnore
 	private Set<DictionaryEntry> words = new HashSet<>();
 }

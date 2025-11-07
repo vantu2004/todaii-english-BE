@@ -10,17 +10,23 @@ import com.todaii.english.core.entity.Article;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
+	// nếu topicId != null nghĩa là tìm các article dựa theo topicId, dùng chung cho
+	// 2 hàm getArticles
 	@Query("""
-			SELECT a FROM Article a
+			SELECT DISTINCT a FROM Article a
+			LEFT JOIN a.topics t
 			WHERE
-			    ?1 IS NULL
-			    OR STR(a.id) LIKE CONCAT('%', ?1, '%')
-			    OR LOWER(a.sourceId) LIKE LOWER(CONCAT('%', ?1, '%'))
-			    OR LOWER(a.sourceName) LIKE LOWER(CONCAT('%', ?1, '%'))
-			    OR LOWER(a.author) LIKE LOWER(CONCAT('%', ?1, '%'))
-			    OR LOWER(a.title) LIKE LOWER(CONCAT('%', ?1, '%'))
-			    OR a.description LIKE CONCAT('%', ?1, '%')
-			    OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?1, '%'))
+				(?1 IS NULL OR t.id = ?1) AND
+				(
+					?2 IS NULL
+				    OR STR(a.id) LIKE CONCAT('%', ?2, '%')
+				    OR LOWER(a.sourceId) LIKE LOWER(CONCAT('%', ?2, '%'))
+				    OR LOWER(a.sourceName) LIKE LOWER(CONCAT('%', ?2, '%'))
+				    OR LOWER(a.author) LIKE LOWER(CONCAT('%', ?2, '%'))
+				    OR LOWER(a.title) LIKE LOWER(CONCAT('%', ?2, '%'))
+				    OR a.description LIKE CONCAT('%', ?2, '%')
+				    OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?2, '%'))
+				)
 			""")
-	public Page<Article> search(String keyword, Pageable pageable);
+	public Page<Article> search(Long topicId, String keyword, Pageable pageable);
 }

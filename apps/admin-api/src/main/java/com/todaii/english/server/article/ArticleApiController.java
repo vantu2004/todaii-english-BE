@@ -58,6 +58,20 @@ public class ArticleApiController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/topic/{topicId}")
+	public ResponseEntity<PagedResponse<Article>> getArticlesBytopicId(@PathVariable Long topicId,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+		Page<Article> articles = articleService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
+
+		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
+				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
 		return ResponseEntity.ok(articleService.findById(id));

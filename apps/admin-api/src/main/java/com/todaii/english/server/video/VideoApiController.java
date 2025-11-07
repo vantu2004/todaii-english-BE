@@ -67,6 +67,19 @@ public class VideoApiController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/topic/{topicId}")
+	public ResponseEntity<PagedResponse<Video>> getVideosByTopicId(@PathVariable Long topicId,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+		Page<Video> videos = videoService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
+
+		PagedResponse<Video> response = new PagedResponse<>(videos.getContent(), page, size, videos.getTotalElements(),
+				videos.getTotalPages(), videos.isFirst(), videos.isLast(), sortBy, direction);
+
+		return ResponseEntity.ok(response);
+	}
+
 	@PostMapping
 	public ResponseEntity<Video> createVideo(@Valid @RequestBody VideoDTO videoDTO) {
 		return ResponseEntity.status(201).body(videoService.createVideo(videoDTO));

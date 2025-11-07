@@ -49,6 +49,19 @@ public class VocabDeckApiController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/group/{groupId}")
+	public ResponseEntity<PagedResponse<VocabDeck>> getDecksByGroupdId(@PathVariable Long groupId,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+		Page<VocabDeck> decks = vocabDeckService.findByGroupId(groupId, page, size, sortBy, direction, keyword);
+
+		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,
+				decks.getTotalElements(), decks.getTotalPages(), decks.isFirst(), decks.isLast(), sortBy, direction);
+
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/{deckId}")
 	public ResponseEntity<VocabDeck> getVocabDeck(@PathVariable Long deckId) {
 		return ResponseEntity.ok(vocabDeckService.findById(deckId));

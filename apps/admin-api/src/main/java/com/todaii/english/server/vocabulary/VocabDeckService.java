@@ -50,7 +50,15 @@ public class VocabDeckService {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return vocabDeckRepository.search(keyword, pageable);
+		return vocabDeckRepository.search(null, keyword, pageable);
+	}
+
+	public Page<VocabDeck> findByGroupId(Long groupId, int page, int size, String sortBy, String direction,
+			String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		return vocabDeckRepository.search(groupId, keyword, pageable);
 	}
 
 	public VocabDeck findById(Long deckId) {
@@ -116,4 +124,5 @@ public class VocabDeckService {
 
 		vocabDeckRepository.deleteById(deckId);
 	}
+
 }

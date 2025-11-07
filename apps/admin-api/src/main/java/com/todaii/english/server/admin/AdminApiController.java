@@ -2,6 +2,7 @@ package com.todaii.english.server.admin;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
@@ -12,6 +13,7 @@ import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.server.CreateAdminRequest;
 import com.todaii.english.shared.request.server.UpdateAdminRequest;
+import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class AdminApiController {
 
 	private final AdminService adminService;
 
-	@GetMapping
+	@Deprecated
 	public ResponseEntity<?> getAllAdmins() {
 		List<Admin> admins = this.adminService.findAll();
 
@@ -32,6 +34,20 @@ public class AdminApiController {
 		}
 
 		return ResponseEntity.ok(admins);
+	}
+
+	// sortBy dùng đúng tên trong entity chứ ko phải snakecase
+	@GetMapping
+	public ResponseEntity<?> getAllAdminsPaged(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+		Page<Admin> admins = this.adminService.findAllPaged(page, size, sortBy, direction, keyword);
+
+		PagedResponse<Admin> response = new PagedResponse<Admin>(admins.getContent(), page, size,
+				admins.getTotalElements(), admins.getTotalPages(), admins.isFirst(), admins.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")

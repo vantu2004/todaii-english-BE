@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,9 +32,17 @@ public class AdminService {
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
 
+	@Deprecated
 	public List<Admin> findAll() {
 		// chỉ lấy những admin chưa bị xóa
 		return this.adminRepository.findAll();
+	}
+
+	public Page<Admin> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		return this.adminRepository.findAllActive(keyword, pageable);
 	}
 
 	public Admin findById(Long id) {
@@ -149,4 +161,5 @@ public class AdminService {
 
 		this.adminRepository.save(admin);
 	}
+
 }

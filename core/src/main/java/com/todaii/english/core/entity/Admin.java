@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.AdminStatus;
 
@@ -47,6 +48,7 @@ public class Admin implements JwtPrincipal {
 	@Column(nullable = false, length = 191, unique = true)
 	private String email;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@Column(name = "password_hash", nullable = false, length = 191)
 	private String passwordHash;
 

@@ -3,6 +3,7 @@ package com.todaii.english.server.topic;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.shared.request.server.CreateTopicRequest;
+import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -30,13 +32,26 @@ import lombok.RequiredArgsConstructor;
 public class TopicApiController {
 	private final TopicService topicService;
 
-	@GetMapping
+	@Deprecated
 	public ResponseEntity<?> getAll() {
 		List<Topic> topics = topicService.findAll();
 		if (topics.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(topics);
+	}
+
+	@GetMapping
+	public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+		Page<Topic> topics = topicService.findAllPaged(page, size, sortBy, direction, keyword);
+
+		PagedResponse<Topic> response = new PagedResponse<Topic>(topics.getContent(), page, size,
+				topics.getTotalElements(), topics.getTotalPages(), topics.isFirst(), topics.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")

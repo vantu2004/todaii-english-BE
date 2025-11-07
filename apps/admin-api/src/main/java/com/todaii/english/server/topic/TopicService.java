@@ -2,6 +2,10 @@ package com.todaii.english.server.topic;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Topic;
@@ -16,8 +20,16 @@ import lombok.RequiredArgsConstructor;
 public class TopicService {
 	private final TopicRepository topicRepository;
 
+	@Deprecated
 	public List<Topic> findAll() {
 		return topicRepository.findAll();
+	}
+
+	public Page<Topic> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		return topicRepository.findAllActive(keyword, pageable);
 	}
 
 	public Topic findById(Long id) {

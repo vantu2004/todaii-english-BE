@@ -1,5 +1,6 @@
 package com.todaii.english.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.UserStatus;
 import jakarta.persistence.*;
@@ -18,7 +19,6 @@ import java.time.LocalDateTime;
 @Builder
 @ToString
 public class User implements JwtPrincipal {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -80,6 +80,7 @@ public class User implements JwtPrincipal {
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
+	@JsonIgnore
 	@Override
 	public String getActorType() {
 		return "USER";

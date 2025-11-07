@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,8 +90,17 @@ public class DictionaryEntryService {
 		return senses;
 	}
 
+	@Deprecated
 	public List<DictionaryEntry> findAll() {
 		return dictionaryEntryRepository.findAll();
+	}
+
+	public Page<DictionaryEntry> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+		Page<DictionaryEntry> entries = dictionaryEntryRepository.search(keyword, pageable);
+
+		return entries;
 	}
 
 	public DictionaryEntry findById(Long id) {

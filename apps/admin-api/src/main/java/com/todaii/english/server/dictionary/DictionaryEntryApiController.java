@@ -3,6 +3,7 @@ package com.todaii.english.server.dictionary;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.response.DictionaryApiResponse;
+import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -36,7 +38,7 @@ public class DictionaryEntryApiController {
 		return ResponseEntity.ok(dictionaryApiResponses);
 	}
 
-	@GetMapping
+	@Deprecated
 	public ResponseEntity<?> getAllWords() {
 		List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
 		if (dictionaryEntries.isEmpty()) {
@@ -44,6 +46,19 @@ public class DictionaryEntryApiController {
 		}
 
 		return ResponseEntity.ok(dictionaryEntries);
+	}
+
+	@GetMapping
+	public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "headword") String sortBy,
+			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+		Page<DictionaryEntry> entries = dictionaryService.findAllPaged(page, size, sortBy, direction, keyword);
+
+		PagedResponse<DictionaryEntry> response = new PagedResponse<DictionaryEntry>(entries.getContent(), page, size,
+				entries.getTotalElements(), entries.getTotalPages(), entries.isFirst(), entries.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")

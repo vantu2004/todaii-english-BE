@@ -6,6 +6,10 @@ import java.util.Set;
 
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -67,8 +71,17 @@ public class VideoService {
 		return videoRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Video not found"));
 	}
 
+	@Deprecated
 	public List<Video> findAll() {
 		return videoRepository.findAll();
+	}
+
+	public Page<Video> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+		Page<Video> videos = videoRepository.search(keyword, pageable);
+
+		return videos;
 	}
 
 	public Video createVideo(VideoDTO videoDTO) {

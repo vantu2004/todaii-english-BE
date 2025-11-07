@@ -2,6 +2,7 @@ package com.todaii.english.server.article;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import com.todaii.english.core.entity.Article;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
+import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -33,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class ArticleApiController {
 	private final ArticleService articleService;
 
-	@GetMapping
+	@Deprecated
 	public ResponseEntity<List<Article>> getAllArticles() {
 		List<Article> articles = articleService.findAll();
 		if (articles.isEmpty()) {
@@ -41,6 +43,19 @@ public class ArticleApiController {
 		}
 
 		return ResponseEntity.ok(articles);
+	}
+
+	@GetMapping
+	public ResponseEntity<PagedResponse<Article>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+		Page<Article> articles = articleService.findAllPaged(page, size, sortBy, direction, keyword);
+
+		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
+				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")
@@ -60,7 +75,7 @@ public class ArticleApiController {
 		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(query, pageSize, page, sortBy);
 		return ResponseEntity.ok(newsApiResponse);
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Article> createArticle(@Valid @RequestBody ArticleRequest articleRequest) {
 		return ResponseEntity.status(201).body(articleService.create(articleRequest));

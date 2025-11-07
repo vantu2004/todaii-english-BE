@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import java.time.LocalDateTime;
@@ -71,17 +72,21 @@ public class Article {
 
 	@OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
 	@Builder.Default
+	// mặc định sort paraOrder theo asc
+	@OrderBy("paraOrder ASC")
 	private Set<ArticleParagraph> paragraphs = new HashSet<>();
 
 	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "article_dictionary_entries", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
 	@Builder.Default
+	@JsonIgnore
 	private Set<DictionaryEntry> entries = new HashSet<>();
 
 	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "article_topics", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))
 	@Builder.Default
+	@JsonIgnore
 	private Set<Topic> topics = new HashSet<>();
 }

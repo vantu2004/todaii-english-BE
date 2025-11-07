@@ -19,7 +19,7 @@ public class GeminiApiController {
 	private final GeminiService geminiService;
 
 	@GetMapping("/generate")
-	public ResponseEntity<?> generate(@RequestParam @NotNull @Length(min = 1, max = 1024) String prompt) {
+	public ResponseEntity<String> generate(@RequestParam @NotNull @Length(min = 1, max = 1024) String prompt) {
 		return ResponseEntity.ok(geminiService.askGemini(prompt));
 	}
 

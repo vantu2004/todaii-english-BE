@@ -22,6 +22,7 @@ import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
@@ -33,13 +34,13 @@ public class DictionaryEntryApiController {
 	private final DictionaryEntryService dictionaryService;
 
 	@GetMapping("/raw-word")
-	public ResponseEntity<?> getRawWord(@RequestParam String word) {
+	public ResponseEntity<DictionaryApiResponse[]> getRawWord(@RequestParam String word) {
 		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(word);
 		return ResponseEntity.ok(dictionaryApiResponses);
 	}
 
 	@Deprecated
-	public ResponseEntity<?> getAllWords() {
+	public ResponseEntity<List<DictionaryEntry>> getAllWords() {
 		List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
 		if (dictionaryEntries.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -49,9 +50,10 @@ public class DictionaryEntryApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "headword") String sortBy,
-			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<DictionaryEntry>> getAllPaged(
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "headword") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
 		Page<DictionaryEntry> entries = dictionaryService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<DictionaryEntry> response = new PagedResponse<DictionaryEntry>(entries.getContent(), page, size,
@@ -62,29 +64,29 @@ public class DictionaryEntryApiController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getWord(@PathVariable Long id) {
+	public ResponseEntity<DictionaryEntry> getWord(@PathVariable Long id) {
 		return ResponseEntity.ok(dictionaryService.findById(id));
 	}
 
 	@PostMapping("/gemini")
-	public ResponseEntity<?> createWordByGemini(@RequestParam @NotNull @Length(min = 1, max = 64) String word)
-			throws Exception {
+	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(
+			@RequestParam @NotNull @Length(min = 1, max = 64) String word) throws Exception {
 		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createWord(@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
+	public ResponseEntity<DictionaryEntry> createWord(@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
 		return ResponseEntity.status(201).body(dictionaryService.createWord(dictionaryEntryDTO));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateWord(@PathVariable Long id,
+	public ResponseEntity<DictionaryEntry> updateWord(@PathVariable Long id,
 			@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
 		return ResponseEntity.ok(dictionaryService.updateWord(id, dictionaryEntryDTO));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteWord(@PathVariable Long id) {
+	public ResponseEntity<Void> deleteWord(@PathVariable Long id) {
 		dictionaryService.deleteWord(id);
 		return ResponseEntity.noContent().build();
 	}

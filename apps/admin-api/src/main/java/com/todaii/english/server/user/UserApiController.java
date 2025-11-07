@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,16 +20,18 @@ import com.todaii.english.shared.request.server.UpdateUserRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/user")
 public class UserApiController {
 	private final UserService userService;
 
 	@Deprecated
-	public ResponseEntity<?> getAllUsers() {
+	public ResponseEntity<List<UserDTO>> getAllUsers() {
 		List<UserDTO> userDTOs = userService.findAll();
 		if (userDTOs.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -37,9 +40,9 @@ public class UserApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
 		Page<UserDTO> userDTOs = userService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<UserDTO> response = new PagedResponse<UserDTO>(userDTOs.getContent(), page, size,

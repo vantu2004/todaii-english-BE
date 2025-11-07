@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Article;
@@ -41,8 +45,16 @@ public class ArticleService {
 
 	}
 
+	@Deprecated
 	public List<Article> findAll() {
 		return articleRepository.findAll();
+	}
+
+	public Page<Article> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		return articleRepository.search(keyword, pageable);
 	}
 
 	public Article findById(Long id) {

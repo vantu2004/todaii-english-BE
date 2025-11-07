@@ -22,6 +22,7 @@ import com.todaii.english.shared.request.server.CreateTopicRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +34,7 @@ public class TopicApiController {
 	private final TopicService topicService;
 
 	@Deprecated
-	public ResponseEntity<?> getAll() {
+	public ResponseEntity<List<Topic>> getAll() {
 		List<Topic> topics = topicService.findAll();
 		if (topics.isEmpty()) {
 			return ResponseEntity.noContent().build();
@@ -42,9 +43,9 @@ public class TopicApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<Topic>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
 		Page<Topic> topics = topicService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<Topic> response = new PagedResponse<Topic>(topics.getContent(), page, size,
@@ -55,27 +56,30 @@ public class TopicApiController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getById(@PathVariable Long id) {
+	public ResponseEntity<Topic> getById(@PathVariable Long id) {
 		return ResponseEntity.ok(topicService.findById(id));
 	}
 
 	@PostMapping
-	public ResponseEntity<?> create(@Valid @RequestBody CreateTopicRequest createTopicRequest) {
+	public ResponseEntity<Topic> create(@Valid @RequestBody CreateTopicRequest createTopicRequest) {
 		return ResponseEntity.status(201).body(topicService.create(createTopicRequest));
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestParam @NotBlank @Length(max = 191) String name) {
+	public ResponseEntity<Topic> update(@PathVariable Long id, @RequestParam @NotBlank @Length(max = 191) String name) {
 		return ResponseEntity.ok(topicService.update(id, name));
 	}
 
-	@DeleteMapping("/{id}")
-	public void delete(@PathVariable Long id) {
-		topicService.softDelete(id);
+	@PatchMapping("/{id}/enabled")
+	public ResponseEntity<Void> toggleEnabled(@PathVariable Long id) {
+		topicService.toggleEnabled(id);
+		return ResponseEntity.ok().build();
 	}
 
-	@PatchMapping("/{id}/enabled")
-	public void toggleEnabled(@PathVariable Long id) {
-		topicService.toggleEnabled(id);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		topicService.softDelete(id);
+		return ResponseEntity.ok().build();
 	}
+
 }

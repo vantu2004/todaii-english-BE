@@ -24,7 +24,7 @@ public class SettingApiController {
 	private final SettingService settingService;
 
 	@GetMapping("/smtp")
-	public ResponseEntity<?> getSmtpSettings() {
+	public ResponseEntity<List<Setting>> getSmtpSettings() {
 		List<Setting> settings = this.settingService.getSettingsByCategory(SettingCategory.MAIL_SERVER);
 		if (CollectionUtils.isEmpty(settings)) {
 			return ResponseEntity.noContent().build();
@@ -34,7 +34,7 @@ public class SettingApiController {
 	}
 
 	@PutMapping("/smtp")
-	public ResponseEntity<?> updateSmtpSettings(@Valid @RequestBody SettingRequest request) {
+	public ResponseEntity<List<Setting>> updateSmtpSettings(@Valid @RequestBody SettingRequest request) {
 		List<Setting> updated = this.settingService.updateSettings(SettingCategory.MAIL_SERVER, request.getSettings());
 
 		return ResponseEntity.ok(updated);

@@ -2,7 +2,9 @@ package com.todaii.english.server.vocabulary;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,24 +13,40 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.VocabDeck;
 import com.todaii.english.shared.request.server.DeckRequest;
+import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/vocab-deck")
 public class VocabDeckApiController {
 	private final VocabDeckService vocabDeckService;
 	private final VocabDeckGeneratorService vocabDeckGeneratorService;
 
-	@GetMapping
+	@Deprecated
 	public ResponseEntity<List<VocabDeck>> getAllVocabDecks() {
 		return ResponseEntity.ok(vocabDeckService.findAll());
+	}
+
+	@GetMapping
+	public ResponseEntity<PagedResponse<VocabDeck>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+		Page<VocabDeck> decks = vocabDeckService.findAllPaged(page, size, sortBy, direction, keyword);
+
+		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,
+				decks.getTotalElements(), decks.getTotalPages(), decks.isFirst(), decks.isLast(), sortBy, direction);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{deckId}")

@@ -59,13 +59,13 @@ public class AuthApiController {
 	}
 
 	@PostMapping("/new-token")
-	public ResponseEntity<?> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
+	public ResponseEntity<AuthResponse> refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
 		AuthResponse authResponse = this.adminTokenService.refreshTokens(refreshTokenRequest);
 		return ResponseEntity.ok(authResponse);
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+	public ResponseEntity<Void> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
 		this.adminTokenService.revokeRefreshToken(refreshTokenRequest);
 
 		ResponseCookie removedAccessToken = CookieUtils.removeCookie("admin_access_token");

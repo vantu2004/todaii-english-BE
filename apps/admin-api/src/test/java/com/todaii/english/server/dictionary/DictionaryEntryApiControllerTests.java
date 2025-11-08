@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -81,6 +83,7 @@ public class DictionaryEntryApiControllerTests {
 	// ============================
 	// 🔹 GET ALL
 	// ============================
+	@Deprecated
 	@Test
 	@DisplayName("GET /api/v1/dictionary → 200 OK")
 	void testGetAllWords_ok() throws Exception {
@@ -90,12 +93,26 @@ public class DictionaryEntryApiControllerTests {
 				.andExpect(jsonPath("$[0].headword").value("run")).andExpect(jsonPath("$[0].ipa").value("/rʌn/"));
 	}
 
+	@Deprecated
 	@Test
 	@DisplayName("GET /api/v1/dictionary → 204 No Content")
 	void testGetAllWords_noContent() throws Exception {
 		when(dictionaryService.findAll()).thenReturn(List.of());
 
 		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isNoContent());
+	}
+
+	@Test
+	@DisplayName("GET /api/v1/dictionary?page=1&size=2&sortBy=headword&direction=asc → 200 OK")
+	void testGetAllPaged_ok() throws Exception {
+		Page<DictionaryEntry> page = new PageImpl<>(List.of(createSampleEntry()));
+
+		when(dictionaryService.findAllPaged(1, 2, "headword", "asc", null)).thenReturn(page);
+
+		mockMvc.perform(get(END_POINT_PATH).param("page", "1").param("size", "2").param("sortBy", "headword")
+				.param("direction", "asc")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[0].headword").value("run")).andExpect(jsonPath("$.page").value(1))
+				.andExpect(jsonPath("$.size").value(2)).andExpect(jsonPath("$.direction").value("asc"));
 	}
 
 	// ============================
@@ -146,6 +163,13 @@ public class DictionaryEntryApiControllerTests {
 				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isConflict());
 	}
 
+	@Test
+	@DisplayName("POST /api/v1/dictionary → 400 Bad Request when DTO is null")
+	void testCreateWord_validation_nullDTO() throws Exception {
+		mockMvc.perform(post(END_POINT_PATH).contentType(MediaType.APPLICATION_JSON).content("null"))
+				.andExpect(status().isBadRequest());
+	}
+
 	// ============================
 	// 🔹 UPDATE
 	// ============================
@@ -174,6 +198,16 @@ public class DictionaryEntryApiControllerTests {
 				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isNotFound());
 	}
 
+	@Test
+	@DisplayName("PUT /api/v1/dictionary/{id} → 400 Bad Request when DTO has empty senses")
+	void testUpdateWord_validation_emptySenses() throws Exception {
+		DictionaryEntryDTO dto = createSampleDTO();
+		dto.setSenses(Set.of()); // empty
+
+		mockMvc.perform(put(END_POINT_PATH + "/10").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(dto))).andExpect(status().isBadRequest());
+	}
+
 	// ============================
 	// 🔹 DELETE
 	// ============================
@@ -198,20 +232,29 @@ public class DictionaryEntryApiControllerTests {
 	// 🔹 GEMINI CREATE
 	// ============================
 	@Test
-	@DisplayName("GET /api/v1/dictionary/gemini?word=run → 200 OK")
+	@DisplayName("POST /api/v1/dictionary/gemini?word=run → 200 OK")
 	void testCreateWordByGemini_ok() throws Exception {
 		when(dictionaryService.createWordByGemini("run")).thenReturn(List.of(createSampleEntry()));
 
-		mockMvc.perform(get(END_POINT_PATH + "/gemini").param("word", "run")).andExpect(status().isOk())
+		mockMvc.perform(post(END_POINT_PATH + "/gemini").param("word", "run")).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].headword").value("run"));
 	}
 
 	@Test
-	@DisplayName("GET /api/v1/dictionary/gemini?word=run → 409 Conflict if exists")
+	@DisplayName("POST /api/v1/dictionary/gemini?word=run → 409 Conflict if exists")
 	void testCreateWordByGemini_conflict() throws Exception {
 		when(dictionaryService.createWordByGemini("run")).thenThrow(new BusinessException(409, "already exists"));
 
-		mockMvc.perform(get(END_POINT_PATH + "/gemini").param("word", "run")).andExpect(status().isConflict());
+		mockMvc.perform(post(END_POINT_PATH + "/gemini").param("word", "run")).andExpect(status().isConflict());
+	}
+
+	@Test
+	@DisplayName("POST /api/v1/dictionary/gemini → 500 Internal Server Error on unexpected exception")
+	void testCreateWordByGemini_exception() throws Exception {
+		when(dictionaryService.createWordByGemini("run")).thenThrow(new RuntimeException("API failed"));
+
+		mockMvc.perform(post(END_POINT_PATH + "/gemini").param("word", "run"))
+				.andExpect(status().isInternalServerError());
 	}
 
 	// ============================================================

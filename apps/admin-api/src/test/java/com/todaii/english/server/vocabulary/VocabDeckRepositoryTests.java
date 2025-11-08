@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import com.todaii.english.core.entity.VocabDeck;
@@ -87,5 +90,58 @@ public class VocabDeckRepositoryTests {
 
 		Optional<VocabDeck> result = vocabDeckRepository.findById(id);
 		assertThat(result).isEmpty();
+	}
+
+	@Test
+	@DisplayName("Search: trả về tất cả khi groupId và keyword là NULL")
+	void testSearch_Nulls() {
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<VocabDeck> result = vocabDeckRepository.search(null, null, pageable);
+
+		// Giả định có ít nhất 1 deck được tạo trong các test case trước đó
+		assertThat(result.getTotalElements()).isGreaterThanOrEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("Search: tìm kiếm theo keyword (name) và phân trang")
+	void testSearch_ByKeywordName() {
+		// Tạo deck với tên dễ tìm
+		VocabDeck searchDeck = VocabDeck.builder().name("Finance Terminology").description("").cefrLevel(CefrLevel.C1)
+				.build();
+		vocabDeckRepository.save(searchDeck);
+
+		Pageable pageable = PageRequest.of(0, 10);
+		// Tìm kiếm một phần tên
+		Page<VocabDeck> result = vocabDeckRepository.search(null, "finance", pageable);
+
+		assertThat(result.getContent()).extracting(VocabDeck::getName).contains("Finance Terminology");
+		assertThat(result.getTotalElements()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("Search: tìm kiếm theo keyword (description)")
+	void testSearch_ByKeywordDescription() {
+		VocabDeck searchDeck = VocabDeck.builder().name("Test").description("This is a simple B1 deck")
+				.cefrLevel(CefrLevel.B1).build();
+		vocabDeckRepository.save(searchDeck);
+
+		Pageable pageable = PageRequest.of(0, 10);
+		// Tìm kiếm một phần description
+		Page<VocabDeck> result = vocabDeckRepository.search(null, "simple B1", pageable);
+
+		assertThat(result.getContent()).extracting(VocabDeck::getName).contains("Test");
+	}
+
+	@Test
+	@DisplayName("Search: tìm kiếm theo keyword (CEFR Level)")
+	void testSearch_ByKeywordCefrLevel() {
+		VocabDeck searchDeck = VocabDeck.builder().name("Test A1").description("").cefrLevel(CefrLevel.A1).build();
+		vocabDeckRepository.save(searchDeck);
+
+		Pageable pageable = PageRequest.of(0, 10);
+		// Tìm kiếm CEFR Level "A1"
+		Page<VocabDeck> result = vocabDeckRepository.search(null, "a1", pageable);
+
+		assertThat(result.getContent()).extracting(VocabDeck::getName).contains("Test A1");
 	}
 }

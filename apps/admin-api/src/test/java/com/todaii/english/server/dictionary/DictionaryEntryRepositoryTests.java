@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
 import com.todaii.english.core.entity.DictionaryEntry;
@@ -72,16 +74,6 @@ public class DictionaryEntryRepositoryTests {
 	}
 
 	@Test
-	@DisplayName("READ - should find entry by headword containing ignore case")
-	void testFindByHeadwordContainingIgnoreCase() {
-		createSampleEntry();
-		List<DictionaryEntry> results = dictionaryEntryRepository.findByHeadwordContainingIgnoreCase("RUN");
-
-		assertThat(results).isNotEmpty();
-		assertThat(results.get(0).getHeadword()).isEqualTo("run");
-	}
-
-	@Test
 	@DisplayName("READ - should find entry by headword in ignore case")
 	void testFindByHeadwordInIgnoreCase() {
 		Set<String> headwords = Set.of("RUN", "COMMON");
@@ -125,6 +117,13 @@ public class DictionaryEntryRepositoryTests {
 		assertThat(exists).isTrue();
 	}
 
+	@Test
+	@DisplayName("EXISTS - should return false when headword does not exist")
+	void testExistsByHeadword_false() {
+		boolean exists = dictionaryEntryRepository.existsByHeadword("unknownword");
+		assertThat(exists).isFalse();
+	}
+
 	// ============================================================
 	// 🧩 DELETE
 	// ============================================================
@@ -141,4 +140,23 @@ public class DictionaryEntryRepositoryTests {
 
 		assertThat(found).isEmpty();
 	}
+
+	// ============================================================
+	// 🧩 SEARCH
+	// ============================================================
+
+	@Test
+	@DisplayName("SEARCH - should return all when keyword is null")
+	void testSearch_keywordNull() {
+		Page<DictionaryEntry> page = dictionaryEntryRepository.search(null, PageRequest.of(0, 10));
+		assertThat(page).isNotNull();
+	}
+
+	@Test
+	@DisplayName("SEARCH - should return all when keyword is null")
+	void testSearch_keywordNotNull() {
+		Page<DictionaryEntry> page = dictionaryEntryRepository.search("template", PageRequest.of(0, 10));
+		assertThat(page).isNotNull();
+	}
+
 }

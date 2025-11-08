@@ -24,7 +24,7 @@ import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,7 +35,7 @@ public class VideoApiController {
 	private final VideoService videoService;
 
 	@GetMapping("/youtube")
-	public ResponseEntity<VideoDTO> importFromYoutube(@RequestParam @NotNull @Length(max = 1024) String url)
+	public ResponseEntity<VideoDTO> importFromYoutube(@RequestParam @NotBlank @Length(max = 1024) String url)
 			throws BadRequestException {
 		return ResponseEntity.ok(videoService.importFromYoutube(url));
 	}

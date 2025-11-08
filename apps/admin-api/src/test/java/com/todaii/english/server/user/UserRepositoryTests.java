@@ -1,41 +1,52 @@
 package com.todaii.english.server.user;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.Optional;
-
+import com.todaii.english.core.entity.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.*;
 import org.springframework.test.annotation.Rollback;
 
-import com.todaii.english.core.entity.User;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
-@Rollback(false)
-public class UserRepositoryTests {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Rollback
+class UserRepositoryTests {
+
 	@Autowired
 	private UserRepository userRepository;
 
 	@Test
-	public void testGetAllUsers() {
-		List<User> users = userRepository.findAll();
-		
-		assertThat(users).isNotEmpty();
-		
-		System.out.println(users);
+	@DisplayName("findAllActive - trả về danh sách người dùng hợp lệ (phân trang + sort)")
+	void findAllActive_withPagingAndSort() {
+		Pageable pageable = PageRequest.of(0, 5, Sort.by("email").ascending());
+		Page<User> result = userRepository.findAllActive(null, pageable);
+
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isLessThanOrEqualTo(5);
 	}
 
 	@Test
-	public void getUserById() {
-		Optional<User> user = userRepository.findById(1L);
+	@DisplayName("findAllActive - lọc theo keyword (email hoặc displayName)")
+	void findAllActive_withKeyword() {
+		Pageable pageable = PageRequest.of(0, 5);
+		Page<User> result = userRepository.findAllActive("john", pageable);
 
-		assertThat(user).isPresent();
+		assertThat(result).isNotNull();
+		result.forEach(u -> assertThat(
+				u.getEmail().toLowerCase().contains("john") || u.getDisplayName().toLowerCase().contains("john"))
+				.isTrue());
+	}
 
-		System.out.println(user);
+	@Test
+	@DisplayName("findById - trả về Optional<User> hợp lệ khi có ID")
+	void findById_success() {
+		Optional<User> userOpt = userRepository.findById(2L);
+		assertThat(userOpt).isPresent();
 	}
 }

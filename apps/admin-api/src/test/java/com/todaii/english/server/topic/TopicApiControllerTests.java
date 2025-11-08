@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -44,6 +47,7 @@ class TopicApiControllerTests {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Deprecated
 	@Test
 	@DisplayName("GET /topic trả về danh sách khi có dữ liệu")
 	void testGetAll_ok() throws Exception {
@@ -55,12 +59,35 @@ class TopicApiControllerTests {
 		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").value("News"));
 	}
 
+	@Deprecated
 	@Test
 	@DisplayName("GET /topic trả về 204 khi rỗng")
 	void testGetAll_noContent() throws Exception {
 		given(topicService.findAll()).willReturn(Collections.emptyList());
 
 		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isNoContent());
+	}
+
+	@Test
+	@DisplayName("GET /api/v1/topic trả về dữ liệu phân trang ko rỗng")
+	void testGetAllPaged_ok() throws Exception {
+		Topic t1 = Topic.builder().id(1L).name("News").alias("article-news").build();
+		Page<Topic> page = new PageImpl<>(List.of(t1));
+
+		given(topicService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+
+		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[0].name").value("News"));
+	}
+
+	@Test
+	@DisplayName("GET /api/v1/topic trả về dữ liệu phân trang rỗng")
+	void testGetAllPaged_empty() throws Exception {
+		Page<Topic> page = new PageImpl<>(Collections.emptyList());
+
+		given(topicService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+
+		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isOk()).andExpect(jsonPath("$.content").isEmpty());
 	}
 
 	@Test

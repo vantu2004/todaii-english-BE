@@ -2,7 +2,6 @@ package com.todaii.english.server.topic;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Rollback
-public class TopicRepositoryTests {
+@Rollback(true)
+class TopicRepositoryTests {
 
 	@Autowired
 	private TopicRepository topicRepository;
@@ -28,16 +30,16 @@ public class TopicRepositoryTests {
 
 	@BeforeEach
 	void setup() {
-		// Tạo 1 topic trước khi test
-		topic = Topic.builder().name("Travel").alias("travel").enabled(true).isDeleted(false).build();
+		topic = Topic.builder().name("Travel").alias("article-travel").topicType(TopicType.ARTICLE).enabled(true)
+				.isDeleted(false).build();
 		topicRepository.save(topic);
 	}
 
 	@Test
 	@DisplayName("Tạo mới topic")
 	void testCreateTopic() {
-		Topic saved = topicRepository
-				.save(Topic.builder().name("Business English").alias("business-english").enabled(true).build());
+		Topic saved = topicRepository.save(Topic.builder().name("Business English").alias("article-business-english")
+				.topicType(TopicType.ARTICLE).enabled(true).isDeleted(false).build());
 
 		assertThat(saved).isNotNull();
 		assertThat(saved.getId()).isGreaterThan(0);
@@ -45,7 +47,7 @@ public class TopicRepositoryTests {
 	}
 
 	@Test
-	@DisplayName("Tìm topic theo id khi chưa bị xóa")
+	@DisplayName("Tìm topic theo id chưa bị xóa")
 	void testFindByIdNotDeleted() {
 		Optional<Topic> found = topicRepository.findById(topic.getId());
 		assertThat(found).isPresent();
@@ -53,9 +55,8 @@ public class TopicRepositoryTests {
 	}
 
 	@Test
-	@DisplayName("Tìm topic theo id khi đã bị soft delete")
+	@DisplayName("Tìm topic theo id đã bị soft delete")
 	void testFindByIdDeleted() {
-		// soft delete
 		topic.setIsDeleted(true);
 		topicRepository.save(topic);
 
@@ -64,34 +65,27 @@ public class TopicRepositoryTests {
 	}
 
 	@Test
-	@DisplayName("Check tồn tại alias")
+	@DisplayName("Kiểm tra tồn tại alias")
 	void testExistsByAlias() {
-		boolean exists = topicRepository.existsByAlias("travel");
+		boolean exists = topicRepository.existsByAlias("article-travel");
 		assertThat(exists).isTrue();
 
-		boolean notExists = topicRepository.existsByAlias("non-existing-alias");
+		boolean notExists = topicRepository.existsByAlias("article-non-existing");
 		assertThat(notExists).isFalse();
 	}
 
 	@Test
-	@DisplayName("Update topic")
-	void testUpdateTopic() {
-		Topic saved = topicRepository.save(Topic.builder().name("Movies").alias("movies").enabled(true).build());
-
-		saved.setName("Films");
-		saved.setAlias("films");
-
-		Topic updated = topicRepository.save(saved);
-
-		assertThat(updated.getName()).isEqualTo("Films");
-		assertThat(updated.getAlias()).isEqualTo("films");
+	@DisplayName("Tìm kiếm topic có keyword")
+	void testFindAllActive_withKeyword() {
+		Page<Topic> result = topicRepository.findAllActive("travel", PageRequest.of(0, 5));
+		assertThat(result.getContent()).isNotEmpty();
+		assertThat(result.getContent().get(0).getAlias()).contains("travel");
 	}
 
 	@Test
-	@DisplayName("Lấy tất cả topic")
-	void testFindAll() {
-		List<Topic> all = topicRepository.findAll();
-		assertThat(all).isNotEmpty();
-		assertThat(all.size()).isGreaterThanOrEqualTo(1);
+	@DisplayName("Tìm kiếm topic khi keyword null")
+	void testFindAllActive_withoutKeyword() {
+		Page<Topic> result = topicRepository.findAllActive(null, PageRequest.of(0, 5));
+		assertThat(result.getTotalElements()).isGreaterThan(0);
 	}
 }

@@ -39,26 +39,20 @@ public class DictionaryEntryService {
 	}
 
 	public List<DictionaryEntry> createWordByGemini(String word) throws Exception {
-		// 1️ Tìm trong DB trước
-//		List<DictionaryEntry> existing = dictionaryEntryRepository.findByHeadwordContainingIgnoreCase(word.trim());
-//		if (!existing.isEmpty()) {
-//			return existing;
-//		}
-
 		boolean existed = dictionaryEntryRepository.existsByHeadword(word);
 		if (existed) {
 			throw new BusinessException(409, "The word '" + word + "' already exists in the system.");
 		}
 
-		// 2️ Gọi Free Dictionary API
+		// Gọi Free Dictionary API
 		DictionaryApiResponse[] rawData = lookupWord(word);
 		String rawJson = objectMapper.writeValueAsString(rawData);
 
-		// 3️ Gọi Gemini (luôn trả về mảng JSON)
+		// Gọi Gemini (luôn trả về mảng JSON)
 		String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
 		String rawResponseText = geminiPort.generateText(prompt);
 
-		// 4️ Parse mảng DTO
+		// Parse mảng DTO
 		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(rawResponseText, DictionaryEntryDTO[].class);
 
 		List<DictionaryEntry> entries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryEntryRepository::save)

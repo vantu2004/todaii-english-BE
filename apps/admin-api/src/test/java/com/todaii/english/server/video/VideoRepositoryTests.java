@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import com.todaii.english.core.entity.Video;
@@ -19,7 +22,7 @@ import com.todaii.english.shared.enums.CefrLevel;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
-@Rollback
+@Rollback(true)
 public class VideoRepositoryTests {
 
 	@Autowired
@@ -112,4 +115,50 @@ public class VideoRepositoryTests {
 
 		assertThat(found).isNotPresent();
 	}
+
+	@Test
+	@DisplayName("Tìm kiếm video theo keyword - tìm thấy kết quả")
+	void testSearchByKeywordFound() {
+		// given
+		Video v1 = buildSampleVideo("https://youtube.com/watch?v=abc");
+		v1.setTitle("Learn English with Music");
+		Video v2 = buildSampleVideo("https://youtube.com/watch?v=xyz");
+		v2.setTitle("Cooking Tutorial");
+
+		videoRepository.saveAll(List.of(v1, v2));
+
+		// when
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Video> page = videoRepository.search(null, "music", pageable);
+
+		// then
+		assertThat(page).isNotNull();
+		assertThat(page.getTotalElements()).isEqualTo(1);
+		assertThat(page.getContent().get(0).getTitle()).containsIgnoringCase("music");
+	}
+
+	@Test
+	@DisplayName("Tìm kiếm video không có keyword - trả về tất cả")
+	void testSearchWithoutKeyword() {
+		videoRepository.save(buildSampleVideo("https://youtube.com/watch?v=1"));
+		videoRepository.save(buildSampleVideo("https://youtube.com/watch?v=2"));
+
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Video> page = videoRepository.search(null, null, pageable);
+
+		assertThat(page).isNotNull();
+		assertThat(page.getContent().size()).isGreaterThanOrEqualTo(2);
+	}
+
+	@Test
+	@DisplayName("Tìm kiếm video theo topicId - không có kết quả")
+	void testSearchByTopicIdNotFound() {
+		videoRepository.save(buildSampleVideo("https://youtube.com/watch?v=1234"));
+
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Video> page = videoRepository.search(999L, null, pageable);
+
+		assertThat(page.getContent()).isEmpty();
+	}
+
 }

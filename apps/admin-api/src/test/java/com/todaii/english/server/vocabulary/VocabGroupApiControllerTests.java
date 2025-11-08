@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -42,6 +44,7 @@ class VocabGroupApiControllerTests {
 
 	// ==================== GET /api/v1/vocab-group ====================
 
+	@Deprecated
 	@Test
 	@DisplayName("GET all - trả về 200 OK khi có dữ liệu")
 	void testGetAll_ReturnsList() throws Exception {
@@ -55,12 +58,55 @@ class VocabGroupApiControllerTests {
 				.andExpect(jsonPath("$[0].name").value("Common Words"));
 	}
 
+	@Deprecated
 	@Test
 	@DisplayName("GET all - trả về 204 No Content khi không có dữ liệu")
 	void testGetAll_EmptyList() throws Exception {
 		when(vocabGroupService.findAll()).thenReturn(Collections.emptyList());
 
 		mockMvc.perform(get(ENDPOINT)).andExpect(status().isNoContent());
+	}
+
+	// ==================== GET /api/v1/vocab-group (Paged) ====================
+
+	@Test
+	@DisplayName("GET all paged - trả về 200 OK khi có dữ liệu")
+	void testGetAllPaged_ReturnsList() throws Exception {
+		List<VocabGroup> list = List.of(VocabGroup.builder().id(1L).name("Common Words").alias("common-words").build(),
+				VocabGroup.builder().id(2L).name("Business English").alias("business-english").build());
+
+		Page<VocabGroup> page = new PageImpl<>(list);
+
+		when(vocabGroupService.findAllPaged(1, 10, "id", "desc", null)).thenReturn(page);
+
+		mockMvc.perform(get(ENDPOINT))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.content[0].name").value("Common Words")).andExpect(jsonPath("$.page").value(1))
+				.andExpect(jsonPath("$.size").value(10)) // Kích thước thực tế của content list
+				.andExpect(jsonPath("$.totalElements").value(2)).andExpect(jsonPath("$.totalPages").value(1));
+	}
+
+	@Test
+	@DisplayName("GET all paged - trả về 200 OK với content rỗng khi không có dữ liệu")
+	void testGetAllPaged_EmptyList() throws Exception {
+		Page<VocabGroup> emptyPage = Page.empty();
+
+		when(vocabGroupService.findAllPaged(1, 10, "id", "desc", null)).thenReturn(emptyPage);
+
+		mockMvc.perform(get(ENDPOINT + "?page=1&size=10")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content").isEmpty()).andExpect(jsonPath("$.totalElements").value(0));
+	}
+
+	@Test
+	@DisplayName("GET all paged - trả về 400 Bad Request khi page < 1")
+	void testGetAllPaged_InvalidPage() throws Exception {
+		mockMvc.perform(get(ENDPOINT + "?page=0")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("GET all paged - trả về 400 Bad Request khi size < 1")
+	void testGetAllPaged_InvalidSize() throws Exception {
+		mockMvc.perform(get(ENDPOINT + "?size=0")).andExpect(status().isBadRequest());
 	}
 
 	// ==================== GET /api/v1/vocab-group/{id} ====================

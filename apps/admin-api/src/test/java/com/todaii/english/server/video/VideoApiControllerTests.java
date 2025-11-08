@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -66,23 +68,23 @@ public class VideoApiControllerTests {
 	// GET /fetch
 	// ----------------------------
 	@Test
-	@DisplayName("GET /fetch - import video thành công")
+	@DisplayName("GET /youtube - import video thành công")
 	void testImportFromYoutubeSuccess() throws Exception {
 		VideoDTO videoDTO = mockVideoDTO();
 		given(videoService.importFromYoutube(anyString())).willReturn(videoDTO);
 
-		mockMvc.perform(get(ENDPOINT + "/fetch").param("url", "https://youtube.com/watch?v=abc"))
+		mockMvc.perform(get(ENDPOINT + "/youtube").param("url", "https://youtube.com/watch?v=abc"))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.title").value("Mock Title"));
 
 		then(videoService).should().importFromYoutube(anyString());
 	}
 
 	@Test
-	@DisplayName("GET /fetch - lỗi BadRequestException khi URL sai")
+	@DisplayName("GET /youtube - lỗi BadRequestException khi URL sai")
 	void testImportFromYoutubeBadRequest() throws Exception {
 		given(videoService.importFromYoutube(anyString())).willThrow(new BadRequestException("Invalid URL"));
 
-		mockMvc.perform(get(ENDPOINT + "/fetch").param("url", "invalid_url")).andExpect(status().isBadRequest());
+		mockMvc.perform(get(ENDPOINT + "/youtube").param("url", "invalid_url")).andExpect(status().isBadRequest());
 	}
 
 	// ----------------------------
@@ -105,9 +107,23 @@ public class VideoApiControllerTests {
 		mockMvc.perform(get(ENDPOINT + "/1")).andExpect(status().isNotFound());
 	}
 
+	@Test
+	@DisplayName("GET /youtube - URL null -> 400")
+	void testImportFromYoutubeUrlNull() throws Exception {
+		mockMvc.perform(get(ENDPOINT + "/youtube").param("url", "")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("GET /youtube - URL quá dài -> 400")
+	void testImportFromYoutubeUrlTooLong() throws Exception {
+		String longUrl = "https://a.com/" + "x".repeat(2000);
+		mockMvc.perform(get(ENDPOINT + "/youtube").param("url", longUrl)).andExpect(status().isBadRequest());
+	}
+
 	// ----------------------------
 	// GET /
 	// ----------------------------
+	@Deprecated
 	@Test
 	@DisplayName("GET / - trả về danh sách video")
 	void testGetAllVideosHasContent() throws Exception {
@@ -116,12 +132,47 @@ public class VideoApiControllerTests {
 		mockMvc.perform(get(ENDPOINT)).andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("Mock Video"));
 	}
 
+	@Deprecated
 	@Test
 	@DisplayName("GET / - không có video nào (204)")
 	void testGetAllVideosEmpty() throws Exception {
 		given(videoService.findAll()).willReturn(Collections.emptyList());
 
 		mockMvc.perform(get(ENDPOINT)).andExpect(status().isNoContent());
+	}
+
+	@Test
+	@DisplayName("GET / - trả về danh sách video đã phân trang")
+	void testGetAllPaged() throws Exception {
+		Page<Video> page = new PageImpl<>(List.of(mockVideo(1L), mockVideo(2L)));
+
+		given(videoService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+
+		mockMvc.perform(get(ENDPOINT)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[0].title").value("Mock Video"));
+	}
+
+	@Test
+	@DisplayName("GET / - trả về danh sách video đã phân trang rỗng")
+	void testGetAllPaged_empty() throws Exception {
+		Page<Video> page = new PageImpl<>(Collections.emptyList());
+
+		given(videoService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+
+		mockMvc.perform(get(ENDPOINT)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content").isEmpty());
+	}
+
+	@Test
+	@DisplayName("GET / - page < 1 -> 400")
+	void testGetAllPagedInvalidPage() throws Exception {
+		mockMvc.perform(get(ENDPOINT).param("page", "0")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("GET /topic/{topicId} - size < 1 -> 400")
+	void testGetVideosByTopicIdInvalidSize() throws Exception {
+		mockMvc.perform(get(ENDPOINT + "/topic/1").param("size", "0")).andExpect(status().isBadRequest());
 	}
 
 	// ----------------------------
@@ -144,6 +195,17 @@ public class VideoApiControllerTests {
 	void testCreateVideoValidationFail() throws Exception {
 		VideoDTO dto = mockVideoDTO();
 		dto.setTitle(""); // invalid
+
+		mockMvc.perform(
+				post(ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("POST / - validation fail (thiếu videoUrl)")
+	void testCreateVideoValidationFailMissingUrl() throws Exception {
+		VideoDTO dto = mockVideoDTO();
+		dto.setVideoUrl(null); // invalid
 
 		mockMvc.perform(
 				post(ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
@@ -173,6 +235,17 @@ public class VideoApiControllerTests {
 
 		mockMvc.perform(put(ENDPOINT + "/1").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(mockVideoDTO()))).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("POST / - validation fail (topicIds rỗng)")
+	void testCreateVideoValidationFailEmptyTopics() throws Exception {
+		VideoDTO dto = mockVideoDTO();
+		dto.setTopicIds(Collections.emptySet()); // invalid
+
+		mockMvc.perform(
+				post(ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
+				.andExpect(status().isBadRequest());
 	}
 
 	// ----------------------------

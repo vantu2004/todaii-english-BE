@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -47,14 +49,14 @@ class ArticleApiControllerTests {
 				.topicIds(Set.of(1L)).build();
 	}
 
-	// -------- GET /news-api ----------
+	// -------- POST /news-api ----------
 	@Test
 	void fetchArticles_shouldReturnOk() throws Exception {
 		NewsApiResponse mockResponse = new NewsApiResponse();
 
 		given(articleService.fetchFromNewsApi(anyString(), anyInt(), anyInt(), anyString())).willReturn(mockResponse);
 
-		mockMvc.perform(get(BASE_ENDPOINT + "/news-api").param("query", "tech").param("pageSize", "5")
+		mockMvc.perform(post(BASE_ENDPOINT + "/news-api").param("query", "tech").param("pageSize", "5")
 				.param("page", "1").param("sortBy", "relevancy")).andExpect(status().isOk());
 	}
 
@@ -66,15 +68,17 @@ class ArticleApiControllerTests {
 	}
 
 	// -------- GET / ------------
+	@Deprecated
 	@Test
 	void getAllArticles_shouldReturnList() throws Exception {
 		Article article = Article.builder().id(1L).title("News").build();
-		
+
 		given(articleService.findAll()).willReturn(List.of(article));
 
 		mockMvc.perform(get(BASE_ENDPOINT)).andExpect(status().isOk()).andExpect(jsonPath("$[0].title").value("News"));
 	}
 
+	@Deprecated
 	@Test
 	void getAllArticles_shouldReturnNoContent() throws Exception {
 		given(articleService.findAll()).willReturn(Collections.emptyList());
@@ -82,11 +86,55 @@ class ArticleApiControllerTests {
 		mockMvc.perform(get(BASE_ENDPOINT)).andExpect(status().isNoContent());
 	}
 
+	// ============================================================
+	// GET / (PAGED)
+	// ============================================================
+	@Test
+	void testGetAllArticlesPaged_ShouldReturnOk() throws Exception {
+		Article article = Article.builder().id(1L).title("Paged Article 1").build();
+		Page<Article> page = new PageImpl<>(List.of(article));
+
+		// Mock service.findAllPaged
+		given(articleService.findAllPaged(anyInt(), anyInt(), anyString(), anyString(), anyString())).willReturn(page);
+
+		mockMvc.perform(get(BASE_ENDPOINT + "?page=1&size=10&keyword=Paged")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[0].title").value("Paged Article 1"))
+				.andExpect(jsonPath("$.page").value(1)).andExpect(jsonPath("$.totalElements").value(1));
+	}
+
+	@Test
+	void testGetAllArticlesPaged_InvalidPage() throws Exception {
+		mockMvc.perform(get(BASE_ENDPOINT + "?page=0")).andExpect(status().isBadRequest());
+	}
+
+	// ============================================================
+	// GET /topic/{topicId} (PAGED)
+	// ============================================================
+	@Test
+	void testGetArticlesByTopicId_ShouldReturnOk() throws Exception {
+		Article article = Article.builder().id(10L).title("Topic Article").build();
+		Page<Article> page = new PageImpl<>(List.of(article));
+		Long topicId = 5L;
+
+		// Mock service.findByTopicId
+		given(articleService.findByTopicId(eq(topicId), anyInt(), anyInt(), anyString(), anyString(), anyString()))
+				.willReturn(page);
+
+		mockMvc.perform(get(BASE_ENDPOINT + "/topic/" + topicId + "?keyword=Topic")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.content[0].title").value("Topic Article"))
+				.andExpect(jsonPath("$.totalElements").value(1));
+	}
+
+	@Test
+	void testGetArticlesByTopicId_InvalidSize() throws Exception {
+		mockMvc.perform(get(BASE_ENDPOINT + "/topic/5?size=0")).andExpect(status().isBadRequest());
+	}
+
 	// -------- GET /{id} ----------
 	@Test
 	void getArticleById_shouldReturnOk() throws Exception {
 		Article article = Article.builder().id(1L).title("News").build();
-		
+
 		given(articleService.findById(1L)).willReturn(article);
 
 		mockMvc.perform(get(BASE_ENDPOINT + "/1")).andExpect(status().isOk())
@@ -127,7 +175,7 @@ class ArticleApiControllerTests {
 	void updateArticle_shouldReturnOk() throws Exception {
 		ArticleRequest req = createValidRequest();
 		Article updated = Article.builder().id(1L).title("Updated").build();
-		
+
 		given(articleService.update(eq(1L), any(ArticleRequest.class))).willReturn(updated);
 
 		mockMvc.perform(put(BASE_ENDPOINT + "/1").contentType(MediaType.APPLICATION_JSON)
@@ -156,6 +204,6 @@ class ArticleApiControllerTests {
 	void deleteArticle_shouldReturnOk() throws Exception {
 		willDoNothing().given(articleService).deleteById(1L);
 
-		mockMvc.perform(delete(BASE_ENDPOINT + "/1")).andExpect(status().isOk());
+		mockMvc.perform(delete(BASE_ENDPOINT + "/1")).andExpect(status().isNoContent());
 	}
 }

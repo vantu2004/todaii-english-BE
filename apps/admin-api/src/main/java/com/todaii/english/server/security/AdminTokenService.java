@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.AdminRefreshToken;
 import com.todaii.english.infra.security.jwt.JwtUtility;
-import com.todaii.english.server.refresh_token.RefreshTokenRepository;
+import com.todaii.english.server.auth.RefreshTokenRepository;
 import com.todaii.english.shared.constants.SecurityConstants;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;

@@ -1,4 +1,4 @@
-package com.todaii.english.server.refresh_token;
+package com.todaii.english.server.auth;
 
 import java.util.List;
 

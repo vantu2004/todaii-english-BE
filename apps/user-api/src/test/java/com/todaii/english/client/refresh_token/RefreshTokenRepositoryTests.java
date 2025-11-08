@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 
+import com.todaii.english.client.auth.RefreshTokenRepository;
 import com.todaii.english.core.entity.UserRefreshToken;
 
 @DataJpaTest

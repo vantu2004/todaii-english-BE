@@ -56,6 +56,10 @@ public class ArticleService {
 
 	public Page<Article> findByTopicId(Long topicId, int page, int size, String sortBy, String direction,
 			String keyword) {
+		if (!topicRepository.existsById(topicId)) {
+			throw new BusinessException(404, "Topic not found");
+		}
+
 		return search(topicId, page, size, sortBy, direction, keyword);
 	}
 

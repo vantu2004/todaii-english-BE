@@ -86,6 +86,10 @@ public class VideoService {
 
 	public Page<Video> findByTopicId(Long topicId, int page, int size, String sortBy, String direction,
 			String keyword) {
+		if (!topicRepository.existsById(topicId)) {
+			throw new BusinessException(404, "Topic not found");
+		}
+
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 		Page<Video> videos = videoRepository.search(topicId, keyword, pageable);

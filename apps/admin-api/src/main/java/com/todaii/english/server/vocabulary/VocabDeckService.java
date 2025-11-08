@@ -55,6 +55,10 @@ public class VocabDeckService {
 
 	public Page<VocabDeck> findByGroupId(Long groupId, int page, int size, String sortBy, String direction,
 			String keyword) {
+		if (!vocabGroupRepository.existsById(groupId)) {
+			throw new BusinessException(404, "Vocabulary group not found");
+		}
+
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 

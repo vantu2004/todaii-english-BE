@@ -106,6 +106,13 @@
 				<version>1.0.2</version>
 			</dependency>
 
+			<!-- Jpa modelgen -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-jpamodelgen</artifactId>
+				<version>6.1.7.Final</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryEntry_;
+import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.constraints.Min;
@@ -26,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/article")
 public class ArticleApiController {
+	private static final String SORT_DIRECTION = "asc";
+
 	private final ArticleService articleService;
 
 	// lấy n articles gần đây nhất
@@ -83,8 +87,8 @@ public class ArticleApiController {
 		Page<DictionaryEntry> entries = articleService.getPagedVocabulary(id, page, size);
 
 		PagedResponse<DictionaryEntry> response = new PagedResponse<>(entries.getContent(), page, size,
-				entries.getTotalElements(), entries.getTotalPages(), entries.isFirst(), entries.isLast(), "headword",
-				"asc");
+				entries.getTotalElements(), entries.getTotalPages(), entries.isFirst(), entries.isLast(),
+				DictionaryEntry_.HEADWORD, SORT_DIRECTION);
 
 		return ResponseEntity.ok(response);
 	}
@@ -97,4 +101,23 @@ public class ArticleApiController {
 
 		return ResponseEntity.ok(related);
 	}
+
+	// filter với nhiều thuộc tính (sourceName, cefrlevel, view, topic)
+	@GetMapping("/filter")
+	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String sourceName,
+			@RequestParam(required = false) CefrLevel cefrLevel, @RequestParam(required = false) Integer minViews,
+			@RequestParam(required = false) Long topicId, @RequestParam(defaultValue = "1") @Min(1) int page,
+			@RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "updatedAt") String sortBy,
+			@RequestParam(defaultValue = "desc") String direction) {
+		Page<Article> articles = articleService.filterArticles(sourceName, cefrLevel, minViews, topicId, page, size,
+				sortBy, direction);
+
+		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
+				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
+				direction);
+
+		return ResponseEntity.ok(response);
+	}
+
 }

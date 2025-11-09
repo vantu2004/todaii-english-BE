@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,7 @@ import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.shared.enums.CefrLevel;
 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 	// lấy 10 bài báo đã enabled gần nhất sort theo createdAt chiều giảm dần
 	public Page<Article> findAllByEnabledTrueOrderByCreatedAtDesc(Pageable pageable);
 

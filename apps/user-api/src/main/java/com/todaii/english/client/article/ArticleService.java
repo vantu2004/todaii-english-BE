@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Article;
@@ -112,6 +113,18 @@ public class ArticleService {
 		Pageable pageable = PageRequest.of(0, limit);
 
 		return articleRepository.findFallbackByCefr(articleId, cefrLevel, pageable);
+	}
+
+	public Page<Article> filterArticles(String sourceName, CefrLevel cefrLevel, Integer minViews, Long topicId,
+			int page, int size, String sortBy, String direction) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		Specification<Article> spec = Specification.where(ArticleSpecification.isEnabled())
+				.and(ArticleSpecification.hasSourceName(sourceName)).and(ArticleSpecification.hasCefrLevel(cefrLevel))
+				.and(ArticleSpecification.hasMinViews(minViews)).and(ArticleSpecification.hasTopic(topicId));
+
+		return articleRepository.findAll(spec, pageable);
 	}
 
 }

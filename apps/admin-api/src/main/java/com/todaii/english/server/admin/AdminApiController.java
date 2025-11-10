@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import com.todaii.english.core.entity.Admin;
 import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
-import com.todaii.english.shared.request.server.CreateAdminRequest;
-import com.todaii.english.shared.request.server.UpdateAdminRequest;
+import com.todaii.english.shared.request.server.AdminRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
@@ -71,8 +70,8 @@ public class AdminApiController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Admin> createAdmin(@Valid @RequestBody CreateAdminRequest createAdminRequest) {
-		return ResponseEntity.status(201).body(this.adminService.create(createAdminRequest));
+	public ResponseEntity<Admin> createAdmin(@Valid @RequestBody AdminRequest adminRequest) {
+		return ResponseEntity.status(201).body(this.adminService.create(adminRequest));
 	}
 
 	@PutMapping("/me")
@@ -85,9 +84,8 @@ public class AdminApiController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Admin> updateAdmin(@PathVariable Long id,
-			@Valid @RequestBody UpdateAdminRequest updateAdminRequest) {
-		return ResponseEntity.ok(this.adminService.updateAdmin(id, updateAdminRequest));
+	public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @Valid @RequestBody AdminRequest adminRequest) {
+		return ResponseEntity.ok(this.adminService.updateAdmin(id, adminRequest));
 	}
 
 	@PatchMapping("/{id}/enabled")

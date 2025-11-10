@@ -10,7 +10,7 @@ import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.UpdateProfileRequest;
-import com.todaii.english.shared.request.server.CreateAdminRequest;
+import com.todaii.english.shared.request.server.AdminRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,10 +126,10 @@ class AdminApiControllerTests {
 	// ------------------------------------------------------------------
 	@Test
 	void createAdmin_success() throws Exception {
-		CreateAdminRequest req = CreateAdminRequest.builder().email("new@test.com").displayName("New Admin")
+		AdminRequest req = AdminRequest.builder().email("new@test.com").displayName("New Admin")
 				.password("123456").roleCodes(Set.of("SUPER_ADMIN")).build();
 
-		when(adminService.create(any(CreateAdminRequest.class))).thenReturn(admin1);
+		when(adminService.create(any(AdminRequest.class))).thenReturn(admin1);
 
 		mockMvc.perform(post(BASE_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(req))).andExpect(status().isCreated())
@@ -138,10 +138,10 @@ class AdminApiControllerTests {
 
 	@Test
 	void createAdmin_alreadyExists() throws Exception {
-		CreateAdminRequest req = CreateAdminRequest.builder().email("exist@test.com").displayName("Dup Admin")
+		AdminRequest req = AdminRequest.builder().email("exist@test.com").displayName("Dup Admin")
 				.password("123456").roleCodes(Set.of("SUPER_ADMIN")).build();
 
-		when(adminService.create(any(CreateAdminRequest.class)))
+		when(adminService.create(any(AdminRequest.class)))
 				.thenThrow(new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS));
 
 		mockMvc.perform(post(BASE_ENDPOINT).contentType(MediaType.APPLICATION_JSON)

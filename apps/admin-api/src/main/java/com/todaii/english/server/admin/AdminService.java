@@ -20,8 +20,7 @@ import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.UpdateProfileRequest;
-import com.todaii.english.shared.request.server.CreateAdminRequest;
-import com.todaii.english.shared.request.server.UpdateAdminRequest;
+import com.todaii.english.shared.request.server.AdminRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,10 +51,18 @@ public class AdminService {
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 	}
 
-	public Admin create(CreateAdminRequest request) {
+	public Admin create(AdminRequest request) {
 		// chấp nhận lấy cả admin đã bị xóa để check
 		if (this.adminRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS);
+		}
+
+		if (StringUtils.hasText(request.getPassword())) {
+			if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
+				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+			}
+		} else {
+			throw new BusinessException(400, "Password not blank");
 		}
 
 		String passwordHash = this.passwordHasher.hash(request.getPassword());
@@ -92,23 +99,21 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin updateAdmin(Long id, UpdateAdminRequest request) {
+	public Admin updateAdmin(Long id, AdminRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		// 1. Xử lý password (super admin không cần oldPassword)
-		if (StringUtils.hasText(request.getNewPassword())) {
-			if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
+		// Xử lý password (super admin không cần oldPassword)
+		if (StringUtils.hasText(request.getPassword())) {
+			if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
 				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
 			}
-			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
+			admin.setPasswordHash(passwordHasher.hash(request.getPassword()));
 		}
 
-		// 2. Update displayName + avatar
 		admin.setDisplayName(request.getDisplayName());
-		admin.setAvatarUrl(request.getAvatarUrl());
 
-		// 3. Update roles
+		// Update roles
 		if (request.getRoleCodes() != null && !request.getRoleCodes().isEmpty()) {
 			Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
 			admin.setRoles(roles);

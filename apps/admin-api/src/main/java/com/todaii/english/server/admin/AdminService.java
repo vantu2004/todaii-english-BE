@@ -38,11 +38,12 @@ public class AdminService {
 		return this.adminRepository.findAll();
 	}
 
-	public Page<Admin> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+	public Page<Admin> findAllPaged(Long currentAdminId, int page, int size, String sortBy, String direction,
+			String keyword) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return this.adminRepository.findAllActive(keyword, pageable);
+		return this.adminRepository.findAllActive(currentAdminId, keyword, pageable);
 	}
 
 	public Admin findById(Long id) {

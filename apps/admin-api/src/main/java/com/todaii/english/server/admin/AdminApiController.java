@@ -41,10 +41,14 @@ public class AdminApiController {
 
 	// sortBy dùng đúng tên trong entity chứ ko phải snakecase
 	@GetMapping
-	public ResponseEntity<PagedResponse<Admin>> getAllAdminsPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
-		Page<Admin> admins = this.adminService.findAllPaged(page, size, sortBy, direction, keyword);
+	public ResponseEntity<PagedResponse<Admin>> getAllAdminsPaged(Authentication authentication,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+		CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
+		Long currentAdminId = principal.getAdmin().getId();
+
+		Page<Admin> admins = this.adminService.findAllPaged(currentAdminId, page, size, sortBy, direction, keyword);
 
 		PagedResponse<Admin> response = new PagedResponse<Admin>(admins.getContent(), page, size,
 				admins.getTotalElements(), admins.getTotalPages(), admins.isFirst(), admins.isLast(), sortBy,

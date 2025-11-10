@@ -20,14 +20,15 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 	@Query("""
 			SELECT a FROM Admin a
 			WHERE a.isDeleted = false
+			AND a.id <> ?1
 			AND (
-			    ?1 IS NULL
-			    OR STR(a.id) LIKE CONCAT('%', ?1, '%')
-			    OR LOWER(a.email) LIKE LOWER(CONCAT('%', ?1, '%'))
-			    OR LOWER(a.displayName) LIKE LOWER(CONCAT('%', ?1, '%'))
+			    ?2 IS NULL
+			    OR STR(a.id) LIKE CONCAT('%', ?2, '%')
+			    OR LOWER(a.email) LIKE LOWER(CONCAT('%', ?2, '%'))
+			    OR LOWER(a.displayName) LIKE LOWER(CONCAT('%', ?2, '%'))
 			)
 			""")
-	public Page<Admin> findAllActive(String keyword, Pageable pageable);
+	public Page<Admin> findAllActive(Long currentAdminId, String keyword, Pageable pageable);
 
 	@Query("SELECT a FROM Admin a WHERE a.isDeleted = false AND a.id = ?1")
 	public Optional<Admin> findById(Long id);

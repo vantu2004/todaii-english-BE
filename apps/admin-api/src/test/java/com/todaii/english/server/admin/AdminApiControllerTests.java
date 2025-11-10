@@ -73,7 +73,7 @@ class AdminApiControllerTests {
 	@Test
 	void getAllAdminsPaged_success() throws Exception {
 		Page<Admin> page = new PageImpl<>(List.of(admin1));
-		when(adminService.findAllPaged(1, 10, "id", "desc", null)).thenReturn(page);
+		when(adminService.findAllPaged(2L, 1, 10, "id", "desc", null)).thenReturn(page);
 
 		mockMvc.perform(get(BASE_ENDPOINT)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.content[0].email", is("admin1@test.com")));
@@ -82,7 +82,7 @@ class AdminApiControllerTests {
 	@Test
 	void getAllAdminsPaged_empty() throws Exception {
 		Page<Admin> page = new PageImpl<>(Collections.emptyList());
-		when(adminService.findAllPaged(1, 10, "id", "desc", null)).thenReturn(page);
+		when(adminService.findAllPaged(2L, 1, 10, "id", "desc", null)).thenReturn(page);
 
 		mockMvc.perform(get(BASE_ENDPOINT)).andExpect(status().isOk()).andExpect(jsonPath("$.content").isEmpty());
 	}

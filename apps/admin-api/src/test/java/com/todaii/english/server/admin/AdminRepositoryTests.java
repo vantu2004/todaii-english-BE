@@ -76,7 +76,7 @@ class AdminRepositoryTests {
 		createAdmin("deleted@test.com", true);
 
 		// Dùng method mới tương ứng với AdminApiController (findAllActive)
-		List<Admin> admins = adminRepository.findAllActive(null, null).getContent();
+		List<Admin> admins = adminRepository.findAllActive(2L, null, null).getContent();
 
 		assertThat(admins).extracting(Admin::getEmail).contains("active@test.com");
 		assertThat(admins).extracting(Admin::getEmail).doesNotContain("deleted@test.com");

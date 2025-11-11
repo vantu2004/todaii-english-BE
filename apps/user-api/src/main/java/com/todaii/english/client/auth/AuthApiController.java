@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ import com.todaii.english.shared.response.AuthResponse;
 import com.todaii.english.shared.utils.CookieUtils;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
@@ -76,8 +78,9 @@ public class AuthApiController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-		this.userTokenService.revokeRefreshToken(refreshTokenRequest);
+	public ResponseEntity<?> logout(@RequestParam @Email String email,
+			@CookieValue(name = "user_refresh_token", required = false) String refreshToken) {
+		this.userTokenService.revokeRefreshToken(email, refreshToken);
 
 		ResponseCookie removedAccessToken = CookieUtils.removeCookie("user_access_token");
 		ResponseCookie removedRefreshToken = CookieUtils.removeCookie("user_refresh_token");

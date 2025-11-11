@@ -69,13 +69,12 @@ public class AdminTokenService {
 		throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
 	}
 
-	public void revokeRefreshToken(RefreshTokenRequest refreshTokenRequest) {
-		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository
-				.findByAdminEmail(refreshTokenRequest.getEmail());
+	public void revokeRefreshToken(String email, String refreshToken) {
+		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository.findByAdminEmail(email);
 
 		boolean found = false;
 		for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
-			if (this.passwordEncoder.matches(refreshTokenRequest.getRefreshToken(), adminRefreshToken.getTokenHash())) {
+			if (this.passwordEncoder.matches(refreshToken, adminRefreshToken.getTokenHash())) {
 				this.adminRefreshTokenRepository.delete(adminRefreshToken);
 				found = true;
 				break;

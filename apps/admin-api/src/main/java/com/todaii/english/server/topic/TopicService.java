@@ -77,6 +77,8 @@ public class TopicService {
 
 	public void softDelete(Long id) {
 		Topic topic = findById(id);
+		topic.setName("deleted-" + topic.getName());
+		topic.setAlias("deleted-" + topic.getAlias());
 		topic.setIsDeleted(true);
 
 		topicRepository.save(topic);

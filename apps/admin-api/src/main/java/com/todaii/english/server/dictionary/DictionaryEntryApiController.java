@@ -51,9 +51,9 @@ public class DictionaryEntryApiController {
 
 	@GetMapping
 	public ResponseEntity<PagedResponse<DictionaryEntry>> getAllPaged(
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "20") @Min(1) int size,
 			@RequestParam(defaultValue = "headword") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
 		Page<DictionaryEntry> entries = dictionaryService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<DictionaryEntry> response = new PagedResponse<DictionaryEntry>(entries.getContent(), page, size,

@@ -6,22 +6,24 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.URL;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class DictionaryEntryDTO {
-	@NotNull
-	@Length(min = 1, max = 191)
+	@NotBlank
+	@Length(max = 191)
 	private String headword;
 
+	@NotBlank
 	@Length(max = 191)
 	private String ipa;
 
 	@URL
+	@NotBlank
 	@Length(max = 1024)
 	private String audioUrl;
 

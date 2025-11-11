@@ -133,7 +133,6 @@ class UserApiControllerTests {
 	void updateUser_success() throws Exception {
 		UpdateUserRequest req = new UpdateUserRequest();
 		req.setDisplayName("Updated");
-		req.setAvatarUrl("http://avatar.com/a.png");
 
 		User updated = User.builder().id(1L).email("mail@test.com").displayName("Updated").status(UserStatus.ACTIVE)
 				.build();
@@ -178,7 +177,6 @@ class UserApiControllerTests {
 	@DisplayName("PUT /user/{id} - trả về 400 Bad Request khi thiếu displayName")
 	void updateUser_missingDisplayName_shouldReturnBadRequest() throws Exception {
 		UpdateUserRequest req = new UpdateUserRequest();
-		req.setAvatarUrl("http://avatar.com/a.png");
 
 		mockMvc.perform(put(ENDPOINT + "/1").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(req))).andExpect(status().isBadRequest());

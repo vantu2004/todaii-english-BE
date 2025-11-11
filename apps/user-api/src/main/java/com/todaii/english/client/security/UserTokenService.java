@@ -22,69 +22,67 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserTokenService {
-    private final RefreshTokenRepository userRefreshTokenRepository;
-    private final JwtUtility jwtUtility;
-    private final PasswordEncoder passwordEncoder;
+	private final RefreshTokenRepository userRefreshTokenRepository;
+	private final JwtUtility jwtUtility;
+	private final PasswordEncoder passwordEncoder;
 
-    public AuthResponse generateToken(User user) {
-        String accessToken = this.jwtUtility.generateAccessToken(user); // user implement JwtPrincipal
-        String randomUUID = UUID.randomUUID().toString();
+	public AuthResponse generateToken(User user) {
+		String accessToken = this.jwtUtility.generateAccessToken(user); // user implement JwtPrincipal
+		String randomUUID = UUID.randomUUID().toString();
 
-        UserRefreshToken userRefreshToken = new UserRefreshToken();
-        userRefreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
-        userRefreshToken.setUser(user);
+		UserRefreshToken userRefreshToken = new UserRefreshToken();
+		userRefreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
+		userRefreshToken.setUser(user);
 
-        // set thời gian hết hạn là 7 ngày
-        userRefreshToken.setExpiresAt(
-            LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES)
-        );
+		// set thời gian hết hạn là 7 ngày
+		userRefreshToken
+				.setExpiresAt(LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES));
 
-        this.userRefreshTokenRepository.save(userRefreshToken);
+		this.userRefreshTokenRepository.save(userRefreshToken);
 
-        AuthResponse authResponse = new AuthResponse();
-        authResponse.setAccessToken(accessToken);
-        authResponse.setRefreshToken(randomUUID);
+		AuthResponse authResponse = new AuthResponse();
+		authResponse.setAccessToken(accessToken);
+		authResponse.setRefreshToken(randomUUID);
 
-        return authResponse;
-    }
+		return authResponse;
+	}
 
-    public AuthResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
-        String rawRefreshToken = refreshTokenRequest.getRefreshToken();
+	public AuthResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
+		String rawRefreshToken = refreshTokenRequest.getRefreshToken();
 
-        List<UserRefreshToken> userRefreshTokens =
-            this.userRefreshTokenRepository.findByUserEmail(refreshTokenRequest.getEmail());
+		List<UserRefreshToken> userRefreshTokens = this.userRefreshTokenRepository
+				.findByUserEmail(refreshTokenRequest.getEmail());
 
-        for (UserRefreshToken userRefreshToken : userRefreshTokens) {
-            if (this.passwordEncoder.matches(rawRefreshToken, userRefreshToken.getTokenHash())) {
-                LocalDateTime currentDate = LocalDateTime.now();
-                if (userRefreshToken.getExpiresAt().isBefore(currentDate)) {
-                    throw new BusinessException(AuthErrorCode.TOKEN_EXPIRED);
-                }
+		for (UserRefreshToken userRefreshToken : userRefreshTokens) {
+			if (this.passwordEncoder.matches(rawRefreshToken, userRefreshToken.getTokenHash())) {
+				LocalDateTime currentDate = LocalDateTime.now();
+				if (userRefreshToken.getExpiresAt().isBefore(currentDate)) {
+					throw new BusinessException(AuthErrorCode.TOKEN_EXPIRED);
+				}
 
-                this.userRefreshTokenRepository.delete(userRefreshToken);
+				this.userRefreshTokenRepository.delete(userRefreshToken);
 
-                return this.generateToken(userRefreshToken.getUser());
-            }
-        }
+				return this.generateToken(userRefreshToken.getUser());
+			}
+		}
 
-        throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
-    }
+		throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
+	}
 
-    public void revokeRefreshToken(RefreshTokenRequest refreshTokenRequest) {
-        List<UserRefreshToken> userRefreshTokens =
-            this.userRefreshTokenRepository.findByUserEmail(refreshTokenRequest.getEmail());
+	public void revokeRefreshToken(String email, String refreshToken) {
+		List<UserRefreshToken> userRefreshTokens = this.userRefreshTokenRepository.findByUserEmail(email);
 
-        boolean found = false;
-        for (UserRefreshToken userRefreshToken : userRefreshTokens) {
-            if (this.passwordEncoder.matches(refreshTokenRequest.getRefreshToken(), userRefreshToken.getTokenHash())) {
-                this.userRefreshTokenRepository.delete(userRefreshToken);
-                found = true;
-                break;
-            }
-        }
+		boolean found = false;
+		for (UserRefreshToken userRefreshToken : userRefreshTokens) {
+			if (this.passwordEncoder.matches(refreshToken, userRefreshToken.getTokenHash())) {
+				this.userRefreshTokenRepository.delete(userRefreshToken);
+				found = true;
+				break;
+			}
+		}
 
-        if (!found) {
-            throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
-        }
-    }
+		if (!found) {
+			throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
+		}
+	}
 }

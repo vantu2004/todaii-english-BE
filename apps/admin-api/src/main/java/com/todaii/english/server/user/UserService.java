@@ -71,7 +71,6 @@ public class UserService {
 
 		// 2. Update displayName + avatar
 		user.setDisplayName(request.getDisplayName());
-		user.setAvatarUrl(request.getAvatarUrl());
 
 		User updatedUser = this.userRepository.save(user);
 

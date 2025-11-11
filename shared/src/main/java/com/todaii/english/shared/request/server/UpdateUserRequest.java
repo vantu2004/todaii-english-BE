@@ -15,5 +15,4 @@ public class UpdateUserRequest {
 	@Length(min = 1, max = 191)
 	private String displayName;
 
-	private String avatarUrl;
 }

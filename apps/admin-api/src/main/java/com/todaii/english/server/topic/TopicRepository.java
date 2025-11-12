@@ -22,7 +22,7 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 
 	@Query("""
 			SELECT t FROM Topic t
-			WHERE t.isDeleted = false
+			WHERE t.isDeleted = false AND LOWER(t.topicType) = LOWER(?2)
 			AND (
 			    ?1 IS NULL
 			    OR STR(t.id) LIKE CONCAT('%', ?1, '%')
@@ -31,7 +31,7 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 			    OR LOWER(t.topicType) LIKE LOWER(CONCAT('%', ?1, '%'))
 			)
 			""")
-	public Page<Topic> findAllActive(String keyword, Pageable pageable);
+	public Page<Topic> findAllActive(String keyword, String topicType, Pageable pageable);
 
 	public boolean existsByAlias(String alias);
 }

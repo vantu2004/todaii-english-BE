@@ -45,8 +45,9 @@ public class TopicApiController {
 	@GetMapping
 	public ResponseEntity<PagedResponse<Topic>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
 			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
-		Page<Topic> topics = topicService.findAllPaged(page, size, sortBy, direction, keyword);
+			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword,
+			@RequestParam(required = true) String topicType) {
+		Page<Topic> topics = topicService.findAllPaged(page, size, sortBy, direction, keyword, topicType);
 
 		PagedResponse<Topic> response = new PagedResponse<Topic>(topics.getContent(), page, size,
 				topics.getTotalElements(), topics.getTotalPages(), topics.isFirst(), topics.isLast(), sortBy,

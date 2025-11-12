@@ -31,4 +31,6 @@ public interface DictionaryEntryRepository extends JpaRepository<DictionaryEntry
 	public List<DictionaryEntry> findByHeadwordInIgnoreCase(Collection<String> words);
 
 	public boolean existsByHeadword(String headword);
+
+	public List<DictionaryEntry> findAllByHeadword(String word);
 }

@@ -23,7 +23,6 @@ public class DictionaryEntryDTO {
 	private String ipa;
 
 	@URL
-	@NotBlank
 	@Length(max = 1024)
 	private String audioUrl;
 

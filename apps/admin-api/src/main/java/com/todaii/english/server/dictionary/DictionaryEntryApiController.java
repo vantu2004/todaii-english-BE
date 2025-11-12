@@ -23,7 +23,7 @@ import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -70,7 +70,7 @@ public class DictionaryEntryApiController {
 
 	@PostMapping("/gemini")
 	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(
-			@RequestParam @NotNull @Length(min = 1, max = 64) String word) throws Exception {
+			@RequestParam @NotBlank @Length(max = 64) String word) throws Exception {
 		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
 	}
 

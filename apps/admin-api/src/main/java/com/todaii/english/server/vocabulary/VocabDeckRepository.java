@@ -1,5 +1,7 @@
 package com.todaii.english.server.vocabulary;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +30,6 @@ public interface VocabDeckRepository extends JpaRepository<VocabDeck, Long> {
 			    )
 			""")
 	public Page<VocabDeck> search(Long groupId, String keyword, Pageable pageable);
+
+	public List<VocabDeck> findAllByWords_Id(Long entryId);
 }

@@ -13,10 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.DictionarySense;
+import com.todaii.english.core.entity.VocabDeck;
 import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.core.port.GeminiPort;
+import com.todaii.english.server.article.ArticleRepository;
+import com.todaii.english.server.vocabulary.VocabDeckRepository;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -31,6 +35,8 @@ public class DictionaryEntryService {
 	private final DictionaryPort dictionaryPort;
 	private final GeminiPort geminiPort;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
+	private final ArticleRepository articleRepository;
+	private final VocabDeckRepository vocabDeckRepository;
 	private final ObjectMapper objectMapper;
 	private final ModelMapper modelMapper;
 
@@ -39,11 +45,10 @@ public class DictionaryEntryService {
 	}
 
 	public List<DictionaryEntry> createWordByGemini(String word) throws Exception {
-		boolean existed = dictionaryEntryRepository.existsByHeadword(word);
-		if (existed) {
-			throw new BusinessException(409, "The word '" + word + "' already exists in the system.");
+		List<DictionaryEntry> dictionaryEntries = dictionaryEntryRepository.findAllByHeadword(word);
+		if (!dictionaryEntries.isEmpty()) {
+			return dictionaryEntries;
 		}
-
 		// Gọi Free Dictionary API
 		DictionaryApiResponse[] rawData = lookupWord(word);
 		String rawJson = objectMapper.writeValueAsString(rawData);
@@ -55,10 +60,9 @@ public class DictionaryEntryService {
 		// Parse mảng DTO
 		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(rawResponseText, DictionaryEntryDTO[].class);
 
-		List<DictionaryEntry> entries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryEntryRepository::save)
-				.toList();
+		dictionaryEntries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryEntryRepository::save).toList();
 
-		return entries;
+		return dictionaryEntries;
 	}
 
 	public DictionaryEntry toEntity(DictionaryEntryDTO dto) {
@@ -133,12 +137,29 @@ public class DictionaryEntryService {
 		return dictionaryEntryRepository.save(entry);
 	}
 
-	public void deleteWord(Long id) {
-		if (!dictionaryEntryRepository.existsById(id)) {
-			throw new BusinessException(404, "Word not found with id: " + id);
+	// muốn xóa 1 từ thì phải xóa các quan hệ xung quanh
+	public void deleteWord(Long entryId) {
+		DictionaryEntry entry = dictionaryEntryRepository.findById(entryId)
+				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+
+		// Xóa quan hệ trong article
+		List<Article> articles = articleRepository.findAllByEntries_Id(entryId);
+		for (Article article : articles) {
+			article.getEntries().remove(entry);
 		}
 
-		dictionaryEntryRepository.deleteById(id);
+		// Xóa quan hệ trong deck
+		List<VocabDeck> decks = vocabDeckRepository.findAllByWords_Id(entryId);
+		for (VocabDeck deck : decks) {
+			deck.getWords().remove(entry);
+		}
+
+		// Lưu thay đổi
+		articleRepository.saveAll(articles);
+		vocabDeckRepository.saveAll(decks);
+
+		// Cuối cùng xóa entry
+		dictionaryEntryRepository.delete(entry);
 	}
 
 }

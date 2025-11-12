@@ -25,11 +25,12 @@ public class TopicService {
 		return topicRepository.findAll();
 	}
 
-	public Page<Topic> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+	public Page<Topic> findAllPaged(int page, int size, String sortBy, String direction, String keyword,
+			String topicType) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return topicRepository.findAllActive(keyword, pageable);
+		return topicRepository.findAllActive(keyword, topicType, pageable);
 	}
 
 	public Topic findById(Long id) {

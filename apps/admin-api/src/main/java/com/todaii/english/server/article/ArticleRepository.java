@@ -1,5 +1,7 @@
 package com.todaii.english.server.article;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +31,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 				)
 			""")
 	public Page<Article> search(Long topicId, String keyword, Pageable pageable);
+
+	public List<Article> findAllByEntries_Id(Long entryId);
 }

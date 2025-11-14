@@ -51,7 +51,4 @@ public class ArticleRequest {
 
 	@NotEmpty
 	private Set<Long> topicIds;
-
-	// dùng khi update vì khi tạo thì chưa có content để lọc từ
-	private Set<Long> dictionaryEntryIds;
 }

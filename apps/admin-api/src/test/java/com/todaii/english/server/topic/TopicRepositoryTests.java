@@ -77,7 +77,7 @@ class TopicRepositoryTests {
 	@Test
 	@DisplayName("Tìm kiếm topic có keyword")
 	void testFindAllActive_withKeyword() {
-		Page<Topic> result = topicRepository.findAllActive("travel", PageRequest.of(0, 5));
+		Page<Topic> result = topicRepository.findAllActive("travel", "ARTICLE", PageRequest.of(0, 5));
 		assertThat(result.getContent()).isNotEmpty();
 		assertThat(result.getContent().get(0).getAlias()).contains("travel");
 	}
@@ -85,7 +85,7 @@ class TopicRepositoryTests {
 	@Test
 	@DisplayName("Tìm kiếm topic khi keyword null")
 	void testFindAllActive_withoutKeyword() {
-		Page<Topic> result = topicRepository.findAllActive(null, PageRequest.of(0, 5));
+		Page<Topic> result = topicRepository.findAllActive(null, "ARTICLE", PageRequest.of(0, 5));
 		assertThat(result.getTotalElements()).isGreaterThan(0);
 	}
 }

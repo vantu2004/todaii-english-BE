@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.port.NewsApiPort;
-import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
@@ -27,7 +26,6 @@ public class ArticleService {
 	private final NewsApiPort newsApiPort;
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
-	private final DictionaryEntryRepository dictionaryEntryRepository;
 
 	public NewsApiResponse fetchFromNewsApi(String query, int pageSize, int page, String sortBy) {
 		return newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
@@ -36,10 +34,7 @@ public class ArticleService {
 	public Article create(ArticleRequest request) {
 		Article article = modelMapper.map(request, Article.class);
 
-		// Liên kết topic nếu có
-		if (request.getTopicIds() != null && !request.getTopicIds().isEmpty()) {
-			article.setTopics(new HashSet<>(topicRepository.findAllById(request.getTopicIds())));
-		}
+		article.setTopics(new HashSet<>(topicRepository.findAllById(request.getTopicIds())));
 
 		return articleRepository.save(article);
 
@@ -79,15 +74,7 @@ public class ArticleService {
 
 		modelMapper.map(request, article);
 
-		// Liên kết lại topic nếu có
-		if (request.getTopicIds() != null && !request.getTopicIds().isEmpty()) {
-			article.setTopics(new HashSet<>(topicRepository.findAllById(request.getTopicIds())));
-		}
-
-		// Liên kết lại dictionary entries nếu có
-		if (request.getDictionaryEntryIds() != null && !request.getDictionaryEntryIds().isEmpty()) {
-			article.setEntries(new HashSet<>(dictionaryEntryRepository.findAllById(request.getDictionaryEntryIds())));
-		}
+		article.setTopics(new HashSet<>(topicRepository.findAllById(request.getTopicIds())));
 
 		return articleRepository.save(article);
 	}

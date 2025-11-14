@@ -18,12 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 import com.todaii.english.shared.request.server.CreateTopicRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -54,6 +56,11 @@ public class TopicApiController {
 				direction);
 
 		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("/no-paged")
+	public ResponseEntity<List<Topic>> getAllNoPaged(@RequestParam @NotNull TopicType topicType) {
+		return ResponseEntity.ok(topicService.findAllNoPaged(topicType));
 	}
 
 	@GetMapping("/{id}")

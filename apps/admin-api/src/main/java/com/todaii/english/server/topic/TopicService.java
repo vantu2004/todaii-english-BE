@@ -33,6 +33,10 @@ public class TopicService {
 		return topicRepository.findAllActive(keyword, topicType, pageable);
 	}
 
+	public List<Topic> findAllNoPaged(TopicType topicType) {
+		return topicRepository.findAllNopaged(topicType);
+	}
+
 	public Topic findById(Long id) {
 		return topicRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Topic not found"));
 	}
@@ -91,4 +95,5 @@ public class TopicService {
 
 		topicRepository.save(topic);
 	}
+
 }

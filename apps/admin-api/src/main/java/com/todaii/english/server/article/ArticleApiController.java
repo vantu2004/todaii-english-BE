@@ -78,7 +78,7 @@ public class ArticleApiController {
 	}
 
 	@PostMapping("/news-api")
-	public ResponseEntity<NewsApiResponse> fetchArticles(@RequestParam(defaultValue = "bitcoin") @NotBlank String query,
+	public ResponseEntity<NewsApiResponse> fetchArticles(@RequestParam(defaultValue = "new") @NotBlank String query,
 			@RequestParam(defaultValue = "10") @Min(1) @Max(100) int pageSize,
 			@RequestParam(defaultValue = "1") @Min(1) int page,
 			@RequestParam(defaultValue = "publishedAt") String sortBy) {

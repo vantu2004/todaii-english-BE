@@ -74,7 +74,7 @@ class TopicApiControllerTests {
 		Topic t1 = Topic.builder().id(1L).name("News").alias("article-news").build();
 		Page<Topic> page = new PageImpl<>(List.of(t1));
 
-		given(topicService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+		given(topicService.findAllPaged(1, 10, "id", "desc", null, "ARTICLE")).willReturn(page);
 
 		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.content[0].name").value("News"));
@@ -85,7 +85,7 @@ class TopicApiControllerTests {
 	void testGetAllPaged_empty() throws Exception {
 		Page<Topic> page = new PageImpl<>(Collections.emptyList());
 
-		given(topicService.findAllPaged(1, 10, "id", "desc", null)).willReturn(page);
+		given(topicService.findAllPaged(1, 10, "id", "desc", null, "ARTICLE")).willReturn(page);
 
 		mockMvc.perform(get(END_POINT_PATH)).andExpect(status().isOk()).andExpect(jsonPath("$.content").isEmpty());
 	}

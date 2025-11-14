@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long> {
@@ -33,5 +34,9 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 			""")
 	public Page<Topic> findAllActive(String keyword, String topicType, Pageable pageable);
 
+	@Query("SELECT t FROM Topic t WHERE t.topicType = ?1 AND t.isDeleted = false ORDER BY t.name ASC")
+	List<Topic> findAllNopaged(TopicType topicType);
+
 	public boolean existsByAlias(String alias);
+
 }

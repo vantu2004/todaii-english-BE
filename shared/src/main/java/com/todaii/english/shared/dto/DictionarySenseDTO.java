@@ -12,22 +12,23 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DictionarySenseDTO {
-	@NotBlank
-	@Length(max = 32)
+
+	@NotBlank(message = "POS cannot be blank")
+	@Length(max = 32, message = "POS must not exceed 32 characters")
 	private String pos;
 
-	@NotBlank
-	private String meaning; // tiếng Việt
+	@NotBlank(message = "Meaning (Vietnamese) cannot be blank")
+	private String meaning;
 
-	@NotBlank
-	private String definition; // tiếng Anh
+	@NotBlank(message = "Definition (English) cannot be blank")
+	private String definition;
 
-	@NotBlank
+	@NotBlank(message = "Example sentence cannot be blank")
 	private String example;
 
-	@Size(max = 10)
+	@Size(max = 10, message = "Maximum 10 synonyms allowed")
 	private List<String> synonyms;
 
-	@Size(max = 10)
+	@Size(max = 10, message = "Maximum 10 collocations allowed")
 	private List<String> collocations;
 }

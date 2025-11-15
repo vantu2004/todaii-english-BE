@@ -31,22 +31,18 @@ public class ArticleParagraphApiController {
 	}
 
 	@PostMapping("/{articleId}/paragraph")
-	public ResponseEntity<ArticleParagraph> create(@PathVariable Long articleId,
+	public ResponseEntity<ArticleParagraph> save(@PathVariable Long articleId,
 			@Valid @RequestBody ArticleParagraphRequest request) {
-		ArticleParagraph paragraph = articleParagraphService.create(articleId, request);
-		return ResponseEntity.status(201).body(paragraph);
+		ArticleParagraph paragraph = articleParagraphService.save(articleId, request);
+		return ResponseEntity.status(200).body(paragraph);
 	}
 
 	@PostMapping("/paragraph/translate")
-	public ResponseEntity<String> translateParagraph(@RequestParam @NotNull @Length(min = 10) String textEn) {
+	public ResponseEntity<String> translateParagraph(
+			@RequestBody @NotNull(message = "Text to translate must not be null") @Length(min = 10, message = "Text to translate must be at least 10 characters") String textEn) {
+
 		String translated = articleParagraphService.translateParagraph(textEn);
 		return ResponseEntity.ok(translated);
-	}
-
-	@PutMapping("/paragraph/{paragraphId}")
-	public ResponseEntity<ArticleParagraph> update(@PathVariable Long paragraphId,
-			@Valid @RequestBody ArticleParagraphRequest request) {
-		return ResponseEntity.ok(articleParagraphService.update(paragraphId, request));
 	}
 
 	@DeleteMapping("/paragraph/{paragraphId}")

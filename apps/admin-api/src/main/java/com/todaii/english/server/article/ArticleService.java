@@ -81,10 +81,6 @@ public class ArticleService {
 
 	public void toggleEnabled(Long id) {
 		Article article = findById(id);
-		if (article.getParagraphs().isEmpty()) {
-			throw new BusinessException(400, "Cannot enable the article because it has no content");
-		}
-
 		article.setEnabled(!article.getEnabled());
 
 		articleRepository.save(article);

@@ -40,12 +40,15 @@ public class UserApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+
 		Page<UserDTO> userDTOs = userService.findAllPaged(page, size, sortBy, direction, keyword);
 
-		PagedResponse<UserDTO> response = new PagedResponse<UserDTO>(userDTOs.getContent(), page, size,
+		PagedResponse<UserDTO> response = new PagedResponse<>(userDTOs.getContent(), page, size,
 				userDTOs.getTotalElements(), userDTOs.getTotalPages(), userDTOs.isFirst(), userDTOs.isLast(), sortBy,
 				direction);
 

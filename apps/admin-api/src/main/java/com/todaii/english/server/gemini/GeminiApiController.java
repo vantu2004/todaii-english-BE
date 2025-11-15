@@ -19,7 +19,9 @@ public class GeminiApiController {
 	private final GeminiService geminiService;
 
 	@GetMapping("/generate")
-	public ResponseEntity<String> generate(@RequestParam @NotNull @Length(min = 1, max = 1024) String prompt) {
+	public ResponseEntity<String> generate(
+			@RequestParam @NotNull(message = "Prompt must not be null") @Length(min = 1, max = 1024, message = "Prompt must be between 1 and 1024 characters") String prompt) {
+
 		return ResponseEntity.ok(geminiService.askGemini(prompt));
 	}
 

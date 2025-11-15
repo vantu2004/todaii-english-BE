@@ -14,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SettingRequest {
-	@NotEmpty
-	private Map<@NotBlank String, @NotBlank String> settings;
+
+	@NotEmpty(message = "Settings map cannot be empty")
+	private Map<@NotBlank(message = "Setting key cannot be blank") String, @NotBlank(message = "Setting value cannot be blank") String> settings;
 }

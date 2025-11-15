@@ -68,7 +68,7 @@ public class AuthApiController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<Void> logout(@RequestParam @Email String email,
+	public ResponseEntity<Void> logout(@RequestParam @Email(message = "Email format is invalid") String email,
 			@CookieValue(name = "admin_refresh_token", required = false) String refreshToken) {
 		this.adminTokenService.revokeRefreshToken(email, refreshToken);
 

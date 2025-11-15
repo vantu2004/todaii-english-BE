@@ -46,9 +46,12 @@ public class ArticleApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<Article>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<Article>> getAllPaged(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+
 		Page<Article> articles = articleService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
@@ -60,9 +63,11 @@ public class ArticleApiController {
 
 	@GetMapping("/topic/{topicId}")
 	public ResponseEntity<PagedResponse<Article>> getArticlesBytopicId(@PathVariable Long topicId,
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
 			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
 			@RequestParam(required = false) String keyword) {
+
 		Page<Article> articles = articleService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
 
 		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
@@ -78,12 +83,14 @@ public class ArticleApiController {
 	}
 
 	@PostMapping("/news-api")
-	public ResponseEntity<NewsApiResponse> fetchArticles(@RequestParam(defaultValue = "new") @NotBlank String query,
-			@RequestParam(defaultValue = "10") @Min(1) @Max(100) int pageSize,
-			@RequestParam(defaultValue = "1") @Min(1) int page,
+	public ResponseEntity<NewsApiResponse> fetchArticles(
+			@RequestParam(defaultValue = "new") @NotBlank(message = "Query must not be blank") String query,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Page size must be at least 1") @Max(value = 100, message = "Page size cannot exceed 100") int pageSize,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
 			@RequestParam(defaultValue = "publishedAt") String sortBy) {
+
 		if (page * pageSize > 100) {
-			throw new BusinessException(400, "Your account is limited to a max of 100 results");
+			throw new BusinessException(400, "Your account is limited to a maximum of 100 results");
 		}
 
 		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(query, pageSize, page, sortBy);

@@ -34,25 +34,31 @@ public class ArticleApiController {
 
 	// lấy n articles gần đây nhất
 	@GetMapping("/latest")
-	public ResponseEntity<List<Article>> getLatestArticles(@RequestParam(defaultValue = "1") @Min(1) int size) {
+	public ResponseEntity<List<Article>> getLatestArticles(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
 		return ResponseEntity.ok(articleService.getLatestArticles(size));
 	}
 
 	// lấy articles theo ngày, định dạng YYYY-MM-DD (đúng format, số lượng ký tự)
 	@GetMapping("/by-date/{date}")
-	public ResponseEntity<PagedResponse<Article>> getArticlesByDate(@PathVariable String date,
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+	public ResponseEntity<PagedResponse<Article>> getArticlesByDate(
+			@PathVariable @NotBlank(message = "Date must not be blank") String date,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
 			@RequestParam(defaultValue = "updatedAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
-		LocalDate parsedDate = LocalDate.parse(date);
+
+		LocalDate parsedDate;
+		try {
+			parsedDate = LocalDate.parse(date);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Invalid date format. Expected format is YYYY-MM-DD");
+		}
 
 		Page<Article> articles = articleService.getArticlesByDate(parsedDate, keyword, page, size, sortBy, direction);
 
-		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
-				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
-				direction);
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(new PagedResponse<>(articles.getContent(), page, size, articles.getTotalElements(),
+				articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy, direction));
 	}
 
 	// lấy chi tiết article
@@ -62,19 +68,19 @@ public class ArticleApiController {
 	}
 
 	// search article
+
 	@GetMapping("/search")
-	public ResponseEntity<PagedResponse<Article>> search(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size,
+	public ResponseEntity<PagedResponse<Article>> search(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
 			@RequestParam(defaultValue = "updatedAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = true) @NotBlank @Length(max = 1024) String keyword) {
+			@RequestParam(required = true) @NotBlank(message = "Keyword must not be blank") @Length(max = 1024, message = "Keyword must not exceed 1024 characters") String keyword) {
+
 		Page<Article> articles = articleService.search(keyword, page, size, sortBy, direction);
 
-		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
-				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
-				direction);
-
-		return ResponseEntity.ok(response);
+		return ResponseEntity.ok(new PagedResponse<>(articles.getContent(), page, size, articles.getTotalElements(),
+				articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy, direction));
 	}
 
 	/*

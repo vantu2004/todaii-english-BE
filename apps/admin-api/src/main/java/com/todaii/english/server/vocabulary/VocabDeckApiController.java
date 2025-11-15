@@ -38,9 +38,12 @@ public class VocabDeckApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<VocabDeck>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<VocabDeck>> getAllPaged(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+
 		Page<VocabDeck> decks = vocabDeckService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,
@@ -50,10 +53,12 @@ public class VocabDeckApiController {
 	}
 
 	@GetMapping("/group/{groupId}")
-	public ResponseEntity<PagedResponse<VocabDeck>> getDecksByGroupdId(@PathVariable Long groupId,
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+	public ResponseEntity<PagedResponse<VocabDeck>> getDecksByGroupId(@PathVariable Long groupId,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
 			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
 			@RequestParam(required = false) String keyword) {
+
 		Page<VocabDeck> decks = vocabDeckService.findByGroupId(groupId, page, size, sortBy, direction, keyword);
 
 		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,

@@ -35,8 +35,10 @@ public class VideoApiController {
 	private final VideoService videoService;
 
 	@GetMapping("/youtube")
-	public ResponseEntity<VideoDTO> importFromYoutube(@RequestParam @NotBlank @Length(max = 1024) String url)
+	public ResponseEntity<VideoDTO> importFromYoutube(
+			@RequestParam @NotBlank(message = "URL must not be blank") @Length(max = 1024, message = "URL must not exceed 1024 characters") String url)
 			throws BadRequestException {
+
 		return ResponseEntity.ok(videoService.importFromYoutube(url));
 	}
 
@@ -56,9 +58,12 @@ public class VideoApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<Video>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<Video>> getAllPaged(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+
 		Page<Video> videos = videoService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<Video> response = new PagedResponse<>(videos.getContent(), page, size, videos.getTotalElements(),
@@ -69,9 +74,11 @@ public class VideoApiController {
 
 	@GetMapping("/topic/{topicId}")
 	public ResponseEntity<PagedResponse<Video>> getVideosByTopicId(@PathVariable Long topicId,
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
 			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
 			@RequestParam(required = false) String keyword) {
+
 		Page<Video> videos = videoService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
 
 		PagedResponse<Video> response = new PagedResponse<>(videos.getContent(), page, size, videos.getTotalElements(),

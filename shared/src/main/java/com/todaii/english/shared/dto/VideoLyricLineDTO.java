@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class VideoLyricLineDTO {
+
 	@NotNull(message = "lineOrder is required")
 	@Min(value = 1, message = "lineOrder must be >= 1")
 	private Integer lineOrder;
@@ -23,9 +24,9 @@ public class VideoLyricLineDTO {
 	@Min(value = 0, message = "endMs must be >= 0")
 	private Integer endMs;
 
-	@NotBlank
+	@NotBlank(message = "English text (textEn) cannot be blank")
 	private String textEn;
 
-	@NotBlank
+	@NotBlank(message = "Vietnamese text (textVi) cannot be blank")
 	private String textVi;
 }

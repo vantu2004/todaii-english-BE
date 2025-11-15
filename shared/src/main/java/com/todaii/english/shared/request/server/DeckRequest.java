@@ -17,16 +17,17 @@ import lombok.Setter;
 @Setter
 @Builder
 public class DeckRequest {
-	@NotBlank
-	@Length(max = 191)
+
+	@NotBlank(message = "Deck name cannot be blank")
+	@Length(max = 191, message = "Deck name must not exceed 191 characters")
 	private String name;
 
-	@NotBlank
+	@NotBlank(message = "Description cannot be blank")
 	private String description;
 
-	@NotNull
+	@NotNull(message = "CEFR level is required")
 	private CefrLevel cefrLevel;
 
-	@NotEmpty
+	@NotEmpty(message = "At least one group ID is required")
 	private Set<Long> groupIds;
 }

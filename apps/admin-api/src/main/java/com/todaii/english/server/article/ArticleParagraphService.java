@@ -28,13 +28,29 @@ public class ArticleParagraphService {
 		return article.getParagraphs().stream().sorted((a, b) -> a.getParaOrder().compareTo(b.getParaOrder())).toList();
 	}
 
-	public ArticleParagraph create(Long articleId, ArticleParagraphRequest request) {
-		Article article = articleRepository.findById(articleId)
-				.orElseThrow(() -> new BusinessException(404, "Article not found"));
+	public ArticleParagraph save(Long articleId, ArticleParagraphRequest request) {
+		ArticleParagraph paragraph;
 
-		ArticleParagraph paragraph = modelMapper.map(request, ArticleParagraph.class);
-		paragraph.setArticle(article);
+		// update
+		if (request.getId() != null) {
+			paragraph = articleParagraphRepository.findById(request.getId())
+					.orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
 
+			// kiểm tra paragraph thuộc articleId
+			if (!paragraph.getArticle().getId().equals(articleId)) {
+				throw new BusinessException(400, "Paragraph does not belong to the given article");
+			}
+		}
+		// create
+		else {
+			Article article = articleRepository.findById(articleId)
+					.orElseThrow(() -> new BusinessException(404, "Article not found"));
+
+			paragraph = new ArticleParagraph();
+			paragraph.setArticle(article);
+		}
+
+		modelMapper.map(request, paragraph);
 		return articleParagraphRepository.save(paragraph);
 	}
 
@@ -42,15 +58,6 @@ public class ArticleParagraphService {
 		String prompt = String.format(Gemini.TRANSLATE_PROMPT, textEn);
 
 		return geminiPort.generateText(prompt).trim();
-	}
-
-	public ArticleParagraph update(Long id, ArticleParagraphRequest request) {
-		ArticleParagraph paragraph = articleParagraphRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
-
-		modelMapper.map(request, paragraph);
-
-		return articleParagraphRepository.save(paragraph);
 	}
 
 	public void delete(Long id) {

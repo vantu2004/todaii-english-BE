@@ -28,6 +28,10 @@ public class VideoLyricLineApiController {
 
 	@PostMapping("/lyric/import")
 	public ResponseEntity<List<VideoLyricLineDTO>> importLyrics(@RequestParam("file") MultipartFile file) {
+		if (file.isEmpty()) {
+			throw new IllegalArgumentException("Uploaded file must not be empty");
+		}
+
 		return ResponseEntity.ok(videoLyricLineService.importFromSrt(file));
 	}
 

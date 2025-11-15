@@ -88,8 +88,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		globalErrorDTO.setStatus(HttpStatus.BAD_REQUEST.value());
 
 		Set<ConstraintViolation<?>> constraintViolations = constraintViolationException.getConstraintViolations();
-		constraintViolations.forEach(constraintViolation -> globalErrorDTO
-				.addError(constraintViolation.getPropertyPath() + ": " + constraintViolation.getMessage()));
+		constraintViolations.forEach(constraintViolation -> globalErrorDTO.addError(constraintViolation.getMessage()));
 
 		globalErrorDTO.setPath(request.getServletPath());
 
@@ -109,7 +108,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 		fieldErrors.forEach(fieldError -> {
-			String errorMessage = fieldError.getField() + ": " + fieldError.getDefaultMessage();
+			String errorMessage = fieldError.getDefaultMessage();
 			globalErrorDTO.addError(errorMessage);
 		});
 

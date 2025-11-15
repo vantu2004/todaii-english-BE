@@ -23,40 +23,41 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VideoDTO {
-	@NotBlank
-	@Length(max = 512)
+
+	@NotBlank(message = "Title cannot be blank")
+	@Length(max = 512, message = "Title must not exceed 512 characters")
 	private String title;
 
-	@NotBlank
-	@Length(max = 191)
+	@NotBlank(message = "Author name cannot be blank")
+	@Length(max = 191, message = "Author name must not exceed 191 characters")
 	private String authorName;
 
-	@NotBlank
-	@Length(max = 191)
+	@NotBlank(message = "Provider name cannot be blank")
+	@Length(max = 191, message = "Provider name must not exceed 191 characters")
 	private String providerName;
 
-	@NotBlank
-	@URL
-	@Length(max = 1024)
+	@NotBlank(message = "Provider URL cannot be blank")
+	@URL(message = "Provider URL must be a valid URL")
+	@Length(max = 1024, message = "Provider URL must not exceed 1024 characters")
 	private String providerUrl;
 
-	@NotBlank
-	@URL
-	@Length(max = 1024)
+	@NotBlank(message = "Thumbnail URL cannot be blank")
+	@URL(message = "Thumbnail URL must be a valid URL")
+	@Length(max = 1024, message = "Thumbnail URL must not exceed 1024 characters")
 	private String thumbnailUrl;
 
-	@NotBlank
+	@NotBlank(message = "Embed HTML cannot be blank")
 	private String embedHtml;
 
-	@NotBlank
-	@URL
-	@Length(max = 1024)
+	@NotBlank(message = "Video URL cannot be blank")
+	@URL(message = "Video URL must be a valid URL")
+	@Length(max = 1024, message = "Video URL must not exceed 1024 characters")
 	private String videoUrl;
 
-	@NotNull
+	@NotNull(message = "CEFR level is required")
 	private CefrLevel cefrLevel;
 
-	@NotEmpty
+	@NotEmpty(message = "At least one topic ID is required")
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private Set<Long> topicIds;
 }

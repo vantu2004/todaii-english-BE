@@ -29,7 +29,6 @@ import com.todaii.english.shared.utils.CookieUtils;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -78,7 +77,7 @@ public class AuthApiController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(@RequestParam @Email String email,
+	public ResponseEntity<?> logout(@RequestParam @Email(message = "Email format is invalid") String email,
 			@CookieValue(name = "user_refresh_token", required = false) String refreshToken) {
 		this.userTokenService.revokeRefreshToken(email, refreshToken);
 
@@ -96,15 +95,13 @@ public class AuthApiController {
 	}
 
 	@GetMapping("/resend-otp")
-	public ResponseEntity<?> resendOtp(
-			@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid") @RequestParam String email) {
+	public ResponseEntity<?> resendOtp(@RequestParam @Email(message = "Email format is invalid") String email) {
 		this.userService.resendOtp(email);
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("forgot-password")
-	public ResponseEntity<?> forgotPassword(
-			@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid") @RequestParam String email) {
+	public ResponseEntity<?> forgotPassword(@RequestParam @Email(message = "Email format is invalid") String email) {
 		this.userService.forgotPassword(email);
 		return ResponseEntity.ok().build();
 	}

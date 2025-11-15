@@ -84,7 +84,7 @@ class ArticleParagraphApiControllerTests {
 		ArticleParagraphRequest req = createValidRequest();
 		ArticleParagraph saved = ArticleParagraph.builder().id(10L).paraOrder(1).textEn(req.getTextEn()).build();
 
-		given(articleParagraphService.create(eq(1L), any(ArticleParagraphRequest.class))).willReturn(saved);
+		given(articleParagraphService.save(eq(1L), any(ArticleParagraphRequest.class))).willReturn(saved);
 
 		mockMvc.perform(post(BASE_ENDPOINT + "/1/paragraph").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(req))).andExpect(status().isCreated())
@@ -105,7 +105,7 @@ class ArticleParagraphApiControllerTests {
 	@Test
 	@DisplayName("POST /{articleId}/paragraph — Article không tồn tại → 404 NotFound")
 	void create_shouldThrowNotFound() throws Exception {
-		given(articleParagraphService.create(eq(99L), any(ArticleParagraphRequest.class)))
+		given(articleParagraphService.save(eq(1L), any(ArticleParagraphRequest.class)))
 				.willThrow(new BusinessException(404, "Article not found"));
 
 		mockMvc.perform(post(BASE_ENDPOINT + "/99/paragraph").contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class ArticleParagraphApiControllerTests {
 	@DisplayName("PUT /paragraph/{id} — Cập nhật thành công → 200 OK")
 	void update_shouldReturnOk() throws Exception {
 		ArticleParagraph updated = ArticleParagraph.builder().id(1L).textEn("Updated text").build();
-		given(articleParagraphService.update(eq(1L), any(ArticleParagraphRequest.class))).willReturn(updated);
+		given(articleParagraphService.save(eq(1L), any(ArticleParagraphRequest.class))).willReturn(updated);
 
 		mockMvc.perform(put(BASE_ENDPOINT + "/paragraph/1").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(createValidRequest()))).andExpect(status().isOk())
@@ -157,7 +157,7 @@ class ArticleParagraphApiControllerTests {
 	@Test
 	@DisplayName("PUT /paragraph/{id} — Không tồn tại → 404 NotFound")
 	void update_shouldThrowNotFound() throws Exception {
-		given(articleParagraphService.update(eq(1L), any(ArticleParagraphRequest.class)))
+		given(articleParagraphService.save(eq(1L), any(ArticleParagraphRequest.class)))
 				.willThrow(new BusinessException(404, "Paragraph not found"));
 
 		mockMvc.perform(put(BASE_ENDPOINT + "/paragraph/1").contentType(MediaType.APPLICATION_JSON)

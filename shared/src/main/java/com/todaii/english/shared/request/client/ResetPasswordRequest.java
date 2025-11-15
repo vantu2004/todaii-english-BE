@@ -10,10 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResetPasswordRequest {
-	@NotBlank
+
+	@NotBlank(message = "Reset password token cannot be blank")
 	private String resetPasswordToken;
 
-	@NotNull
-	@Length(min = 6, max = 20)
+	@NotNull(message = "Password cannot be null")
+	@Length(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
 	private String password;
 }

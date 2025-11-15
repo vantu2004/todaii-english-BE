@@ -16,39 +16,40 @@ import org.hibernate.validator.constraints.URL;
 @Setter
 @Builder
 public class ArticleRequest {
-	@Length(max = 191)
+
+	@Length(max = 191, message = "Source ID must not exceed 191 characters")
 	private String sourceId;
 
-	@NotBlank
-	@Length(max = 191)
+	@NotBlank(message = "Source name cannot be blank")
+	@Length(max = 191, message = "Source name must not exceed 191 characters")
 	private String sourceName;
 
-	@NotBlank
-	@Length(max = 191)
+	@NotBlank(message = "Author cannot be blank")
+	@Length(max = 191, message = "Author must not exceed 191 characters")
 	private String author;
 
-	@NotBlank
-	@Length(max = 512)
+	@NotBlank(message = "Title cannot be blank")
+	@Length(max = 512, message = "Title must not exceed 512 characters")
 	private String title;
 
-	@NotBlank
+	@NotBlank(message = "Description cannot be blank")
 	private String description;
 
-	@NotBlank
-	@Length(max = 1024)
-	@URL
+	@NotBlank(message = "Source URL cannot be blank")
+	@Length(max = 1024, message = "Source URL must not exceed 1024 characters")
+	@URL(message = "Source URL must be a valid URL")
 	private String sourceUrl;
 
-	@Length(max = 1024)
-	@URL
+	@Length(max = 1024, message = "Image URL must not exceed 1024 characters")
+	@URL(message = "Image URL must be a valid URL")
 	private String imageUrl;
 
-	@NotNull
+	@NotNull(message = "Published date is required")
 	private LocalDateTime publishedAt;
 
-	@NotNull
+	@NotNull(message = "CEFR level is required")
 	private CefrLevel cefrLevel;
 
-	@NotEmpty
+	@NotEmpty(message = "At least one topic ID is required")
 	private Set<Long> topicIds;
 }

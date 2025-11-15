@@ -40,9 +40,12 @@ public class VocabGroupApiController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PagedResponse<VocabGroup>> getAllPaged(@RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size, @RequestParam(defaultValue = "id") String sortBy,
-			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
+	public ResponseEntity<PagedResponse<VocabGroup>> getAllPaged(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
+			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
+			@RequestParam(required = false) String keyword) {
+
 		Page<VocabGroup> groups = vocabGroupService.findAllPaged(page, size, sortBy, direction, keyword);
 
 		PagedResponse<VocabGroup> response = new PagedResponse<>(groups.getContent(), page, size,
@@ -58,13 +61,14 @@ public class VocabGroupApiController {
 	}
 
 	@PostMapping
-	public ResponseEntity<VocabGroup> create(@RequestParam @NotBlank @Length(max = 191) String name) {
+	public ResponseEntity<VocabGroup> create(
+			@RequestParam @NotBlank(message = "Name must not be blank") @Length(max = 191, message = "Name cannot exceed 191 characters") String name) {
 		return ResponseEntity.status(201).body(vocabGroupService.create(name));
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<VocabGroup> update(@PathVariable Long id,
-			@RequestParam @NotBlank @Length(max = 191) String name) {
+			@RequestParam @NotBlank(message = "Name must not be blank") @Length(max = 191, message = "Name cannot exceed 191 characters") String name) {
 		return ResponseEntity.ok(vocabGroupService.update(id, name));
 	}
 

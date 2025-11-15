@@ -2,18 +2,19 @@ package com.todaii.english.shared.request;
 
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class AuthRequest {
-	@Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid")
+
+	@Email(message = "Email format is invalid")
 	private String email;
 
-	@NotNull
-	@Length(min = 6, max = 20)
+	@NotNull(message = "Password cannot be null")
+	@Length(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
 	private String password;
 }

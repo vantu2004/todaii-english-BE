@@ -14,19 +14,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DictionaryEntryDTO {
-	@NotBlank
-	@Length(max = 191)
+
+	@NotBlank(message = "Headword cannot be blank")
+	@Length(max = 191, message = "Headword must not exceed 191 characters")
 	private String headword;
 
-	@NotBlank
-	@Length(max = 191)
+	@NotBlank(message = "IPA cannot be blank")
+	@Length(max = 191, message = "IPA must not exceed 191 characters")
 	private String ipa;
 
-	@URL
-	@Length(max = 1024)
+	@URL(message = "Audio URL must be a valid URL format")
+	@Length(max = 1024, message = "Audio URL must not exceed 1024 characters")
 	private String audioUrl;
 
 	@Valid
-	@NotEmpty
+	@NotEmpty(message = "At least one sense is required")
 	private Set<DictionarySenseDTO> senses;
 }

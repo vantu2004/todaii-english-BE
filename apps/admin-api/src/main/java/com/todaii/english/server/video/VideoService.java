@@ -18,11 +18,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Video;
+import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.response.YoutubeSearchResponse;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class VideoService {
 	private final ObjectMapper objectMapper;
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
+	private final YoutubeDataApiV3Port youtubeDataApiV3Port;
 
 	public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
 		String requestUri = ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
@@ -50,8 +53,14 @@ public class VideoService {
 			String providerName = json.path("provider_name").asText();
 			String providerUrl = json.path("provider_url").asText();
 			String thumbnailUrl = json.path("thumbnail_url").asText();
-			String embedHtml = json.path("html").asText().replace("width=\"200\"", "width=\"100%\"")
-					.replace("height=\"113\"", "height=\"100%\"");
+
+			String embedHtml = json.path("html").asText();
+
+			// Thay width bất kỳ thành 100%
+			embedHtml = embedHtml.replaceAll("width=\"\\d+\"", "width=\"100%\"");
+
+			// Thay height bất kỳ thành 100%
+			embedHtml = embedHtml.replaceAll("height=\"\\d+\"", "height=\"100%\"");
 
 			VideoDTO videoDTO = VideoDTO.builder().title(title).authorName(authorName).providerName(providerName)
 					.providerUrl(providerUrl).thumbnailUrl(thumbnailUrl).embedHtml(embedHtml).videoUrl(youtubeUrl)
@@ -65,6 +74,10 @@ public class VideoService {
 			// Bắt mọi lỗi còn lại (JSON parse, network, v.v.)
 			throw new RuntimeException("Failed to import YouTube video: " + e.getMessage(), e);
 		}
+	}
+
+	public YoutubeSearchResponse getYoutubeSearchResponse(String keyword, String type, int size) {
+		return youtubeDataApiV3Port.fetchFromYoutube(keyword, type, size);
 	}
 
 	public Video findById(Long id) {

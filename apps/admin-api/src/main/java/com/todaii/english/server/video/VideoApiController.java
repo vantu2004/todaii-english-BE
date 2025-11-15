@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.todaii.english.core.entity.Video;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.response.PagedResponse;
+import com.todaii.english.shared.response.YoutubeSearchResponse;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -38,8 +39,15 @@ public class VideoApiController {
 	public ResponseEntity<VideoDTO> importFromYoutube(
 			@RequestParam @NotBlank(message = "URL must not be blank") @Length(max = 1024, message = "URL must not exceed 1024 characters") String url)
 			throws BadRequestException {
-
 		return ResponseEntity.ok(videoService.importFromYoutube(url));
+	}
+
+	@GetMapping("/youtube-data-api-v3")
+	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(
+			@RequestParam(defaultValue = "listening english") @NotBlank(message = "Keyword must not be blank") @Length(max = 191, message = "Keyword must not exceed 191 characters") String keyword,
+			@RequestParam(defaultValue = "video") @NotBlank(message = "Type must not be blank") String type,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
+		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(keyword, type, size));
 	}
 
 	@GetMapping("/{id}")

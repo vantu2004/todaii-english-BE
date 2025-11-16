@@ -76,6 +76,8 @@ public class VocabGroupService {
 
 	public void softDelete(Long id) {
 		VocabGroup vocabGroup = findById(id);
+		vocabGroup.setName("deleted-" + vocabGroup.getName());
+		vocabGroup.setAlias("deleted-" + vocabGroup.getAlias());
 		vocabGroup.setIsDeleted(true);
 
 		vocabGroupRepository.save(vocabGroup);

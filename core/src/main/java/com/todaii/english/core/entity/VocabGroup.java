@@ -28,10 +28,10 @@ public class VocabGroup {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 191, unique = true, nullable = false)
+	@Column(length = 191, nullable = false)
 	private String name;
 
-	@Column(length = 191, unique = true, nullable = false)
+	@Column(length = 191, nullable = false)
 	private String alias;
 
 	@Builder.Default

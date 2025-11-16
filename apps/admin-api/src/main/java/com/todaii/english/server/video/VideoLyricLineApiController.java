@@ -37,12 +37,7 @@ public class VideoLyricLineApiController {
 
 	@GetMapping("/{videoId}/lyric")
 	public ResponseEntity<List<VideoLyricLine>> getAllLyrics(@PathVariable Long videoId) {
-		List<VideoLyricLine> videoLyricLines = videoLyricLineService.findAll(videoId);
-		if (videoLyricLines.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-
-		return ResponseEntity.ok(videoLyricLines);
+		return ResponseEntity.ok(videoLyricLineService.findAll(videoId));
 	}
 
 	@GetMapping("/lyric/{lyricId}")

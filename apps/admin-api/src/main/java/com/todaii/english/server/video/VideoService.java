@@ -146,11 +146,6 @@ public class VideoService {
 
 	public void toggleEnabled(Long id) {
 		Video video = findById(id);
-
-		if (!videoLyricLineRepository.existsByVideoId(id)) {
-			throw new BusinessException(400, "Cannot enable video without lyrics");
-		}
-
 		video.setEnabled(!video.getEnabled());
 
 		videoRepository.save(video);

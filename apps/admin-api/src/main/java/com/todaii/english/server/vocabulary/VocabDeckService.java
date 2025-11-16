@@ -112,10 +112,6 @@ public class VocabDeckService {
 
 	public void toggleEnabled(Long deckId) {
 		VocabDeck vocabDeck = findById(deckId);
-		if (vocabDeck.getWords().isEmpty()) {
-			throw new BusinessException(400, "Cannot enable empty deck");
-		}
-
 		vocabDeck.setEnabled(!vocabDeck.getEnabled());
 
 		vocabDeckRepository.save(vocabDeck);

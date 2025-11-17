@@ -1,17 +1,18 @@
 package com.todaii.english.server.article;
 
 import java.util.List;
+import java.util.Map;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.ArticleParagraph;
+import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleParagraphRequest;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,9 +38,18 @@ public class ArticleParagraphApiController {
 		return ResponseEntity.status(200).body(paragraph);
 	}
 
+	/*
+	 * @RequestBody làm Spring không parse field textEn vào string raw - thay vào
+	 * đó, textEn ở method sẽ nhận toàn bộ JSON object dưới dạng chuỗi:
+	 * {"textEn":""}
+	 */
 	@PostMapping("/paragraph/translate")
-	public ResponseEntity<String> translateParagraph(
-			@RequestBody @NotNull(message = "Text to translate must not be null") @Length(min = 10, message = "Text to translate must be at least 10 characters") String textEn) {
+	public ResponseEntity<String> translateParagraph(@RequestBody Map<String, String> body) {
+		String textEn = body.get("textEn");
+
+		if (!StringUtils.hasText(textEn) || textEn.length() < 10) {
+			throw new BusinessException(400, "Text to translate must be at least 10 characters");
+		}
 
 		String translated = articleParagraphService.translateParagraph(textEn);
 		return ResponseEntity.ok(translated);

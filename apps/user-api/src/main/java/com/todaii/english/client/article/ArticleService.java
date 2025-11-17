@@ -29,6 +29,10 @@ public class ArticleService {
 	public List<Article> getLatestArticles(int size) {
 		return articleRepository.findAllByEnabledTrueOrderByCreatedAtDesc(PageRequest.of(0, size)).getContent();
 	}
+	
+	public List<Article> getTopArticles(int size) {
+		return articleRepository.findAllByEnabledTrueOrderByViewsDesc(PageRequest.of(0, size)).getContent();
+	}
 
 	public Page<Article> getArticlesByDate(LocalDate date, String keyword, int page, int size, String sortBy,
 			String direction) {
@@ -115,12 +119,13 @@ public class ArticleService {
 		return articleRepository.findFallbackByCefr(articleId, cefrLevel, pageable);
 	}
 
-	public Page<Article> filterArticles(String sourceName, CefrLevel cefrLevel, Integer minViews, Long topicId,
+	public Page<Article> filterArticles(String keyword, String sourceName, CefrLevel cefrLevel, Integer minViews, Long topicId,
 			int page, int size, String sortBy, String direction) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
 		Specification<Article> spec = Specification.where(ArticleSpecification.isEnabled())
+				.and(ArticleSpecification.hasKeyword(keyword))
 				.and(ArticleSpecification.hasSourceName(sourceName)).and(ArticleSpecification.hasCefrLevel(cefrLevel))
 				.and(ArticleSpecification.hasMinViews(minViews)).and(ArticleSpecification.hasTopic(topicId));
 

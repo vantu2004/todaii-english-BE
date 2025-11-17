@@ -19,6 +19,10 @@ import com.todaii.english.shared.enums.CefrLevel;
 public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
 	// lấy 10 bài báo đã enabled gần nhất sort theo createdAt chiều giảm dần
 	public Page<Article> findAllByEnabledTrueOrderByCreatedAtDesc(Pageable pageable);
+	
+	// lấy 10 bài báo đã enabled gần nhất sort theo views chiều giảm dần
+	public Page<Article> findAllByEnabledTrueOrderByViewsDesc(Pageable pageable);
+
 
 	@Query("""
 			    SELECT a FROM Article a

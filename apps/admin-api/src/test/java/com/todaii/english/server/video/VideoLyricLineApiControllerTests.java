@@ -74,7 +74,7 @@ class VideoLyricLineApiControllerTests {
 	@Test
 	@DisplayName("GET /{videoId}/lyric — Có lyrics → 200 OK")
 	void testGetAllLyrics_Success() throws Exception {
-		when(service.findAll(1L)).thenReturn(List.of(lyric));
+		when(service.findAll(1L, "id", "asc", "")).thenReturn(List.of(lyric));
 
 		mockMvc.perform(get(BASE + "/1/lyric")).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].textEn").value("Hello"));
@@ -83,7 +83,7 @@ class VideoLyricLineApiControllerTests {
 	@Test
 	@DisplayName("GET /{videoId}/lyric — Không có lyrics → 204 NoContent")
 	void testGetAllLyrics_NoContent() throws Exception {
-		when(service.findAll(1L)).thenReturn(List.of());
+		when(service.findAll(1L, "id", "asc", "")).thenReturn(List.of());
 
 		mockMvc.perform(get(BASE + "/1/lyric")).andExpect(status().isNoContent());
 	}

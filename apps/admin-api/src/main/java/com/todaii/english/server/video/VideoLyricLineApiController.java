@@ -3,6 +3,7 @@ package com.todaii.english.server.video;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/video")
 public class VideoLyricLineApiController {
 	private final VideoLyricLineService videoLyricLineService;
@@ -36,8 +38,10 @@ public class VideoLyricLineApiController {
 	}
 
 	@GetMapping("/{videoId}/lyric")
-	public ResponseEntity<List<VideoLyricLine>> getAllLyrics(@PathVariable Long videoId) {
-		return ResponseEntity.ok(videoLyricLineService.findAll(videoId));
+	public ResponseEntity<List<VideoLyricLine>> getAllLyrics(@PathVariable Long videoId,
+			@RequestParam(defaultValue = "lineOrder") String sortBy,
+			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+		return ResponseEntity.ok(videoLyricLineService.findAll(videoId, sortBy, direction, keyword));
 	}
 
 	@GetMapping("/lyric/{lyricId}")
@@ -49,6 +53,12 @@ public class VideoLyricLineApiController {
 	public ResponseEntity<List<VideoLyricLine>> createMultipleLyrics(@PathVariable Long videoId,
 			@Valid @RequestBody List<VideoLyricLineDTO> videoLyricLineDTOs) {
 		return ResponseEntity.status(201).body(videoLyricLineService.createBatch(videoId, videoLyricLineDTOs));
+	}
+
+	@PostMapping("/{videoId}/lyric")
+	public ResponseEntity<VideoLyricLine> createLyric(@PathVariable Long videoId,
+			@Valid @RequestBody VideoLyricLineDTO videoLyricLineDTO) {
+		return ResponseEntity.status(201).body(videoLyricLineService.createLyric(videoId, videoLyricLineDTO));
 	}
 
 	@PutMapping("/lyric/{lyricId}")

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,12 +61,14 @@ public class VideoLyricLineService {
 			return result;
 
 		} catch (Exception e) {
-			throw new BusinessException(400, "Failed to parse SRT file");
+			throw new BusinessException(400, "Failed to parse SRT file.\nPlease check data file again");
 		}
 	}
 
-	public List<VideoLyricLine> findAll(Long videoId) {
-		return videoLyricLineRepository.findAll(videoId);
+	public List<VideoLyricLine> findAll(Long videoId, String sortBy, String direction, String keyword) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+
+		return videoLyricLineRepository.findAll(videoId, keyword, sort);
 	}
 
 	public VideoLyricLine findById(Long lyricId) {
@@ -87,6 +90,16 @@ public class VideoLyricLineService {
 		}).collect(Collectors.toList());
 
 		return videoLyricLineRepository.saveAll(videoLyricLines);
+	}
+
+	public VideoLyricLine createLyric(Long videoId, VideoLyricLineDTO videoLyricLineDTO) {
+		Video video = videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
+
+		VideoLyricLine videoLyricLine = modelMapper.map(videoLyricLineDTO, VideoLyricLine.class);
+		videoLyricLine.setVideo(video);
+
+		// Lưu và trả về
+		return videoLyricLineRepository.save(videoLyricLine);
 	}
 
 	public VideoLyricLine updateLyric(Long lyricId, VideoLyricLineDTO videoLyricLineDTO) {

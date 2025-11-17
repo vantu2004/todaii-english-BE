@@ -16,7 +16,6 @@ public interface VocabGroupRepository extends JpaRepository<VocabGroup, Long> {
 	@Query("SELECT v FROM VocabGroup v WHERE v.id = ?1 AND v.isDeleted = false")
 	public Optional<VocabGroup> findById(Long id);
 
-	@Deprecated
 	@Query("SELECT v FROM VocabGroup v WHERE v.isDeleted = false")
 	public List<VocabGroup> findAll();
 

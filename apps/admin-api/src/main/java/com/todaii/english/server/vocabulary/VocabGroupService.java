@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class VocabGroupService {
 	private final VocabGroupRepository vocabGroupRepository;
 
-	@Deprecated
 	public List<VocabGroup> findAll() {
 		return vocabGroupRepository.findAll();
 	}

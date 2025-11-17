@@ -30,13 +30,9 @@ import lombok.RequiredArgsConstructor;
 public class VocabGroupApiController {
 	private final VocabGroupService vocabGroupService;
 
-	@Deprecated
-	public ResponseEntity<List<VocabGroup>> getAll() {
-		List<VocabGroup> vocabGroups = vocabGroupService.findAll();
-		if (vocabGroups.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(vocabGroups);
+	@GetMapping("/no-paged")
+	public ResponseEntity<List<VocabGroup>> getAllNoPaged() {
+		return ResponseEntity.ok(vocabGroupService.findAll());
 	}
 
 	@GetMapping

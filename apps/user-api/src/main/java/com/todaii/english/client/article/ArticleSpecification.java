@@ -8,6 +8,11 @@ import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ArticleSpecification {
+	
+	public static Specification<Article> hasKeyword(String keyword) {
+		return (root, query, cb) -> keyword == null ? null
+				: cb.like(cb.lower(root.get(Article_.TITLE)), "%" + keyword.toLowerCase() + "%");
+	}
 
 	public static Specification<Article> hasSourceName(String sourceName) {
 		return (root, query, cb) -> sourceName == null ? null

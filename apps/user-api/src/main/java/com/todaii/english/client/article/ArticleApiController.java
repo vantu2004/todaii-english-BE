@@ -38,6 +38,12 @@ public class ArticleApiController {
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
 		return ResponseEntity.ok(articleService.getLatestArticles(size));
 	}
+	
+	@GetMapping("/top")
+    public ResponseEntity<List<Article>> getTopArticles(
+            @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
+        return ResponseEntity.ok(articleService.getTopArticles(size));
+    }
 
 	// lấy articles theo ngày, định dạng YYYY-MM-DD (đúng format, số lượng ký tự)
 	@GetMapping("/by-date/{date}")
@@ -110,13 +116,13 @@ public class ArticleApiController {
 
 	// filter với nhiều thuộc tính (sourceName, cefrlevel, view, topic)
 	@GetMapping("/filter")
-	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String sourceName,
+	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String keyword, @RequestParam(required = false) String sourceName,
 			@RequestParam(required = false) CefrLevel cefrLevel, @RequestParam(required = false) Integer minViews,
 			@RequestParam(required = false) Long topicId, @RequestParam(defaultValue = "1") @Min(1) int page,
 			@RequestParam(defaultValue = "10") @Min(1) int size,
 			@RequestParam(defaultValue = "updatedAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction) {
-		Page<Article> articles = articleService.filterArticles(sourceName, cefrLevel, minViews, topicId, page, size,
+		Page<Article> articles = articleService.filterArticles(keyword, sourceName, cefrLevel, minViews, topicId, page, size,
 				sortBy, direction);
 
 		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,

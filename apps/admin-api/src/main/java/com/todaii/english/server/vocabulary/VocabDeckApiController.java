@@ -92,6 +92,11 @@ public class VocabDeckApiController {
 		return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
 	}
 
+	@DeleteMapping("/{deckId}/word")
+	public ResponseEntity<VocabDeck> removeAllWordsFromDeck(@PathVariable Long deckId) {
+		return ResponseEntity.ok(vocabDeckService.removeAllWordsFromDeck(deckId));
+	}
+
 	@PutMapping("/{deckId}")
 	public ResponseEntity<VocabDeck> updateVocabDeck(@PathVariable Long deckId,
 			@Valid @RequestBody DeckRequest deckRequest) {

@@ -93,6 +93,13 @@ public class VocabDeckService {
 		return vocabDeckRepository.save(vocabDeck);
 	}
 
+	public VocabDeck removeAllWordsFromDeck(Long deckId) {
+		VocabDeck vocabDeck = findById(deckId);
+		vocabDeck.getWords().clear();
+
+		return vocabDeckRepository.save(vocabDeck);
+	}
+
 	public VocabDeck updateVocabDeck(Long deckId, DeckRequest deckRequest) {
 		VocabDeck vocabDeck = findById(deckId);
 		vocabDeck.setName(deckRequest.getName());

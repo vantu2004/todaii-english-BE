@@ -36,7 +36,7 @@ public class DictionaryApiClient implements DictionaryPort {
 									clientResponse.statusCode(), body))
 							// Ném BusinessException với thông tin cụ thể
 							.flatMap(body -> Mono.error(
-									new BusinessException(404, "Word not found: " + word + " | Response: " + body))))
+									new BusinessException(404, "Word not found"))))
 
 					// Xử lý lỗi 5xx (server-side)
 					.onStatus(HttpStatusCode::is5xxServerError,

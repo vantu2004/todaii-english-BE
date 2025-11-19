@@ -116,4 +116,19 @@ public class VideoApiController {
 		videoService.deleteVideo(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	@PostMapping("/{videoId}/word/{wordId}")
+	public ResponseEntity<Video> addWordToVideo(@PathVariable Long videoId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(videoService.addWordToVideo(videoId, wordId));
+	}
+
+	@DeleteMapping("/{videoId}/word/{wordId}")
+	public ResponseEntity<Video> removeWordFromVideo(@PathVariable Long videoId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(videoService.removeWordFromVideo(videoId, wordId));
+	}
+
+	@DeleteMapping("/{videoId}/word")
+	public ResponseEntity<Video> removeAllWordsFromVideo(@PathVariable Long videoId) {
+		return ResponseEntity.ok(videoService.removeAllWordsFromVideo(videoId));
+	}
 }

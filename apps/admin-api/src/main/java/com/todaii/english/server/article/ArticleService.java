@@ -11,7 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Article;
+import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.port.NewsApiPort;
+import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
@@ -26,6 +28,7 @@ public class ArticleService {
 	private final NewsApiPort newsApiPort;
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
+	private final DictionaryEntryRepository dictionaryEntryRepository;
 
 	public NewsApiResponse fetchFromNewsApi(String query, int pageSize, int page, String sortBy) {
 		return newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
@@ -88,6 +91,37 @@ public class ArticleService {
 
 	public void deleteById(Long id) {
 		articleRepository.deleteById(id);
+	}
+
+	public Article addWordToArticle(Long articleId, Long wordId) {
+		Article article = findById(articleId);
+
+		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
+				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+		article.getWords().add(dictionaryEntry);
+
+		return articleRepository.save(article);
+	}
+
+	public Article removeWordFromArticle(Long articleId, Long wordId) {
+		Article article = findById(articleId);
+
+		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
+				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+
+		boolean removed = article.getWords().remove(dictionaryEntry);
+		if (!removed) {
+			throw new BusinessException(400, "Word not found in article");
+		}
+
+		return articleRepository.save(article);
+	}
+
+	public Article removeAllWordsFromArticle(Long articleId) {
+		Article article = findById(articleId);
+		article.getWords().clear();
+
+		return articleRepository.save(article);
 	}
 
 }

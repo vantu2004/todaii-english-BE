@@ -69,7 +69,7 @@ public class ArticleService {
 
 		Pageable pageable = PageRequest.of(page - 1, size);
 
-		return articleRepository.findPagedEntriesByArticleId(id, pageable);
+		return articleRepository.findPagedWordsByArticleId(id, pageable);
 	}
 
 	public List<Article> getRelatedArticles(Long articleId, int limit) {

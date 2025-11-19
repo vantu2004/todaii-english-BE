@@ -64,6 +64,12 @@ public class Video {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
+	// quan hệ 1 chiều
+	@ManyToMany
+	@JoinTable(name = "video_words", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
+	@Builder.Default
+	private Set<DictionaryEntry> words = new HashSet<>();
+
 	// Quan hệ N-N với topic (1 chiều)
 	@ManyToMany
 	@JoinTable(name = "videos_topics", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))

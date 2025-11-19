@@ -32,5 +32,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 			""")
 	public Page<Article> search(Long topicId, String keyword, Pageable pageable);
 
-	public List<Article> findAllByEntries_Id(Long entryId);
+	public List<Article> findAllByWords_Id(Long entryId);
 }

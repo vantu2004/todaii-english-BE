@@ -10,6 +10,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.todaii.english.core.entity.Setting;
 import com.todaii.english.core.port.SettingQueryPort;
+import com.todaii.english.shared.constants.SettingKey;
 import com.todaii.english.shared.enums.SettingCategory;
 
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,12 @@ public class SmtpConfig {
 
 		for (Setting s : settings) {
 			switch (s.getKey()) {
-			case "mail_host" -> mailSender.setHost(s.getValue());
-			case "mail_port" -> mailSender.setPort(Integer.parseInt(s.getValue()));
-			case "mail_username" -> mailSender.setUsername(s.getValue());
-			case "mail_password" -> mailSender.setPassword(s.getValue());
-			case "mail_protocol" -> props.put("mail.transport.protocol", s.getValue());
-			case "mail_starttls" -> {
+			case SettingKey.MAIL_HOST -> mailSender.setHost(s.getValue());
+			case SettingKey.MAIL_PORT -> mailSender.setPort(Integer.parseInt(s.getValue()));
+			case SettingKey.MAIL_USERNAME -> mailSender.setUsername(s.getValue());
+			case SettingKey.MAIL_PASSWORD -> mailSender.setPassword(s.getValue());
+			case SettingKey.MAIL_PROTOCOL -> props.put("mail.transport.protocol", s.getValue());
+			case SettingKey.MAIL_STARTTLS -> {
 				props.put("mail.smtp.starttls.enable", s.getValue());
 				props.put("mail.smtp.auth", "true");
 			}

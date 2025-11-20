@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.AdminRole;
+import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
@@ -30,6 +31,7 @@ public class AdminService {
 	private final AdminRepository adminRepository;
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
+	private final CloudinaryPort cloudinaryPort;
 
 	@Deprecated
 	public List<Admin> findAll() {
@@ -93,8 +95,22 @@ public class AdminService {
 			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
 		}
 
+		if (request.getAvatarUrl() != null) {
+			String avatar = request.getAvatarUrl();
+
+			// FE gửi base64
+			if (avatar.startsWith("data:image")) {
+				String uploadedUrl = cloudinaryPort.uploadImage(avatar);
+				admin.setAvatarUrl(uploadedUrl);
+			}
+			// FE gửi chuỗi rỗng → remove
+			else if (avatar.isBlank()) {
+				admin.setAvatarUrl(null);
+			}
+			// FE gửi URL → giữ nguyên
+		}
+
 		admin.setDisplayName(request.getDisplayName());
-		admin.setAvatarUrl(request.getAvatarUrl());
 
 		return this.adminRepository.save(admin);
 	}

@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class DictionaryApiClient implements DictionaryPort {
-
 	private final WebClient webClient;
 
 	public DictionaryApiClient(WebClient.Builder builder) {

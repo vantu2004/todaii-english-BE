@@ -1,7 +1,5 @@
 package com.todaii.english.server.setting;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -72,14 +70,14 @@ public class SettingApiControllerTests {
 	@Test
 	@DisplayName("PUT /smtp - trả về 200 OK khi update thành công")
 	void testUpdateSmtpSettings_success() throws Exception {
-		SettingRequest request = new SettingRequest(Map.of("mail_host", "smtp.office365.com", "mail_port", "587"));
+		SettingRequest request = new SettingRequest(SettingCategory.MAIL_SERVER, Map.of("mail_host", "smtp.office365.com", "mail_port", "587"));
 
 		List<Setting> updatedSettings = List.of(
 				Setting.builder().key("mail_host").value("smtp.office365.com")
 						.settingCategory(SettingCategory.MAIL_SERVER).build(),
 				Setting.builder().key("mail_port").value("587").settingCategory(SettingCategory.MAIL_SERVER).build());
 
-		given(settingService.updateSettings(eq(SettingCategory.MAIL_SERVER), any())).willReturn(updatedSettings);
+		given(settingService.updateSettings(request)).willReturn(updatedSettings);
 
 		mockMvc.perform(put(END_POINT_PATH + "/smtp").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
@@ -91,7 +89,7 @@ public class SettingApiControllerTests {
 	@Test
 	@DisplayName("PUT /smtp - trả về 400 Bad Request khi body rỗng")
 	void testUpdateSmtpSettings_invalidRequest() throws Exception {
-		SettingRequest invalidRequest = new SettingRequest(Map.of()); // rỗng
+		SettingRequest invalidRequest = new SettingRequest(SettingCategory.MAIL_SERVER, Map.of()); // rỗng
 
 		mockMvc.perform(put(END_POINT_PATH + "/smtp").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidRequest))).andExpect(status().isBadRequest());
@@ -101,7 +99,7 @@ public class SettingApiControllerTests {
 	@DisplayName("PUT /smtp - trả về 400 khi value rỗng")
 	void testUpdateSmtpSettings_blankValue() throws Exception {
 		// value = "" => NotBlank fail
-		SettingRequest invalidRequest = new SettingRequest(Map.of("mail_host", ""));
+		SettingRequest invalidRequest = new SettingRequest(SettingCategory.MAIL_SERVER, Map.of("mail_host", ""));
 
 		mockMvc.perform(put(END_POINT_PATH + "/smtp").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidRequest))).andExpect(status().isBadRequest());
@@ -114,7 +112,7 @@ public class SettingApiControllerTests {
 		Map<String, String> map = new HashMap<>();
 		map.put("mail_host", null);
 
-		SettingRequest invalidRequest = new SettingRequest(map);
+		SettingRequest invalidRequest = new SettingRequest(SettingCategory.MAIL_SERVER, map);
 
 		mockMvc.perform(put(END_POINT_PATH + "/smtp").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(invalidRequest))).andExpect(status().isBadRequest());

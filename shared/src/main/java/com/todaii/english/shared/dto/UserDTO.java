@@ -1,6 +1,7 @@
 package com.todaii.english.shared.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.todaii.english.shared.enums.UserStatus;
 
@@ -28,4 +29,5 @@ public class UserDTO {
 	private LocalDateTime lastLoginAt;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+
 }

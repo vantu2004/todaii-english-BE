@@ -37,4 +37,7 @@ public class UserApiController {
 
 		return ResponseEntity.ok(this.userService.updateProfile(currentUserId, updateProfileRequest));
 	}
+	
+	
+	
 }

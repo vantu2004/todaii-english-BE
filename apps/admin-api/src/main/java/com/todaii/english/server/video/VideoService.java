@@ -16,9 +16,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Video;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
+import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
@@ -38,6 +40,7 @@ public class VideoService {
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
 	private final YoutubeDataApiV3Port youtubeDataApiV3Port;
+	private final DictionaryEntryRepository dictionaryEntryRepository;
 
 	public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
 		String requestUri = ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
@@ -155,6 +158,37 @@ public class VideoService {
 	public void deleteVideo(Long id) {
 		videoLyricLineRepository.deleteAllByVideoId(id);
 		videoRepository.deleteById(id);
+	}
+
+	public Video addWordToVideo(Long videoId, Long wordId) {
+		Video video = findById(videoId);
+
+		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
+				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+		video.getWords().add(dictionaryEntry);
+
+		return videoRepository.save(video);
+	}
+
+	public Video removeWordFromVideo(Long videoId, Long wordId) {
+		Video video = findById(videoId);
+
+		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
+				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+
+		boolean removed = video.getWords().remove(dictionaryEntry);
+		if (!removed) {
+			throw new BusinessException(400, "Word not found in video");
+		}
+
+		return videoRepository.save(video);
+	}
+
+	public Video removeAllWordsFromVideo(Long videoId) {
+		Video video = findById(videoId);
+		video.getWords().clear();
+
+		return videoRepository.save(video);
 	}
 
 }

@@ -61,11 +61,11 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
 	@Query("""
 			    SELECT d FROM Article a
-			    JOIN a.entries d
+			    JOIN a.words d
 			    WHERE a.id = ?1
 			    ORDER BY d.headword ASC
 			""")
-	public Page<DictionaryEntry> findPagedEntriesByArticleId(Long articleId, Pageable pageable);
+	public Page<DictionaryEntry> findPagedWordsByArticleId(Long articleId, Pageable pageable);
 
 	@Query("""
 			    SELECT DISTINCT a

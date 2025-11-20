@@ -16,10 +16,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.DictionarySense;
+import com.todaii.english.core.entity.Video;
 import com.todaii.english.core.entity.VocabDeck;
 import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.server.article.ArticleRepository;
+import com.todaii.english.server.video.VideoRepository;
 import com.todaii.english.server.vocabulary.VocabDeckRepository;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
@@ -36,6 +38,7 @@ public class DictionaryEntryService {
 	private final GeminiPort geminiPort;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
 	private final ArticleRepository articleRepository;
+	private final VideoRepository videoRepository;
 	private final VocabDeckRepository vocabDeckRepository;
 	private final ObjectMapper objectMapper;
 	private final ModelMapper modelMapper;
@@ -143,9 +146,15 @@ public class DictionaryEntryService {
 				.orElseThrow(() -> new BusinessException(404, "Word not found"));
 
 		// Xóa quan hệ trong article
-		List<Article> articles = articleRepository.findAllByEntries_Id(entryId);
+		List<Article> articles = articleRepository.findAllByWords_Id(entryId);
 		for (Article article : articles) {
-			article.getEntries().remove(entry);
+			article.getWords().remove(entry);
+		}
+
+		// Xóa quan hệ trong video
+		List<Video> videos = videoRepository.findAllByWords_Id(entryId);
+		for (Video video : videos) {
+			video.getWords().remove(entry);
 		}
 
 		// Xóa quan hệ trong deck
@@ -156,6 +165,7 @@ public class DictionaryEntryService {
 
 		// Lưu thay đổi
 		articleRepository.saveAll(articles);
+		videoRepository.saveAll(videos);
 		vocabDeckRepository.saveAll(decks);
 
 		// Cuối cùng xóa entry

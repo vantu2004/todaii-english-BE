@@ -119,4 +119,19 @@ public class ArticleApiController {
 		articleService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
+
+	@PostMapping("/{articleId}/word/{wordId}")
+	public ResponseEntity<Article> addWordToArticle(@PathVariable Long articleId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(articleService.addWordToArticle(articleId, wordId));
+	}
+
+	@DeleteMapping("/{articleId}/word/{wordId}")
+	public ResponseEntity<Article> removeWordFromArticle(@PathVariable Long articleId, @PathVariable Long wordId) {
+		return ResponseEntity.ok(articleService.removeWordFromArticle(articleId, wordId));
+	}
+
+	@DeleteMapping("/{articleId}/word")
+	public ResponseEntity<Article> removeAllWordsFromArticle(@PathVariable Long articleId) {
+		return ResponseEntity.ok(articleService.removeAllWordsFromArticle(articleId));
+	}
 }

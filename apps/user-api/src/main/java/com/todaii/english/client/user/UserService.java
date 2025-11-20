@@ -1,8 +1,6 @@
 package com.todaii.english.client.user;
 
-import com.todaii.english.client.article.ArticleRepository;
 import com.todaii.english.core.entity.User;
-import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
@@ -16,7 +14,6 @@ import com.todaii.english.shared.request.client.RegisterRequest;
 import com.todaii.english.shared.request.client.ResetPasswordRequest;
 import com.todaii.english.shared.utils.OtpUtils;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
@@ -31,7 +28,6 @@ import java.util.UUID;
 public class UserService {
 	private final PasswordHasher passwordHasher;
 	private final UserRepository userRepository;
-	private final ArticleRepository articleRepository;
 	private final SmtpService smtpService;
 	private final ModelMapper modelMapper;
 
@@ -178,33 +174,7 @@ public class UserService {
 		return userDTO;
 	}
 	
-	@Transactional
-	public void saveArticleForUser(Long userId, Long articleId) {
-		User user = userRepository.findById(userId)	
-				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-		Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new BusinessException(404, "Article not found"));
-		
-		user.getSavedArticles().add(article);         // add bài vào collection
-        article.getSavedByUsers().add(user);         // đồng bộ bên inverse side
-        userRepository.save(user);                   // Hibernate tự update join table
 
-
-	}
-	
-    @Transactional
-    public void removeSavedArticle(Long userId, Long articleId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-        Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new BusinessException(404, "Article not found"));
-
-        // Xóa trong cả 2 entity
-        user.getSavedArticles().remove(article);
-        article.getSavedByUsers().remove(user);
-
-        userRepository.save(user);
-    }
     
 
 	

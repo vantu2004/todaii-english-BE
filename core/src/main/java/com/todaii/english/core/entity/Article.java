@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import java.time.LocalDateTime;
@@ -86,4 +87,8 @@ public class Article {
 	@JoinTable(name = "article_topics", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))
 	@Builder.Default
 	private Set<Topic> topics = new HashSet<>();
+	
+	@ManyToMany(mappedBy = "savedArticles", cascade = CascadeType.ALL)
+	@Builder.Default
+	private Set<User> savedByUser = new HashSet<>();
 }

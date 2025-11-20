@@ -88,7 +88,11 @@ public class Article {
 	@Builder.Default
 	private Set<Topic> topics = new HashSet<>();
 	
-	@ManyToMany(mappedBy = "savedArticles", cascade = CascadeType.ALL)
+	// quan hệ 1 chiều
+	@ManyToMany
+	@JsonIgnore
+	@JoinTable(name = "article_users", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	@Builder.Default
-	private Set<User> savedByUser = new HashSet<>();
+	private Set<User> savedByUsers = new HashSet<>();
+	
 }

@@ -82,16 +82,6 @@ public class User implements JwtPrincipal {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
-	
-	@ManyToMany
-	@JoinTable(
-	        name = "user_articles",
-	        joinColumns = @JoinColumn(name = "user_id"),
-	        inverseJoinColumns = @JoinColumn(name = "article_id")
-	)
-	@Builder.Default
-	private Set<Article> savedArticles = new HashSet<>();
-
 
 	@JsonIgnore
 	@Override

@@ -14,9 +14,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.client.user.UserRepository;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.User;
 import com.todaii.english.shared.enums.CefrLevel;
+import com.todaii.english.shared.enums.error_code.UserErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArticleService {
 	private final ArticleRepository articleRepository;
+	private final UserRepository userRepository;
 
 	public List<Article> getLatestArticles(int size) {
 		return articleRepository.findAllByEnabledTrueOrderByCreatedAtDesc(PageRequest.of(0, size)).getContent();
@@ -44,6 +48,32 @@ public class ArticleService {
 
 		return articleRepository.findByUpdatedDateRangeAndKeyword(startOfDay, endOfDay, keyword, pageable);
 	}
+	
+	public Article addUserToArticle(Long articleId, Long userId) {
+		Article article = findById(articleId);
+		
+		User user = userRepository.findById(userId)				
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+		article.getSavedByUsers().add(user);
+
+		return articleRepository.save(article);
+	}
+	
+	public Article removeUserFromArticle(Long articleId, Long userId) {
+		Article article = findById(articleId);
+
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+		boolean removed = article.getSavedByUsers().remove(user);
+		if (!removed) {
+			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
+		}
+
+		return articleRepository.save(article);
+	}
+
 
 	public Article findById(Long id) {
 		Article article = articleRepository.findById(id)

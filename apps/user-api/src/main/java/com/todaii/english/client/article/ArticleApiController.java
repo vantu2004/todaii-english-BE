@@ -7,8 +7,10 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -130,6 +132,16 @@ public class ArticleApiController {
 				direction);
 
 		return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping("/{articleId}/user/{userId}")
+	public ResponseEntity<Article> addUserToArticle(@PathVariable Long articleId, @PathVariable Long userId) {
+		return ResponseEntity.ok(articleService.addUserToArticle(articleId, userId));
+	}
+	
+	@DeleteMapping("/{articleId}/user/{userId}")
+	public ResponseEntity<Article> removeUserFromArticle(@PathVariable Long articleId, @PathVariable Long userId) {
+		return ResponseEntity.ok(articleService.removeUserFromArticle(articleId, userId));
 	}
 
 }

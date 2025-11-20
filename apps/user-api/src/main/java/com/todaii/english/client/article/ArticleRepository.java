@@ -86,16 +86,12 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 			""")
 	public List<Article> findFallbackByCefr(Long articleId, CefrLevel cefrLevel, Pageable pageable);
 	
-	
-    @Query("SELECT a FROM Article a " +
-           "JOIN a.savedByUser u " +
-           "WHERE u.id = ?1 AND u.isDeleted = false AND a.enabled = true")
-    public Page<Article> findSavedArticlesByUserId(Long userId, Pageable pageable);
+	@Query("""
+		    SELECT a FROM Article a 
+		    JOIN a.savedByUsers u 
+		    WHERE u.id = ?1 AND u.isDeleted = false AND a.enabled = true
+		""")
+	public Page<Article> findSavedArticlesByUserId(Long userId, Pageable pageable);
 
-    
-    @Query("SELECT COUNT(a) FROM Article a " +
-           "JOIN a.savedByUser u " +
-           "WHERE u.id = ?1 AND u.isDeleted = false AND a.enabled = true")
-    public long countSavedArticlesByUserId(Long userId);
 
 }

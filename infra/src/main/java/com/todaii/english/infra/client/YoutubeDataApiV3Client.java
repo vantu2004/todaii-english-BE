@@ -1,13 +1,14 @@
 package com.todaii.english.infra.client;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.todaii.english.core.port.SettingQueryPort;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.shared.constants.ApiUrl;
+import com.todaii.english.shared.constants.SettingKey;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
 
@@ -17,12 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @ConditionalOnProperty(prefix = "youtube.api", name = "key")
 public class YoutubeDataApiV3Client implements YoutubeDataApiV3Port {
-
 	private final RestTemplate restTemplate;
-	private final String apiKey;
+	private final SettingQueryPort settingQueryPort;
 
-	public YoutubeDataApiV3Client(@Value("${youtube.api.key}") String apiKey) {
-		this.apiKey = apiKey;
+	public YoutubeDataApiV3Client(SettingQueryPort settingQueryPort) {
+		this.settingQueryPort = settingQueryPort;
 		this.restTemplate = new RestTemplate();
 	}
 
@@ -40,6 +40,8 @@ public class YoutubeDataApiV3Client implements YoutubeDataApiV3Port {
 	}
 
 	private String buildUrl(String keyword, String type, int size) {
+		String apiKey = settingQueryPort.getSettingByKey(SettingKey.YOUTUBE_API_KEY).getValue();
+
 		switch (type.toLowerCase()) {
 		case "video":
 			return String.format(ApiUrl.YOUTUBE_DATA_API_V3_VIDEO, keyword, size, apiKey);

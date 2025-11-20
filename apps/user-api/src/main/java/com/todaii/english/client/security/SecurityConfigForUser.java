@@ -85,11 +85,16 @@ public class SecurityConfigForUser {
 						.requestMatchers("/api/v1/auth/**").permitAll()
 
 						// ArticleApiController
+						.requestMatchers("/api/v1/article/saved").hasAuthority("USER")
+						.requestMatchers("/api/v1/article/*/is-saved").hasAuthority("USER")
 						.requestMatchers("/api/v1/article/**").permitAll()
 
 						// UserApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/user/me").hasAuthority("USER")
-						.requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER").anyRequest()
+						.requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER")
+						.requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*").hasAuthority("USER")
+						
+						.anyRequest()
 						.authenticated());
 
 		/*

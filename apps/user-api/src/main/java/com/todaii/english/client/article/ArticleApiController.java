@@ -8,10 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,12 +40,13 @@ public class ArticleApiController {
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
 		return ResponseEntity.ok(articleService.getLatestArticles(size));
 	}
-	
+
+	// lấy n article được xem nhiều nhất
 	@GetMapping("/top")
-    public ResponseEntity<List<Article>> getTopArticles(
-            @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
-        return ResponseEntity.ok(articleService.getTopArticles(size));
-    }
+	public ResponseEntity<List<Article>> getTopArticles(
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
+		return ResponseEntity.ok(articleService.getTopArticles(size));
+	}
 
 	// lấy articles theo ngày, định dạng YYYY-MM-DD (đúng format, số lượng ký tự)
 	@GetMapping("/by-date/{date}")
@@ -78,7 +77,6 @@ public class ArticleApiController {
 	}
 
 	// search article
-
 	@GetMapping("/search")
 	public ResponseEntity<PagedResponse<Article>> search(
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
@@ -120,14 +118,14 @@ public class ArticleApiController {
 
 	// filter với nhiều thuộc tính (sourceName, cefrlevel, view, topic)
 	@GetMapping("/filter")
-	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String keyword, @RequestParam(required = false) String sourceName,
-			@RequestParam(required = false) CefrLevel cefrLevel, @RequestParam(required = false) Integer minViews,
-			@RequestParam(required = false) Long topicId, @RequestParam(defaultValue = "1") @Min(1) int page,
-			@RequestParam(defaultValue = "10") @Min(1) int size,
+	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String keyword,
+			@RequestParam(required = false) String sourceName, @RequestParam(required = false) CefrLevel cefrLevel,
+			@RequestParam(required = false) Integer minViews, @RequestParam(required = false) Long topicId,
+			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
 			@RequestParam(defaultValue = "updatedAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction) {
-		Page<Article> articles = articleService.filterArticles(keyword, sourceName, cefrLevel, minViews, topicId, page, size,
-				sortBy, direction);
+		Page<Article> articles = articleService.filterArticles(keyword, sourceName, cefrLevel, minViews, topicId, page,
+				size, sortBy, direction);
 
 		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
 				articles.getTotalElements(), articles.getTotalPages(), articles.isFirst(), articles.isLast(), sortBy,
@@ -135,19 +133,22 @@ public class ArticleApiController {
 
 		return ResponseEntity.ok(response);
 	}
-	
-	@PostMapping("/bookmark/{articleId}")
-	public ResponseEntity<Article> addUserToArticle(Authentication authentication, @PathVariable Long articleId) {
+
+	// lấy danh sách articles đc lưu bỏi user
+	@GetMapping("/saved")
+	public ResponseEntity<List<Article>> getSavedArticlesByUserId(Authentication authentication) {
 		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 		Long currentUserId = principal.getUser().getId();
-		return ResponseEntity.ok(articleService.addUserToArticle(articleId, currentUserId));
-	}
-	
-	@DeleteMapping("/bookmark/{articleId}")
-	public ResponseEntity<Article> removeUserFromArticle(Authentication authentication, @PathVariable Long articleId) {
-		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-		Long currentUserId = principal.getUser().getId();
-		return ResponseEntity.ok(articleService.removeUserFromArticle(articleId, currentUserId));
+
+		return ResponseEntity.ok(articleService.getSavedArticlesByUserId(currentUserId));
 	}
 
+	// check article có đc lưu bởi user ko
+	@GetMapping("/{articleId}/is-saved")
+	public ResponseEntity<Boolean> isSavedByUser(Authentication authentication, @PathVariable Long articleId) {
+		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = principal.getUser().getId();
+
+		return ResponseEntity.ok(articleService.isSavedByUser(articleId, currentUserId));
+	}
 }

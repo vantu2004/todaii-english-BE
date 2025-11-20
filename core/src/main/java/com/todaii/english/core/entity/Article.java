@@ -87,12 +87,10 @@ public class Article {
 	@JoinTable(name = "article_topics", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))
 	@Builder.Default
 	private Set<Topic> topics = new HashSet<>();
-	
-	// quan hệ 1 chiều
-	@ManyToMany
+
+	@ManyToMany(mappedBy = "savedArticles")
 	@JsonIgnore
-	@JoinTable(name = "article_users", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	@Builder.Default
-	private Set<User> savedByUsers = new HashSet<>();
-	
+	private Set<User> users = new HashSet<>();
+
 }

@@ -2,6 +2,7 @@ package com.todaii.english.client.article;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,6 @@ import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.User;
 import com.todaii.english.shared.enums.CefrLevel;
-import com.todaii.english.shared.enums.error_code.UserErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ArticleService {
 	public List<Article> getLatestArticles(int size) {
 		return articleRepository.findAllByEnabledTrueOrderByCreatedAtDesc(PageRequest.of(0, size)).getContent();
 	}
-	
+
 	public List<Article> getTopArticles(int size) {
 		return articleRepository.findAllByEnabledTrueOrderByViewsDesc(PageRequest.of(0, size)).getContent();
 	}
@@ -48,32 +48,6 @@ public class ArticleService {
 
 		return articleRepository.findByUpdatedDateRangeAndKeyword(startOfDay, endOfDay, keyword, pageable);
 	}
-	
-	public Article addUserToArticle(Long articleId, Long userId) {
-		Article article = findById(articleId);
-		
-		User user = userRepository.findById(userId)				
-				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-
-		article.getSavedByUsers().add(user);
-
-		return articleRepository.save(article);
-	}
-	
-	public Article removeUserFromArticle(Long articleId, Long userId) {
-		Article article = findById(articleId);
-
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-
-		boolean removed = article.getSavedByUsers().remove(user);
-		if (!removed) {
-			throw new BusinessException(UserErrorCode.USER_NOT_FOUND);
-		}
-
-		return articleRepository.save(article);
-	}
-
 
 	public Article findById(Long id) {
 		Article article = articleRepository.findById(id)
@@ -149,17 +123,30 @@ public class ArticleService {
 		return articleRepository.findFallbackByCefr(articleId, cefrLevel, pageable);
 	}
 
-	public Page<Article> filterArticles(String keyword, String sourceName, CefrLevel cefrLevel, Integer minViews, Long topicId,
-			int page, int size, String sortBy, String direction) {
+	public Page<Article> filterArticles(String keyword, String sourceName, CefrLevel cefrLevel, Integer minViews,
+			Long topicId, int page, int size, String sortBy, String direction) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
 		Specification<Article> spec = Specification.where(ArticleSpecification.isEnabled())
-				.and(ArticleSpecification.hasKeyword(keyword))
-				.and(ArticleSpecification.hasSourceName(sourceName)).and(ArticleSpecification.hasCefrLevel(cefrLevel))
-				.and(ArticleSpecification.hasMinViews(minViews)).and(ArticleSpecification.hasTopic(topicId));
+				.and(ArticleSpecification.hasKeyword(keyword)).and(ArticleSpecification.hasSourceName(sourceName))
+				.and(ArticleSpecification.hasCefrLevel(cefrLevel)).and(ArticleSpecification.hasMinViews(minViews))
+				.and(ArticleSpecification.hasTopic(topicId));
 
 		return articleRepository.findAll(spec, pageable);
+	}
+
+	public List<Article> getSavedArticlesByUserId(Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(404, "User not found"));
+		Set<Article> savedSet = user.getSavedArticles();
+
+		return new ArrayList<>(savedSet);
+	}
+
+	public Boolean isSavedByUser(Long articleId, Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(404, "User not found"));
+
+		return user.getSavedArticles().stream().anyMatch(a -> a.getId().equals(articleId));
 	}
 
 }

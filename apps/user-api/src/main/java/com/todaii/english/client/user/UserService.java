@@ -5,7 +5,6 @@ import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.User;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
-import com.todaii.english.shared.dto.ArticleDTO;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
@@ -20,28 +19,24 @@ import com.todaii.english.shared.utils.OtpUtils;
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
-    private final ArticleRepository articleRepository;
 	private final PasswordHasher passwordHasher;
 	private final UserRepository userRepository;
 	private final SmtpService smtpService;
 	private final ModelMapper modelMapper;
+	private final ArticleRepository articleRepository;
 
 	private String CLIENT_URL = "http://localhost:5173";
-	
+
 	public UserDTO createUser(RegisterRequest request) {
 		if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
@@ -182,24 +177,23 @@ public class UserService {
 
 		return userDTO;
 	}
-	
-	public Page<ArticleDTO> getSavedArticles(Long userId, int page, int size) {
-	    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("updatedAt").descending());
-	    Page<Article> articles = articleRepository.findSavedArticlesByUserId(userId, pageable);
 
-	    return articles.map(article -> modelMapper.map(article, ArticleDTO.class));
+	public void toggleSavedArticle(Long currentUserId, Long articleId) {
+		User user = userRepository.findById(currentUserId)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
+		Article article = articleRepository.findById(articleId)
+				.orElseThrow(() -> new BusinessException(404, "Article not found"));
+
+		Set<Article> savedArticles = user.getSavedArticles();
+
+		if (savedArticles.contains(article)) {
+			savedArticles.remove(article);
+		} else {
+			savedArticles.add(article);
+		}
+
+		userRepository.save(user);
 	}
-	
-	public boolean isArticleSaved(Long userId, Long articleId) {
-	    return articleRepository.isSavedByUser(articleId, userId);
-	}
-
-
-	
-
-    
-
-	
 
 }

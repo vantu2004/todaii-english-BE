@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Article;
-import com.todaii.english.shared.dto.ArticleDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;

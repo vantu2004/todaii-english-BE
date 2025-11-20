@@ -91,5 +91,11 @@
 			<groupId>com.github.KwabenBerko</groupId>
 			<artifactId>News-API-Java</artifactId>
 		</dependency>
+
+		<!-- Cloudinary -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http5</artifactId>
+		</dependency>
 	</dependencies>
 </project>

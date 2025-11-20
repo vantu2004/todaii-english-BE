@@ -92,6 +92,13 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 		    WHERE u.id = ?1 AND u.isDeleted = false AND a.enabled = true
 		""")
 	public Page<Article> findSavedArticlesByUserId(Long userId, Pageable pageable);
+	
+	@Query("""
+			SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END 
+	           FROM Article a JOIN a.savedByUsers u 
+	           WHERE a.id = ?1 AND u.id = ?2
+			""")
+	public boolean isSavedByUser(Long articleId, Long userId);
 
 
 }

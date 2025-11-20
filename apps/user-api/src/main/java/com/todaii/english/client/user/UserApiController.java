@@ -73,11 +73,20 @@ public class UserApiController {
 
 	    return ResponseEntity.ok(response);
 	}
+	
+	@GetMapping("/is-article-saved/{articleId}")
+	public ResponseEntity<Boolean> isArticleSaved(
+	        Authentication authentication,
+	        @PathVariable Long articleId) {
 
-	
-	
+	    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+	    Long currentUserId = principal.getUser().getId();
 
-	
+	    boolean saved = userService.isArticleSaved(currentUserId, articleId);
+	    return ResponseEntity.ok(saved);
+	}
+
+
 	
 	
 }

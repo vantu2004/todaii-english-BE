@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.DictionaryEntry_;
@@ -134,14 +136,18 @@ public class ArticleApiController {
 		return ResponseEntity.ok(response);
 	}
 	
-	@PostMapping("/{articleId}/user/{userId}")
-	public ResponseEntity<Article> addUserToArticle(@PathVariable Long articleId, @PathVariable Long userId) {
-		return ResponseEntity.ok(articleService.addUserToArticle(articleId, userId));
+	@PostMapping("/bookmark/{articleId}")
+	public ResponseEntity<Article> addUserToArticle(Authentication authentication, @PathVariable Long articleId) {
+		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = principal.getUser().getId();
+		return ResponseEntity.ok(articleService.addUserToArticle(articleId, currentUserId));
 	}
 	
-	@DeleteMapping("/{articleId}/user/{userId}")
-	public ResponseEntity<Article> removeUserFromArticle(@PathVariable Long articleId, @PathVariable Long userId) {
-		return ResponseEntity.ok(articleService.removeUserFromArticle(articleId, userId));
+	@DeleteMapping("/bookmark/{articleId}")
+	public ResponseEntity<Article> removeUserFromArticle(Authentication authentication, @PathVariable Long articleId) {
+		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = principal.getUser().getId();
+		return ResponseEntity.ok(articleService.removeUserFromArticle(articleId, currentUserId));
 	}
 
 }

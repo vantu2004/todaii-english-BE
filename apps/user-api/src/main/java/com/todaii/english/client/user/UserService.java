@@ -191,6 +191,12 @@ public class UserService {
 
 	}
 	
+	public boolean isArticleSaved(Long userId, Long articleId) {
+	    return articleRepository.isSavedByUser(articleId, userId);
+	}
+
+
+	
 
     
 

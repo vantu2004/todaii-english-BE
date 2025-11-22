@@ -11,8 +11,20 @@ import org.springframework.data.jpa.domain.Specification;
 public class ArticleSpecification {
 
 	public static Specification<Article> hasKeyword(String keyword) {
-		return (root, query, cb) -> keyword == null ? null
-				: cb.like(cb.lower(root.get(Article_.TITLE)), "%" + keyword.toLowerCase() + "%");
+		return (root, query, cb) -> {
+			if (keyword == null || keyword.trim().isEmpty()) {
+				return null;
+			}
+
+			String likeValue = "%" + keyword.toLowerCase() + "%";
+
+			return cb.or(cb.like(cb.lower(root.get(Article_.SOURCE_ID)), likeValue),
+					cb.like(cb.lower(root.get(Article_.SOURCE_NAME)), likeValue),
+					cb.like(cb.lower(root.get(Article_.AUTHOR)), likeValue),
+					cb.like(cb.lower(root.get(Article_.TITLE)), likeValue),
+					cb.like(root.get(Article_.DESCRIPTION), likeValue),
+					cb.like(cb.lower(root.get(Article_.CEFR_LEVEL).as(String.class)), likeValue));
+		};
 	}
 
 	public static Specification<Article> hasSourceName(String sourceName) {

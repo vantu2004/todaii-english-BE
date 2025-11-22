@@ -77,6 +77,7 @@ public class ArticleApiController {
 	}
 
 	// search article
+	@Deprecated
 	@GetMapping("/search")
 	public ResponseEntity<PagedResponse<Article>> search(
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,

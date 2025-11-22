@@ -43,6 +43,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 	@Query("SELECT a FROM Article a WHERE a.enabled = true AND a.id = ?1")
 	public Optional<Article> findById(Long id);
 
+	@Deprecated
 	@Query("""
 			    SELECT a FROM Article a
 			    WHERE a.enabled = true
@@ -87,6 +88,5 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 
 	@Query("SELECT DISTINCT a.sourceName FROM Article a WHERE a.enabled = true")
 	public List<String> findAllDistinctSourceNames();
-
 
 }

@@ -59,6 +59,7 @@ public class ArticleService {
 		return articleRepository.save(article);
 	}
 
+	@Deprecated
 	public Page<Article> search(String keyword, int page, int size, String sortBy, String direction) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);

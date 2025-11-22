@@ -120,11 +120,11 @@ public class ArticleApiController {
 	@GetMapping("/filter")
 	public ResponseEntity<PagedResponse<Article>> filterArticles(@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) String sourceName, @RequestParam(required = false) CefrLevel cefrLevel,
-			@RequestParam(required = false) Integer minViews, @RequestParam(required = false) Long topicId,
+			@RequestParam(required = false) Integer minViews, @RequestParam(required = false) String alias,
 			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size,
 			@RequestParam(defaultValue = "updatedAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction) {
-		Page<Article> articles = articleService.filterArticles(keyword, sourceName, cefrLevel, minViews, topicId, page,
+		Page<Article> articles = articleService.filterArticles(keyword, sourceName, cefrLevel, minViews, alias, page,
 				size, sortBy, direction);
 
 		PagedResponse<Article> response = new PagedResponse<>(articles.getContent(), page, size,
@@ -134,7 +134,7 @@ public class ArticleApiController {
 		return ResponseEntity.ok(response);
 	}
 
-	// lấy danh sách articles đc lưu bỏi user
+	// lấy danh sách articles đc lưu bởi user
 	@GetMapping("/saved")
 	public ResponseEntity<List<Article>> getSavedArticlesByUserId(Authentication authentication) {
 		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();

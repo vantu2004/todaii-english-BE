@@ -124,14 +124,14 @@ public class ArticleService {
 	}
 
 	public Page<Article> filterArticles(String keyword, String sourceName, CefrLevel cefrLevel, Integer minViews,
-			Long topicId, int page, int size, String sortBy, String direction) {
+			String alias, int page, int size, String sortBy, String direction) {
 		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 		Pageable pageable = PageRequest.of(page - 1, size, sort);
 
 		Specification<Article> spec = Specification.where(ArticleSpecification.isEnabled())
 				.and(ArticleSpecification.hasKeyword(keyword)).and(ArticleSpecification.hasSourceName(sourceName))
 				.and(ArticleSpecification.hasCefrLevel(cefrLevel)).and(ArticleSpecification.hasMinViews(minViews))
-				.and(ArticleSpecification.hasTopic(topicId));
+				.and(ArticleSpecification.hasTopic(alias));
 
 		return articleRepository.findAll(spec, pageable);
 	}

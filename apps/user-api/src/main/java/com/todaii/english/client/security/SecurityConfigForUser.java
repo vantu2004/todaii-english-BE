@@ -94,6 +94,9 @@ public class SecurityConfigForUser {
 						.requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER")
 						.requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*").hasAuthority("USER")
 						
+						// TopicApiController
+						.requestMatchers(HttpMethod.GET, "/api/v1/topic/**").permitAll()
+						
 						.anyRequest()
 						.authenticated());
 

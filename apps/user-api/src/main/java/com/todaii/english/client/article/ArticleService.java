@@ -149,4 +149,8 @@ public class ArticleService {
 		return user.getSavedArticles().stream().anyMatch(a -> a.getId().equals(articleId));
 	}
 
+	public List<String> getAllSources() {
+		return articleRepository.findAllDistinctSourceNames();
+	}
+
 }

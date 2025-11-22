@@ -54,7 +54,7 @@ public class ArticleApiController {
 			@PathVariable @NotBlank(message = "Date must not be blank") String date,
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
 			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "updatedAt") String sortBy,
+			@RequestParam(defaultValue = "createdAt") String sortBy,
 			@RequestParam(defaultValue = "desc") String direction, @RequestParam(required = false) String keyword) {
 
 		LocalDate parsedDate;
@@ -151,4 +151,11 @@ public class ArticleApiController {
 
 		return ResponseEntity.ok(articleService.isSavedByUser(articleId, currentUserId));
 	}
+
+	// lấy tất cả source name
+	@GetMapping("/source")
+	public ResponseEntity<List<String>> getSources() {
+		return ResponseEntity.ok(articleService.getAllSources());
+	}
+
 }

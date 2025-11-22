@@ -26,7 +26,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 	@Query("""
 			    SELECT a FROM Article a
 			    WHERE a.enabled = true
-			      AND a.updatedAt BETWEEN ?1 AND ?2
+			      AND a.createdAt BETWEEN ?1 AND ?2
 			      AND (
 			           ?3 IS NULL
 					   OR LOWER(a.sourceId) LIKE LOWER(CONCAT('%', ?3, '%'))
@@ -84,5 +84,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 			      AND a.cefrLevel = ?2
 			""")
 	public List<Article> findFallbackByCefr(Long articleId, CefrLevel cefrLevel, Pageable pageable);
+
+	@Query("SELECT DISTINCT a.sourceName FROM Article a WHERE a.enabled = true")
+	public List<String> findAllDistinctSourceNames();
+
 
 }

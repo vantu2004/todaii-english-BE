@@ -95,19 +95,13 @@ public class AdminService {
 			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
 		}
 
-		if (request.getAvatarUrl() != null) {
-			String avatar = request.getAvatarUrl();
+		String avatar = request.getAvatarUrl();
+		if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
+			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
+			admin.setAvatarUrl(uploadedUrl);
 
-			// FE gửi base64
-			if (avatar.startsWith("data:image")) {
-				String uploadedUrl = cloudinaryPort.uploadImage(avatar);
-				admin.setAvatarUrl(uploadedUrl);
-			}
-			// FE gửi chuỗi rỗng → remove
-			else if (avatar.isBlank()) {
-				admin.setAvatarUrl(null);
-			}
-			// FE gửi URL → giữ nguyên
+		} else {
+			admin.setAvatarUrl(admin.getAvatarUrl());
 		}
 
 		admin.setDisplayName(request.getDisplayName());

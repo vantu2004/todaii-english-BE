@@ -28,10 +28,10 @@ public class CloudinaryClient implements CloudinaryPort {
 	}
 
 	@Override
-	public String uploadImage(String base64Image) {
+	public String uploadImage(String base64Image, String folderName) {
 		try {
 			Map uploadResult = cloudinary.uploader().upload(base64Image, ObjectUtils.asMap("folder",
-					"todaii/admin_avatars", "resource_type", "image", "use_filename", false, "unique_filename", true));
+					"todaii/" + folderName, "resource_type", "image", "use_filename", false, "unique_filename", true));
 
 			return uploadResult.get("secure_url").toString();
 

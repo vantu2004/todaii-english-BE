@@ -3,6 +3,7 @@ package com.todaii.english.client.user;
 import com.todaii.english.client.article.ArticleRepository;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.User;
+import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
@@ -34,6 +35,7 @@ public class UserService {
 	private final SmtpService smtpService;
 	private final ModelMapper modelMapper;
 	private final ArticleRepository articleRepository;
+	private final CloudinaryPort cloudinaryPort;
 
 	private String CLIENT_URL = "http://localhost:5173";
 
@@ -168,9 +170,16 @@ public class UserService {
 			user.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
 		}
 
-		// Cập nhật thông tin cơ bản
+		String avatar = request.getAvatarUrl();
+		if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
+			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "user_avatars");
+			user.setAvatarUrl(uploadedUrl);
+
+		} else {
+			user.setAvatarUrl(user.getAvatarUrl());
+		}
+
 		user.setDisplayName(request.getDisplayName());
-		user.setAvatarUrl(request.getAvatarUrl());
 
 		User savedUser = this.userRepository.save(user);
 		UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);

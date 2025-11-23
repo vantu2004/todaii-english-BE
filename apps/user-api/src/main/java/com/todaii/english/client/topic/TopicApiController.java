@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.shared.enums.TopicType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +20,7 @@ public class TopicApiController {
 	private final TopicService topicService;
 
 	@GetMapping
-	public ResponseEntity<List<Topic>> getAllTopics() {
-		return ResponseEntity.ok(topicService.findAll());
+	public ResponseEntity<List<Topic>> getAllTopics(@RequestParam(required = true) TopicType topicType) {
+		return ResponseEntity.ok(topicService.findAll(topicType));
 	}
 }

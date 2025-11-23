@@ -1,8 +1,10 @@
 package com.todaii.english.client.user;
 
 import com.todaii.english.client.article.ArticleRepository;
+import com.todaii.english.client.video.VideoRepository;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.Video;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
@@ -35,6 +37,7 @@ public class UserService {
 	private final SmtpService smtpService;
 	private final ModelMapper modelMapper;
 	private final ArticleRepository articleRepository;
+	private final VideoRepository videoRepository;
 	private final CloudinaryPort cloudinaryPort;
 
 	private String CLIENT_URL = "http://localhost:5173";
@@ -200,6 +203,24 @@ public class UserService {
 			savedArticles.remove(article);
 		} else {
 			savedArticles.add(article);
+		}
+
+		userRepository.save(user);
+	}
+
+	public void toggleSavedVideo(Long currentUserId, Long videoId) {
+		User user = userRepository.findById(currentUserId)
+				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+
+		Video video = videoRepository.findById(videoId)
+				.orElseThrow(() -> new BusinessException(404, "Video not found"));
+
+		Set<Video> savedVideos = user.getSavedVideos();
+
+		if (savedVideos.contains(video)) {
+			savedVideos.remove(video);
+		} else {
+			savedVideos.add(video);
 		}
 
 		userRepository.save(user);

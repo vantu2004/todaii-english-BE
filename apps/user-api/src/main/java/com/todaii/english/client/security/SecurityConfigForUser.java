@@ -93,12 +93,16 @@ public class SecurityConfigForUser {
 						.requestMatchers(HttpMethod.GET, "/api/v1/user/me").hasAuthority("USER")
 						.requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER")
 						.requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*").hasAuthority("USER")
-						
+
 						// TopicApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/topic/**").permitAll()
-						
-						.anyRequest()
-						.authenticated());
+
+						// VideoApiController
+						.requestMatchers("/api/v1/video/saved").hasAuthority("USER")
+						.requestMatchers("/api/v1/video/*/is-saved").hasAuthority("USER")
+						.requestMatchers("/api/v1/video/**").permitAll()
+
+						.anyRequest().authenticated());
 
 		/*
 		 * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy

@@ -82,12 +82,17 @@ public class User implements JwtPrincipal {
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
-	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "article_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "article_id"))
 	@Builder.Default
 	@JsonIgnore
 	private Set<Article> savedArticles = new HashSet<>();
+	
+	@ManyToMany
+	@JoinTable(name = "video_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "video_id"))
+	@Builder.Default
+	@JsonIgnore
+	private Set<Video> savedVideos = new HashSet<>();
 
 	@JsonIgnore
 	@Override

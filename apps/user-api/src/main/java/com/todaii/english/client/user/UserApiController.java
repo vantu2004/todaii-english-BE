@@ -50,4 +50,15 @@ public class UserApiController {
 
 		return ResponseEntity.ok().build();
 	}
+
+	// xử lý lưu/bỏ lưu video
+	@PutMapping("/video/{videoId}")
+	public ResponseEntity<Void> toggleSavedVideo(Authentication authentication, @PathVariable Long videoId) {
+		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = principal.getUser().getId();
+
+		userService.toggleSavedVideo(currentUserId, videoId);
+
+		return ResponseEntity.ok().build();
+	}
 }

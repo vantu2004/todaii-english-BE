@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import java.time.LocalDateTime;
@@ -75,4 +76,9 @@ public class Video {
 	@JoinTable(name = "videos_topics", joinColumns = @JoinColumn(name = "video_id"), inverseJoinColumns = @JoinColumn(name = "topic_id"))
 	@Builder.Default
 	private Set<Topic> topics = new HashSet<>();
+
+	@ManyToMany(mappedBy = "savedVideos")
+	@JsonIgnore
+	@Builder.Default
+	private Set<User> users = new HashSet<>();
 }

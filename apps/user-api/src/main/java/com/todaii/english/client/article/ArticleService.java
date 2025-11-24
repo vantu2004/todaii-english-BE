@@ -46,7 +46,7 @@ public class ArticleService {
 		LocalDateTime startOfDay = date.atStartOfDay();
 		LocalDateTime endOfDay = date.atTime(23, 59, 59);
 
-		return articleRepository.findByUpdatedDateRangeAndKeyword(startOfDay, endOfDay, keyword, pageable);
+		return articleRepository.findByCreatedDateRangeAndKeyword(startOfDay, endOfDay, keyword, pageable);
 	}
 
 	public Article findById(Long id) {

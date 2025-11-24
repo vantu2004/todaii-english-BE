@@ -1,5 +1,7 @@
 package com.todaii.english.client.video;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -8,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.user.UserRepository;
+import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.entity.User;
 import com.todaii.english.core.entity.Video;
 import com.todaii.english.shared.enums.CefrLevel;
@@ -34,6 +37,16 @@ public class VideoService {
 		video.setViews(video.getViews() + 1);
 
 		return videoRepository.save(video);
+	}
+
+	public Page<DictionaryEntry> getPagedVocabulary(Long id, int page, int size) {
+		if (!videoRepository.existsById(id)) {
+			throw new BusinessException(404, "Video not found");
+		}
+
+		Pageable pageable = PageRequest.of(page - 1, size);
+
+		return videoRepository.findPagedWordsByVideoId(id, pageable);
 	}
 
 	public List<Video> getRelatedVideos(Long videoId, int limit) {
@@ -96,6 +109,16 @@ public class VideoService {
 				.orElseThrow(() -> new BusinessException(404, "User not found"));
 
 		return user.getSavedArticles().stream().anyMatch(a -> a.getId().equals(videoId));
+	}
+
+	public Page<Video> getVideosByDate(LocalDate parsedDate, int page, int size, String sortBy, String direction) {
+		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+		Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+		LocalDateTime startOfDay = parsedDate.atStartOfDay();
+		LocalDateTime endOfDay = parsedDate.atTime(23, 59, 59);
+
+		return videoRepository.findByCreatedDateRange(startOfDay, endOfDay, pageable);
 	}
 
 }

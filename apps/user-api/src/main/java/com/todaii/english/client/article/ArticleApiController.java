@@ -98,7 +98,8 @@ public class ArticleApiController {
 	 */
 	@GetMapping("/{id}/entry")
 	public ResponseEntity<PagedResponse<DictionaryEntry>> getPagedVocabulary(@PathVariable Long id,
-			@RequestParam(defaultValue = "1") @Min(1) int page, @RequestParam(defaultValue = "10") @Min(1) int size) {
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int page,
+			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size) {
 		Page<DictionaryEntry> entries = articleService.getPagedVocabulary(id, page, size);
 
 		PagedResponse<DictionaryEntry> response = new PagedResponse<>(entries.getContent(), page, size,

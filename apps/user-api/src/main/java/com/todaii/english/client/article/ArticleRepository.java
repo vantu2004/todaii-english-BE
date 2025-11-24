@@ -37,7 +37,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 					   OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?3, '%'))
 			      )
 			""")
-	public Page<Article> findByUpdatedDateRangeAndKeyword(LocalDateTime startOfDay, LocalDateTime endOfDay,
+	public Page<Article> findByCreatedDateRangeAndKeyword(LocalDateTime startOfDay, LocalDateTime endOfDay,
 			String keyword, Pageable pageable);
 
 	@Query("SELECT a FROM Article a WHERE a.enabled = true AND a.id = ?1")

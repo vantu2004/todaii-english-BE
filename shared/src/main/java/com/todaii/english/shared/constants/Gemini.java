@@ -62,4 +62,14 @@ public class Gemini {
 			---
 			Only return the Vietnamese translation.
 			""";
+
+	public static final String RELATED_WORD_PROMPT = """
+			Generate between 1 and 10 English words that are semantically related to the target word: "%s".
+			Rules:
+			- Only return SINGLE English words (no phrases).
+			- Words must be common, meaningful, and contextually linked.
+			- Avoid duplicates and avoid returning the target word itself.
+			- Output ONLY a JSON array of strings, e.g. ["word1", "word2"].
+			""";
+
 }

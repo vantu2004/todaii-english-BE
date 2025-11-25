@@ -108,7 +108,7 @@ public class VideoService {
 		User user = userRepository.findById(currentUserId)
 				.orElseThrow(() -> new BusinessException(404, "User not found"));
 
-		return user.getSavedArticles().stream().anyMatch(a -> a.getId().equals(videoId));
+		return user.getSavedVideos().stream().anyMatch(a -> a.getId().equals(videoId));
 	}
 
 	public Page<Video> getVideosByDate(LocalDate parsedDate, int page, int size, String sortBy, String direction) {

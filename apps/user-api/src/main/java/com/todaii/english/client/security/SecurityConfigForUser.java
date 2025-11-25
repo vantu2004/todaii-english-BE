@@ -102,6 +102,9 @@ public class SecurityConfigForUser {
 						.requestMatchers("/api/v1/video/*/is-saved").hasAuthority("USER")
 						.requestMatchers("/api/v1/video/**").permitAll()
 
+						// AuthApiController
+						.requestMatchers("/api/v1/dictionary/**").permitAll()
+						
 						.anyRequest().authenticated());
 
 		/*

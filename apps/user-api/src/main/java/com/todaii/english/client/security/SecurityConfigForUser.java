@@ -104,7 +104,10 @@ public class SecurityConfigForUser {
 
 						// AuthApiController
 						.requestMatchers("/api/v1/dictionary/**").permitAll()
-						
+
+						// NotebookApiController + NoteDictApiController
+						.requestMatchers("/api/v1/notebook/**").hasAuthority("USER")
+
 						.anyRequest().authenticated());
 
 		/*

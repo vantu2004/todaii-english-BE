@@ -108,6 +108,12 @@ public class SecurityConfigForUser {
 						// NotebookApiController + NoteDictApiController
 						.requestMatchers("/api/v1/notebook/**").hasAuthority("USER")
 
+						// VocabGroupApiController
+						.requestMatchers("/api/v1/vocab-group/**").permitAll()
+
+						// VocabDeckApiController
+						.requestMatchers("/api/v1/vocab-deck/**").permitAll()
+
 						.anyRequest().authenticated());
 
 		/*

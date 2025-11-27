@@ -18,31 +18,37 @@ public class NoteDictService {
 	private final NotebookRepository notebookRepository;
 	private final DictionaryRepository dictionaryRepository;
 
-	private NotebookItem findById(Long id) {
-		return notebookRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Notebook not found"));
+	private NotebookItem getOwned(Long userId, Long id) {
+		NotebookItem item = notebookRepository.findById(id)
+				.orElseThrow(() -> new BusinessException(404, "Notebook not found"));
+
+		if (!item.getUser().getId().equals(userId)) {
+			throw new BusinessException(403, "Forbidden");
+		}
+		return item;
 	}
 
-	public List<DictionaryEntry> getEntries(Long noteId) {
-		NotebookItem notebookItem = findById(noteId);
-
+	public List<DictionaryEntry> getEntries(Long userId, Long noteId) {
+		NotebookItem notebookItem = getOwned(userId, noteId);
 		return new ArrayList<>(notebookItem.getWords());
 	}
 
-	public NotebookItem addEntry(Long noteId, Long entryId) {
-		NotebookItem notebookItem = findById(noteId);
+	public void addEntry(Long userId, Long noteId, Long entryId) {
+		NotebookItem notebookItem = getOwned(userId, noteId);
+
 		DictionaryEntry dictionaryEntry = dictionaryRepository.findById(entryId)
 				.orElseThrow(() -> new BusinessException(404, "Dictionary entry not found"));
 
 		notebookItem.getWords().add(dictionaryEntry);
 
-		return notebookRepository.save(notebookItem);
+		notebookRepository.save(notebookItem);
 	}
 
-	public NotebookItem removeEntry(Long noteId, Long entryId) {
-		NotebookItem notebookItem = findById(noteId);
+	public void removeEntry(Long userId, Long noteId, Long entryId) {
+		NotebookItem notebookItem = getOwned(userId, noteId);
+
 		notebookItem.getWords().removeIf(e -> e.getId().equals(entryId));
 
-		return notebookRepository.save(notebookItem);
+		notebookRepository.save(notebookItem);
 	}
-
 }

@@ -87,12 +87,17 @@ public class User implements JwtPrincipal {
 	@Builder.Default
 	@JsonIgnore
 	private Set<Article> savedArticles = new HashSet<>();
-	
+
 	@ManyToMany
 	@JoinTable(name = "video_users", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "video_id"))
 	@Builder.Default
 	@JsonIgnore
 	private Set<Video> savedVideos = new HashSet<>();
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	@JsonIgnore
+	private Set<NotebookItem> notebookItems = new HashSet<>();
 
 	@JsonIgnore
 	@Override

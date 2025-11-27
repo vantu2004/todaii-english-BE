@@ -3,6 +3,8 @@ package com.todaii.english.shared.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.todaii.english.shared.enums.NotebookType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +13,6 @@ import lombok.Setter;
 public class NotebookNode {
 	private Long id;
 	private String name;
-	private boolean isFolder;
-	private String content;
+	private NotebookType type;
 	private List<NotebookNode> children = new ArrayList<>();
 }

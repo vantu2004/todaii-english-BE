@@ -47,6 +47,11 @@ public class NotebookItem {
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
+	// quan hệ 1 chiều
 	@ManyToMany
 	@JoinTable(name = "note_words", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
 	@Builder.Default

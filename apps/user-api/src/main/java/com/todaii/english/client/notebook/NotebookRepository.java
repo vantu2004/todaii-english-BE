@@ -9,7 +9,7 @@ import com.todaii.english.core.entity.NotebookItem;
 
 @Repository
 public interface NotebookRepository extends JpaRepository<NotebookItem, Long> {
-	public List<NotebookItem> findByParentId(Long parentId);
+	List<NotebookItem> findByUserIdOrderByNameAsc(Long userId);
 
-	public List<NotebookItem> findAllByOrderByNameAsc();
+	List<NotebookItem> findByUserIdAndParentId(Long userId, Long parentId);
 }

@@ -85,9 +85,12 @@ public class SecurityConfigForAdmin {
 
 				// hasRole() tự thêm tiền tố ROLE_, vd read -> ROLE_read
 				.authorizeHttpRequests(auth -> auth
-						// AuthApiController
-						.requestMatchers("/api/v1/auth/**").permitAll()
-
+						// AuthApiController + Swagger
+						.requestMatchers("/api/v1/auth/**", 
+								"/v3/api-docs/**",
+		                        "/swagger-ui/**",
+		                        "/swagger-ui.html").permitAll()
+						
 						// AdminApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin/me")

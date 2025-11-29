@@ -20,36 +20,41 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/v1/video")
+@Tag(name = "Video", description = "APIs for video content and user-saved videos")
 public class VideoApiController {
 	private static final String SORT_DIRECTION = "asc";
 
 	private final VideoService videoService;
 
-	// lấy n video gần đây nhất
 	@GetMapping("/latest")
+	@Operation(summary = "Get latest videos", description = "Retrieve the most recent videos, limited by size")
 	public ResponseEntity<List<Video>> getLatest(
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
 		return ResponseEntity.ok(videoService.getLatestVideos(size));
 	}
 
-	// lấy top n video
 	@GetMapping("/top")
+	@Operation(summary = "Get top videos", description = "Retrieve the top videos by popularity, limited by size")
 	public ResponseEntity<List<Video>> getTop(
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
 		return ResponseEntity.ok(videoService.getTopVideos(size));
 	}
 
-	// lấy chi tiết video
 	@GetMapping("/{id}")
+	@Operation(summary = "Get video details", description = "Retrieve detailed information of a video by its ID")
 	public ResponseEntity<Video> findById(@PathVariable Long id) {
 		return ResponseEntity.ok(videoService.findById(id));
 	}
 
 	@GetMapping("/{id}/entry")
+	@Operation(summary = "Get paged vocabulary", description = "Retrieve paginated vocabulary entries for a video")
 	public ResponseEntity<PagedResponse<DictionaryEntry>> getPagedVocabulary(@PathVariable Long id,
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int page,
 			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size) {
@@ -62,15 +67,15 @@ public class VideoApiController {
 		return ResponseEntity.ok(response);
 	}
 
-	// lấy n video liên quan
 	@GetMapping("/{id}/related")
+	@Operation(summary = "Get related videos", description = "Retrieve a list of videos related to the given video ID")
 	public ResponseEntity<List<Video>> getRelated(@PathVariable Long id,
-			@RequestParam(defaultValue = "5") @Min(value = 1, message = "Size must be at least 1") int limit) {
+			@RequestParam(defaultValue = "5") @Min(1) int limit) {
 		return ResponseEntity.ok(videoService.getRelatedVideos(id, limit));
 	}
 
-	// lấy videos theo ngày, định dạng YYYY-MM-DD (đúng format, số lượng ký tự)
 	@GetMapping("/by-date/{date}")
+	@Operation(summary = "Get videos by date", description = "Retrieve videos created on a specific date (YYYY-MM-DD)")
 	public ResponseEntity<PagedResponse<Video>> getArticlesByDate(
 			@PathVariable @NotBlank(message = "Date must not be blank") String date,
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
@@ -91,8 +96,8 @@ public class VideoApiController {
 				videos.getTotalPages(), videos.isFirst(), videos.isLast(), sortBy, direction));
 	}
 
-	// lọc video
 	@GetMapping("/filter")
+	@Operation(summary = "Filter videos", description = "Filter videos by keyword, CEFR level, views, or alias")
 	public ResponseEntity<PagedResponse<Video>> filter(@RequestParam(required = false) String keyword,
 			@RequestParam(required = false) CefrLevel cefrLevel, @RequestParam(required = false) Integer minViews,
 			@RequestParam(required = false) String alias,
@@ -111,8 +116,8 @@ public class VideoApiController {
 		return ResponseEntity.ok(pagedResponse);
 	}
 
-	// lấy danh sách videos đc lưu bởi user
 	@GetMapping("/saved")
+	@Operation(summary = "Get saved videos for user", description = "Retrieve videos saved by the currently authenticated user")
 	public ResponseEntity<List<Video>> getSavedVideosByUserId(Authentication authentication) {
 		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 		Long currentUserId = principal.getUser().getId();
@@ -120,13 +125,12 @@ public class VideoApiController {
 		return ResponseEntity.ok(videoService.getSavedVideosByUserId(currentUserId));
 	}
 
-	// check video có đc lưu bởi user ko
 	@GetMapping("/{videoId}/is-saved")
+	@Operation(summary = "Check if video is saved by user", description = "Check if the currently authenticated user has saved a specific video")
 	public ResponseEntity<Boolean> isSavedByUser(Authentication authentication, @PathVariable Long videoId) {
 		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
 		Long currentUserId = principal.getUser().getId();
 
 		return ResponseEntity.ok(videoService.isSavedByUser(videoId, currentUserId));
 	}
-
 }

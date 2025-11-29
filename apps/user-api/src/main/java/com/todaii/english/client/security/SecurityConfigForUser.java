@@ -81,8 +81,11 @@ public class SecurityConfigForUser {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
 				.authorizeHttpRequests(auth -> auth
-						// AuthApiController
-						.requestMatchers("/api/v1/auth/**").permitAll()
+						// AuthApiController + Swagger 
+						.requestMatchers("/api/v1/auth/**",
+								"/v3/api-docs/**",
+		                        "/swagger-ui/**",
+		                        "/swagger-ui.html").permitAll()
 
 						// ArticleApiController
 						.requestMatchers("/api/v1/article/saved").hasAuthority("USER")

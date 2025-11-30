@@ -3,125 +3,343 @@ package com.todaii.english.shared.constants;
 public class MailTemplate {
 	public static final String VERIFICATION_EMAIL_TEMPLATE = """
 			<!DOCTYPE html>
-			<html lang="en">
+			<html>
 			<head>
-			  <meta charset="UTF-8">
-			  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-			  <title>Verify Your Email</title>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Verify Email</title>
 			</head>
-			<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-			  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-			    <h1 style="color: white; margin: 0;">Verify Your Email</h1>
-			  </div>
-			  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-			    <p>Hello,</p>
-			    <p>Thank you for signing up! Your verification code is:</p>
-			    <div style="text-align: center; margin: 30px 0;">
-			      <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">{verificationCode}</span>
-			    </div>
-			    <p>Enter this code on the verification page to complete your registration.</p>
-			    <p>This code will expire in 15 minutes for security reasons.</p>
-			    <p>If you didn't create an account with us, please ignore this email.</p>
-			    <p>Best regards,<br>Your App Team</p>
-			  </div>
-			  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-			    <p>This is an automated message, please do not reply to this email.</p>
-			  </div>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Todaii English</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <h2 style="color: #333333; margin-top: 0; font-size: 20px;">Verify Your Email Address</h2>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Hello,</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Thank you for starting your journey with Todaii English. To complete your registration, please use the verification code below:</p>
+
+			                            <div style="background-color: #f0fdf4; border: 2px dashed #10b981; border-radius: 6px; padding: 20px; margin: 30px 0; text-align: center;">
+			                                <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #10b981; font-family: monospace;">{verificationCode}</span>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 14px; line-height: 1.6;">This code helps us ensure your account is secure. It will expire in <strong>15 minutes</strong>.</p>
+			                            <p style="color: #999999; font-size: 14px; margin-top: 30px;">If you didn't sign up for Todaii English, you can safely ignore this email.</p>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
 			</body>
 			</html>
 			""";
 
 	public static final String PASSWORD_RESET_SUCCESS_TEMPLATE = """
 			<!DOCTYPE html>
-			<html lang="en">
+			<html>
 			<head>
-			  <meta charset="UTF-8">
-			  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-			  <title>Password Reset Successful</title>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Password Reset Successful</title>
 			</head>
-			<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-			  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-			    <h1 style="color: white; margin: 0;">Password Reset Successful</h1>
-			  </div>
-			  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-			    <p>Hello,</p>
-			    <p>We're writing to confirm that your password has been successfully reset.</p>
-			    <div style="text-align: center; margin: 30px 0;">
-			      <div style="background-color: #4CAF50; color: white; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; display: inline-block; font-size: 30px;">
-			        ✓
-			      </div>
-			    </div>
-			    <p>If you did not initiate this password reset, please contact our support team immediately.</p>
-			    <p>For security reasons, we recommend that you:</p>
-			    <ul>
-			      <li>Use a strong, unique password</li>
-			      <li>Enable two-factor authentication if available</li>
-			      <li>Avoid using the same password across multiple sites</li>
-			    </ul>
-			    <p>Thank you for helping us keep your account secure.</p>
-			    <p>Best regards,<br>Your App Team</p>
-			  </div>
-			  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-			    <p>This is an automated message, please do not reply to this email.</p>
-			  </div>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Security Update</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px; text-align: center;">
+			                            <div style="background-color: #10b981; color: white; width: 60px; height: 60px; line-height: 60px; border-radius: 50%; display: inline-block; font-size: 30px; margin-bottom: 20px;">✓</div>
+			                            <h2 style="color: #333333; margin: 0 0 20px 0; font-size: 20px;">Password Reset Successfully</h2>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Hello,</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Your password has been successfully updated. You can now log in with your new credentials.</p>
+
+			                            <div style="text-align: left; background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 25px 0;">
+			                                <p style="margin: 0 0 10px 0; font-weight: bold; color: #444;">Security Tips:</p>
+			                                <ul style="color: #666666; font-size: 14px; padding-left: 20px; margin: 0;">
+			                                    <li style="margin-bottom: 5px;">Never share your password with anyone.</li>
+			                                    <li style="margin-bottom: 5px;">Enable two-factor authentication if available.</li>
+			                                </ul>
+			                            </div>
+
+			                            <p style="color: #ef4444; font-size: 14px; margin-top: 20px;">If you did not make this change, please contact our support team immediately.</p>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
 			</body>
 			</html>
 			""";
 
 	public static final String PASSWORD_RESET_REQUEST_TEMPLATE = """
 			<!DOCTYPE html>
-			<html lang="en">
+			<html>
 			<head>
-			  <meta charset="UTF-8">
-			  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-			  <title>Reset Your Password</title>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Reset Password</title>
 			</head>
-			<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-			  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-			    <h1 style="color: white; margin: 0;">Password Reset</h1>
-			  </div>
-			  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-			    <p>Hello,</p>
-			    <p>We received a request to reset your password. If you didn't make this request, please ignore this email.</p>
-			    <p>To reset your password, click the button below:</p>
-			    <div style="text-align: center; margin: 30px 0;">
-			      <a href="{resetURL}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
-			    </div>
-			    <p>This link will expire in 1 hour for security reasons.</p>
-			    <p>Best regards,<br>Your App Team</p>
-			  </div>
-			  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-			    <p>This is an automated message, please do not reply to this email.</p>
-			  </div>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Reset Password</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Hello,</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">We received a request to reset your password for your Todaii English account. If you didn't ask for this, you can ignore this email.</p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="{resetURL}" style="background-color: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">Reset My Password</a>
+			                            </div>
+
+			                            <p style="color: #999999; font-size: 14px; text-align: center;">This link is valid for <strong>1 hour</strong>.</p>
+			                            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 30px 0;">
+			                            <p style="color: #999999; font-size: 12px;">Button not working? Copy and paste this link into your browser:<br><a href="{resetURL}" style="color: #10b981;">{resetURL}</a></p>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
 			</body>
 			</html>
 			""";
 
 	public static final String WELCOME_EMAIL_TEMPLATE = """
 			<!DOCTYPE html>
-			<html lang="en">
+			<html>
 			<head>
-			  <meta charset="UTF-8">
-			  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-			  <title>Welcome!</title>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Welcome to Todaii</title>
 			</head>
-			<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-			  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
-			    <h1 style="color: white; margin: 0;">Welcome Aboard 🎉</h1>
-			  </div>
-			  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-			    <p>Hello <strong>{name}</strong>,</p>
-			    <p>We’re thrilled to have you with us! Your registered email is:</p>
-			    <div style="text-align: center; margin: 20px 0;">
-			      <span style="font-size: 20px; font-weight: bold; color: #4CAF50;">{email}</span>
-			    </div>
-			    <p>You can now log in and start exploring all the features we’ve built for you.</p>
-			    <p>Enjoy your journey with us 🚀</p>
-			    <p>Best regards,<br>Your App Team</p>
-			  </div>
-			  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
-			    <p>This is an automated message, please do not reply to this email.</p>
-			  </div>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 40px 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0 0 10px 0; font-size: 28px;">Welcome Aboard! 🎉</h1>
+			                            <p style="color: #e6fffa; margin: 0; font-size: 16px;">Let's master English together</p>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">We are thrilled to have you join the Todaii English community! Your account has been successfully created with the email:</p>
+
+			                            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; text-align: center; margin: 20px 0;">
+			                                <span style="color: #374151; font-weight: 600; font-size: 16px;">{email}</span>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">You now have full access to our learning resources. Ready to start your first lesson?</p>
+
+			                            <div style="text-align: center; margin-top: 30px;">
+			                                <a href="#" style="background-color: #333333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Go to Dashboard</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+	public static final String ACCOUNT_BANNED_TEMPLATE = """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Account Suspended</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #ef4444; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Account Suspended</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+
+			                            <div style="background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin-bottom: 25px;">
+			                                <p style="color: #991b1b; margin: 0; font-size: 16px;">Your account has been suspended due to a violation of our Terms of Service.</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                While suspended, you will not be able to access your courses, history, or login to the platform.
+			                            </p>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6; margin-top: 20px;">
+			                                If you believe this is a mistake, please contact our support team immediately for a review of your case.
+			                            </p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="mailto:{contactMail}" style="background-color: #333333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Contact Support</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+	public static final String ACCOUNT_UNBANNED_TEMPLATE = """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Account Restored</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Account Restored</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+
+			                            <div style="background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 15px; margin-bottom: 25px;">
+			                                <p style="color: #065f46; margin: 0; font-size: 16px;">Good news! Your account has been successfully reactivated.</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                We have reviewed your account status and lifted the suspension. You now have full access to all Todaii English features, course history, and learning materials again.
+			                            </p>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6; margin-top: 20px;">
+			                                We apologize for any inconvenience this may have caused. Welcome back!
+			                            </p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="/client/login" style="background-color: #333333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Log In Now</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+	public static final String ACCOUNT_DELETED_TEMPLATE = """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Account Deleted</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #4b5563; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Goodbye for now</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+
+			                            <div style="background-color: #f3f4f6; border-left: 4px solid #4b5563; padding: 15px; margin-bottom: 25px;">
+			                                <p style="color: #1f2937; margin: 0; font-size: 16px;">Your account has been successfully deleted as requested.</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                We confirm that your personal data, learning history, and vocabulary lists have been permanently removed from our servers.
+			                            </p>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6; margin-top: 20px;">
+			                                We are sorry to see you go, but we hope to see you again in the future. You are always welcome to create a new account whenever you're ready to continue your English journey.
+			                            </p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="{homepageURL}" style="background-color: #ffffff; color: #4b5563; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; border: 2px solid #4b5563;">Visit Todaii English</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
 			</body>
 			</html>
 			""";

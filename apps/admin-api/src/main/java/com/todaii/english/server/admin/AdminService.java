@@ -16,6 +16,7 @@ import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
+import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
@@ -32,6 +33,7 @@ public class AdminService {
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
 	private final CloudinaryPort cloudinaryPort;
+	private final SmtpService smtpService;
 
 	@Deprecated
 	public List<Admin> findAll() {
@@ -144,6 +146,8 @@ public class AdminService {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
+		smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
+
 		admin.setIsDeleted(true);
 		admin.setDeletedAt(LocalDateTime.now());
 		admin.setEnabled(false);
@@ -171,8 +175,12 @@ public class AdminService {
 		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
 		if (admin.getEnabled()) {
 			admin.setStatus(AdminStatus.ACTIVE);
+
+			smtpService.accountUnBannedNotice(admin.getEmail(), admin.getDisplayName());
 		} else {
 			admin.setStatus(AdminStatus.LOCKED);
+
+			smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
 		}
 
 		this.adminRepository.save(admin);

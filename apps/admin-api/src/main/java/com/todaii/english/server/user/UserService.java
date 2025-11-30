@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import com.todaii.english.core.entity.User;
 import com.todaii.english.core.security.PasswordHasher;
+import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
@@ -29,6 +30,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordHasher passwordHasher;
 	private final ModelMapper modelMapper;
+	private final SmtpService smtpService;
 
 	@Deprecated
 	public List<UserDTO> findAll() {
@@ -91,8 +93,12 @@ public class UserService {
 			if (user.getEmailVerifiedAt() == null) {
 				user.setEmailVerifiedAt(LocalDateTime.now());
 			}
+
+			smtpService.accountUnBannedNotice(user.getEmail(), user.getDisplayName());
 		} else {
 			user.setStatus(UserStatus.LOCKED);
+
+			smtpService.accountBannedNotice(user.getEmail(), user.getDisplayName());
 		}
 
 		userRepository.save(user);
@@ -100,6 +106,8 @@ public class UserService {
 
 	public void delete(Long id) {
 		User user = findById(id);
+
+		smtpService.accountDeletedNotice(user.getEmail(), user.getDisplayName());
 
 		user.setIsDeleted(true);
 		user.setDeletedAt(LocalDateTime.now());

@@ -88,6 +88,9 @@ public class SecurityConfigForAdmin {
 						// AuthApiController
 						.requestMatchers("/api/v1/auth/**").permitAll()
 
+						// DashboardApiController
+						.requestMatchers("/api/v1/dashboard/**").hasAuthority("SUPER_ADMIN")
+
 						// AdminApiController
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin").hasAuthority("SUPER_ADMIN")
 						.requestMatchers(HttpMethod.GET, "/api/v1/admin/me")

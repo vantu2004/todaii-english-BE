@@ -176,7 +176,7 @@ public class AdminService {
 		this.adminRepository.save(admin);
 
 		// log login event
-		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, null, null);
+		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, 1, null);
 	}
 
 	public void toggleEnabled(Long currentAdminId, Long id) {

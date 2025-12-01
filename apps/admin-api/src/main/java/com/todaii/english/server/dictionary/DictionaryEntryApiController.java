@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
@@ -34,8 +36,11 @@ public class DictionaryEntryApiController {
 	private final DictionaryEntryService dictionaryService;
 
 	@GetMapping("/raw-word")
-	public ResponseEntity<DictionaryApiResponse[]> getRawWord(@RequestParam String word) {
-		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(word);
+	public ResponseEntity<DictionaryApiResponse[]> getRawWord(Authentication authentication,
+			@RequestParam String word) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(currentAdminId, word);
+
 		return ResponseEntity.ok(dictionaryApiResponses);
 	}
 
@@ -71,9 +76,11 @@ public class DictionaryEntryApiController {
 	}
 
 	@PostMapping("/gemini")
-	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(
+	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(Authentication authentication,
 			@RequestParam @NotBlank @Length(max = 64) String word) throws Exception {
-		return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		return ResponseEntity.ok(dictionaryService.createWordByGemini(currentAdminId, word));
 	}
 
 	@PostMapping

@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.todaii.english.core.entity.AdminEvent;
+import com.todaii.english.shared.enums.EventType;
 
 @Repository
-public interface AdminEventRepository extends JpaRepository<AdminEvent, Long> {
-	public List<AdminEvent> findByAdminId(Long id);
+public interface EventRepository extends JpaRepository<AdminEvent, Long> {
+	public List<AdminEvent> findByEventType(EventType eventType);
+
 }

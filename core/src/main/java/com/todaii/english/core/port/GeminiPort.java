@@ -1,5 +1,7 @@
 package com.todaii.english.core.port;
 
+import com.todaii.english.shared.response.AIResponse;
+
 public interface GeminiPort {
-	String generateText(String prompt);
+	AIResponse generateText(String prompt);
 }

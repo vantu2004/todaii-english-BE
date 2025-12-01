@@ -17,7 +17,9 @@ import com.todaii.english.core.entity.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.enums.AdminStatus;
+import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -34,6 +36,7 @@ public class AdminService {
 	private final PasswordHasher passwordHasher;
 	private final CloudinaryPort cloudinaryPort;
 	private final SmtpService smtpService;
+	private final EventService eventService;
 
 	@Deprecated
 	public List<Admin> findAll() {
@@ -163,6 +166,9 @@ public class AdminService {
 		admin.setLastLoginAt(LocalDateTime.now());
 
 		this.adminRepository.save(admin);
+
+		// log login event
+		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, null, null);
 	}
 
 	public void toggleEnabled(Long id) {

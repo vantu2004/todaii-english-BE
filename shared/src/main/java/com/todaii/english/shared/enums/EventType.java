@@ -1,0 +1,17 @@
+package com.todaii.english.shared.enums;
+
+public enum EventType {
+	DICTIONARY_API,
+
+	AI_REQUEST,
+
+	MAIL_SEND,
+
+	CLOUDINARY_UPLOAD, CLOUDINARY_DELETE,
+
+	YOUTUBE_SEARCH, YOUTUBE_UNIT,
+
+	NEWSAPI_REQUEST,
+
+	USER_LOGIN, ADMIN_LOGIN, ADMIN_ACTION
+}

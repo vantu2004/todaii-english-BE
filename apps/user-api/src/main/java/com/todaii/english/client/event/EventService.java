@@ -1,12 +1,13 @@
 package com.todaii.english.client.event;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.UserEvent;
-import com.todaii.english.shared.enums.EventOutcome;
-import com.todaii.english.shared.enums.UserEventAction;
-import com.todaii.english.shared.enums.UserEventModule;
+import com.todaii.english.shared.enums.EventType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,9 +15,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EventService {
 	private final EventRepository eventRepository;
+	private final ObjectMapper objectMapper;
 
-	public void log(User user, UserEventModule module, UserEventAction action, EventOutcome outcome) {
-		UserEvent event = UserEvent.builder().user(user).module(module).action(action).outcome(outcome).build();
-		eventRepository.save(event);
+	public void logUser(Long userId, EventType type, Integer quantity, Map<String, Object> metadata)
+			throws JsonProcessingException {
+		UserEvent ev = new UserEvent();
+		ev.setUserId(userId);
+		ev.setEventType(type);
+		ev.setQuantity(quantity != null ? quantity : 0);
+		ev.setMetadata(metadata != null ? objectMapper.writeValueAsString(metadata) : null);
+
+		eventRepository.save(ev);
 	}
 }

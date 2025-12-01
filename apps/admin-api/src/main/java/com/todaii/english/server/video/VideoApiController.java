@@ -6,6 +6,7 @@ import org.apache.coyote.BadRequestException;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Video;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.response.PagedResponse;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
@@ -43,11 +45,13 @@ public class VideoApiController {
 	}
 
 	@GetMapping("/youtube-data-api-v3")
-	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(
+	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(Authentication authentication,
 			@RequestParam(defaultValue = "listening english") @NotBlank(message = "Keyword must not be blank") @Length(max = 191, message = "Keyword must not exceed 191 characters") String keyword,
 			@RequestParam(defaultValue = "video") @NotBlank(message = "Type must not be blank") String type,
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
-		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(keyword, type, size));
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		
+		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(currentAdminId, keyword, type, size));
 	}
 
 	@GetMapping("/{id}")

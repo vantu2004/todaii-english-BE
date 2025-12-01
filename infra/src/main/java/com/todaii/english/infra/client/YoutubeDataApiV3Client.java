@@ -1,6 +1,5 @@
 package com.todaii.english.infra.client;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@ConditionalOnProperty(prefix = "youtube.api", name = "key")
 public class YoutubeDataApiV3Client implements YoutubeDataApiV3Port {
 	private final RestTemplate restTemplate;
 	private final SettingQueryPort settingQueryPort;

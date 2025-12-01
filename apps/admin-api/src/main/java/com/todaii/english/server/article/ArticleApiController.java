@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.Article;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -83,17 +85,19 @@ public class ArticleApiController {
 	}
 
 	@PostMapping("/news-api")
-	public ResponseEntity<NewsApiResponse> fetchArticles(
+	public ResponseEntity<NewsApiResponse> fetchArticles(Authentication authentication,
 			@RequestParam(defaultValue = "new") @NotBlank(message = "Query must not be blank") String query,
 			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Page size must be at least 1") @Max(value = 100, message = "Page size cannot exceed 100") int pageSize,
 			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
 			@RequestParam(defaultValue = "publishedAt") String sortBy) {
-
 		if (page * pageSize > 100) {
 			throw new BusinessException(400, "Your account is limited to a maximum of 100 results");
 		}
 
-		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(query, pageSize, page, sortBy);
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		NewsApiResponse newsApiResponse = articleService.fetchFromNewsApi(currentAdminId, query, pageSize, page,
+				sortBy);
 		return ResponseEntity.ok(newsApiResponse);
 	}
 

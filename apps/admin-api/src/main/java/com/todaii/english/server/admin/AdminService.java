@@ -108,6 +108,7 @@ public class AdminService {
 			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
 			admin.setAvatarUrl(uploadedUrl);
 
+			eventService.logAdmin(id, EventType.CLOUDINARY_UPLOAD, 1, null);
 		} else {
 			admin.setAvatarUrl(admin.getAvatarUrl());
 		}

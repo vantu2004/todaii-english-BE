@@ -14,7 +14,9 @@ import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
+import com.todaii.english.server.event.EventService;
 import com.todaii.english.server.topic.TopicRepository;
+import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -29,9 +31,14 @@ public class ArticleService {
 	private final ModelMapper modelMapper;
 	private final TopicRepository topicRepository;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
+	private final EventService eventService;
 
-	public NewsApiResponse fetchFromNewsApi(String query, int pageSize, int page, String sortBy) {
-		return newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
+	public NewsApiResponse fetchFromNewsApi(Long currentAdminId, String query, int pageSize, int page, String sortBy) {
+		NewsApiResponse newsApiResponse = newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
+
+		eventService.logAdmin(currentAdminId, EventType.NEWSAPI_REQUEST, 1, null);
+
+		return newsApiResponse;
 	}
 
 	public Article create(ArticleRequest request) {

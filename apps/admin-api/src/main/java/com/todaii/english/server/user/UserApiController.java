@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.request.server.UpdateUserRequest;
 import com.todaii.english.shared.response.PagedResponse;
@@ -61,20 +63,28 @@ public class UserApiController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,
+	public ResponseEntity<UserDTO> updateUser(Authentication authentication, @PathVariable Long id,
 			@Valid @RequestBody UpdateUserRequest updateUserRequest) {
-		return ResponseEntity.ok(userService.update(id, updateUserRequest));
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		return ResponseEntity.ok(userService.update(currentAdminId, id, updateUserRequest));
 	}
 
 	@PatchMapping("/{id}/enabled")
-	public ResponseEntity<Void> toggleEnabled(@PathVariable Long id) {
-		userService.toggleEnabled(id);
+	public ResponseEntity<Void> toggleEnabled(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		userService.toggleEnabled(currentAdminId, id);
+
 		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-		userService.delete(id);
+	public ResponseEntity<Void> deleteUser(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		userService.delete(currentAdminId, id);
+
 		return ResponseEntity.noContent().build();
 	}
 }

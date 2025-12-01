@@ -14,7 +14,9 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.core.entity.User;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.dto.UserDTO;
+import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -31,6 +33,7 @@ public class UserService {
 	private final PasswordHasher passwordHasher;
 	private final ModelMapper modelMapper;
 	private final SmtpService smtpService;
+	private final EventService eventService;
 
 	@Deprecated
 	public List<UserDTO> findAll() {
@@ -60,7 +63,7 @@ public class UserService {
 		return userDTO;
 	}
 
-	public UserDTO update(Long id, @Valid UpdateUserRequest request) {
+	public UserDTO update(Long currentAdminId, Long id, @Valid UpdateUserRequest request) {
 		User user = findById(id);
 
 		// 1. Xử lý password (super admin không cần oldPassword)
@@ -76,10 +79,13 @@ public class UserService {
 
 		User updatedUser = this.userRepository.save(user);
 
+		smtpService.accountUpdatedNotice(updatedUser.getEmail(), updatedUser.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+
 		return modelMapper.map(updatedUser, UserDTO.class);
 	}
 
-	public void toggleEnabled(Long id) {
+	public void toggleEnabled(Long currentAdminId, Long id) {
 		User user = findById(id);
 
 		// Đảo ngược trạng thái enable
@@ -101,13 +107,16 @@ public class UserService {
 			smtpService.accountBannedNotice(user.getEmail(), user.getDisplayName());
 		}
 
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+
 		userRepository.save(user);
 	}
 
-	public void delete(Long id) {
+	public void delete(Long currentAdminId, Long id) {
 		User user = findById(id);
 
 		smtpService.accountDeletedNotice(user.getEmail(), user.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		user.setIsDeleted(true);
 		user.setDeletedAt(LocalDateTime.now());

@@ -1,4 +1,4 @@
-package com.todaii.english.infra.smtp;
+package com.todaii.english.infra.client;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class SmtpSenderAdapter implements SmtpSenderPort {
+public class SmtpClient implements SmtpSenderPort {
 	private final JavaMailSender javaMailSender;
 
 	@Override

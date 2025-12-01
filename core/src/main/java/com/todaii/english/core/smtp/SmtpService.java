@@ -46,4 +46,16 @@ public class SmtpService {
 		String content = MailTemplate.ACCOUNT_DELETED_TEMPLATE.replace("{name}", name);
 		this.smtpSenderPort.send(to, subject, content);
 	}
+
+	public void accountCreatedNotice(String to, String name) {
+		String subject = "Your account has been created.";
+		String content = MailTemplate.ACCOUNT_CREATED_BY_ADMIN_TEMPLATE.replace("{name}", name);
+		this.smtpSenderPort.send(to, subject, content);
+	}
+
+	public void accountUpdatedNotice(String to, String name) {
+		String subject = "Your account has been updated.";
+		String content = MailTemplate.ACCOUNT_UPDATED_BY_ADMIN_TEMPLATE.replace("{name}", name);
+		this.smtpSenderPort.send(to, subject, content);
+	}
 }

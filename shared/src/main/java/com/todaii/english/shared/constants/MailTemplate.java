@@ -343,4 +343,126 @@ public class MailTemplate {
 			</body>
 			</html>
 			""";
+
+	// --- TEMPLATE: ADMIN TẠO TÀI KHOẢN (GỬI KÈM MẬT KHẨU) ---
+	public static final String ACCOUNT_CREATED_BY_ADMIN_TEMPLATE = """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Account Created</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #10b981; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Account Created</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                An account has been created for you by the Todaii English administration team. You can now access the system using the credentials below:
+			                            </p>
+
+			                            <div style="background-color: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; margin: 25px 0;">
+			                                <table width="100%" cellpadding="0" cellspacing="0">
+			                                    <tr>
+			                                        <td style="padding-bottom: 10px; color: #666666; font-size: 14px;">Email / Username:</td>
+			                                    </tr>
+			                                    <tr>
+			                                        <td style="padding-bottom: 20px; color: #333333; font-weight: bold; font-size: 16px;">{email}</td>
+			                                    </tr>
+			                                    <tr>
+			                                        <td style="padding-bottom: 10px; color: #666666; font-size: 14px;">Temporary Password:</td>
+			                                    </tr>
+			                                    <tr>
+			                                        <td style="color: #333333; font-weight: bold; font-size: 18px; font-family: monospace; letter-spacing: 1px;">{password}</td>
+			                                    </tr>
+			                                </table>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 14px; line-height: 1.6;">
+			                                <strong>Security Note:</strong> Please verify your information and <a href="{resetPasswordURL}" style="color: #10b981; text-decoration: none;">change your password</a> immediately after your first login.
+			                            </p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="{loginURL}" style="background-color: #333333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">Login Now</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+	// --- TEMPLATE: ADMIN CẬP NHẬT THÔNG TIN TÀI KHOẢN ---
+	public static final String ACCOUNT_UPDATED_BY_ADMIN_TEMPLATE = """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Account Updated</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #2563eb; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Account Updated</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+
+			                            <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 15px; margin-bottom: 25px;">
+			                                <p style="color: #1e40af; margin: 0; font-size: 16px;">This is a notification that your account details have been updated by an administrator.</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                The changes have been applied successfully. You can review your profile information by visiting your account settings.
+			                            </p>
+
+			                             <p style="color: #666666; font-size: 16px; line-height: 1.6;">
+			                                If you have any questions regarding these changes, please contact the support team.
+			                            </p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="{profileURL}" style="background-color: #333333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold;">View My Profile</a>
+			                            </div>
+
+			                            <hr style="border: none; border-top: 1px solid #eeeeee; margin: 30px 0;">
+			                            <p style="color: #999999; font-size: 14px; margin: 0;">Note: If you did not request any support or changes, please reply to this email immediately.</p>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
 }

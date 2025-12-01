@@ -58,7 +58,7 @@ public class AdminService {
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 	}
 
-	public Admin create(AdminRequest request) {
+	public Admin create(Long currentAdminId, AdminRequest request) {
 		// chấp nhận lấy cả admin đã bị xóa để check
 		if (this.adminRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS);
@@ -79,6 +79,9 @@ public class AdminService {
 
 		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
 				.displayName(request.getDisplayName()).status(AdminStatus.PENDING).roles(roles).build();
+
+		smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		return this.adminRepository.save(admin);
 	}
@@ -114,7 +117,7 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin updateAdmin(Long id, AdminRequest request) {
+	public Admin updateAdmin(Long currentAdminId, Long id, AdminRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
@@ -134,6 +137,9 @@ public class AdminService {
 			admin.setRoles(roles);
 		}
 
+		smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+
 		return this.adminRepository.save(admin);
 	}
 
@@ -145,11 +151,12 @@ public class AdminService {
 		return roles;
 	}
 
-	public void delete(Long id) {
+	public void delete(Long currentAdminId, Long id) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
 		smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		admin.setIsDeleted(true);
 		admin.setDeletedAt(LocalDateTime.now());
@@ -171,7 +178,7 @@ public class AdminService {
 		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, null, null);
 	}
 
-	public void toggleEnabled(Long id) {
+	public void toggleEnabled(Long currentAdminId, Long id) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
@@ -188,6 +195,8 @@ public class AdminService {
 
 			smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
 		}
+
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		this.adminRepository.save(admin);
 	}

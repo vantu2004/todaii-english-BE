@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
-
 	private final ArticleRepository articleRepository;
 	private final VideoRepository videoRepository;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
@@ -39,13 +38,11 @@ public class DashboardService {
 	private final UserEventRepository userEventRepository;
 	private final ObjectMapper objectMapper;
 
-	/** SUMMARY */
 	public DashboardSummaryDTO getSummary() {
 		return new DashboardSummaryDTO(articleRepository.count(), videoRepository.count(), vocabDeckRepository.count(),
 				dictionaryEntryRepository.count());
 	}
 
-	/** ADMIN CHART */
 	public DashboardChartDTO getAdminDashboardChart(LocalDate start, LocalDate end) {
 		List<AdminEvent> logs = adminEventRepository.findByCreatedAtBetween(start.atStartOfDay(),
 				end.atTime(23, 59, 59));
@@ -53,16 +50,14 @@ public class DashboardService {
 		return buildDashboardChart(logs);
 	}
 
-	/** USER CHART */
 	public DashboardChartDTO getUserDashboardChart(LocalDate start, LocalDate end) {
 		List<UserEvent> logs = userEventRepository.findByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
 
 		return buildDashboardChart(logs);
 	}
 
-	/** ----- GENERIC: dùng chung cho cả Admin và User ----- */
+	// GENERIC: dùng chung cho cả Admin và User
 	private <T extends BaseEvent> DashboardChartDTO buildDashboardChart(List<T> logs) {
-
 		Map<String, Long> logSummary = buildLogSummary(logs);
 		Map<String, List<ChartPoint>> logTrends = buildLogTrends(logs);
 
@@ -75,13 +70,13 @@ public class DashboardService {
 		return new DashboardChartDTO(logSummary, logTrends, aiTokenSummary, aiTokenTrends);
 	}
 
-	/** SUMMARY THEO EVENT TYPE */
+	// tính tổng số liệu các eventType
 	private <T extends BaseEvent> Map<String, Long> buildLogSummary(List<T> logs) {
 		return logs.stream().collect(
 				Collectors.groupingBy(e -> e.getEventType().name(), Collectors.summingLong(BaseEvent::getQuantity)));
 	}
 
-	/** TREND THEO NGÀY */
+	// thống kê số liệu theo ngày các eventType
 	private <T extends BaseEvent> Map<String, List<ChartPoint>> buildLogTrends(List<T> logs) {
 
 		return logs.stream()
@@ -94,7 +89,7 @@ public class DashboardService {
 								.sorted(Comparator.comparing(ChartPoint::getDate)).toList()));
 	}
 
-	/** TỔNG TOKEN */
+	// tính tổng token
 	private <T extends BaseEvent> TokenSummary buildAiTokenSummary(List<T> aiEvents) {
 		return aiEvents.stream().map(e -> parseAiMetadata(e.getMetadata())).reduce(new TokenSummary(), (a, b) -> {
 			a.setInputToken(a.getInputToken() + b.getInputToken());
@@ -103,7 +98,7 @@ public class DashboardService {
 		});
 	}
 
-	/** TOKEN TREND THEO NGÀY */
+	// tính token theo ngày
 	private <T extends BaseEvent> Map<String, List<TokenChartPoint>> buildAiTokenTrends(List<T> aiEvents) {
 
 		return aiEvents.stream()
@@ -117,7 +112,6 @@ public class DashboardService {
 				}));
 	}
 
-	/** PARSE METADATA */
 	private TokenSummary parseAiMetadata(String json) {
 		try {
 			return objectMapper.readValue(json, TokenSummary.class);

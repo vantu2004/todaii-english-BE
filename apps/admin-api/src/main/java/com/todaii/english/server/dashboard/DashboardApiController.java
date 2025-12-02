@@ -3,12 +3,15 @@ package com.todaii.english.server.dashboard;
 import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.response.DashboardChartDTO;
 import com.todaii.english.shared.response.DashboardSummaryDTO;
 
@@ -37,6 +40,30 @@ public class DashboardApiController {
 		return ResponseEntity.ok(dto);
 	}
 
+	@GetMapping("/admin-chart/{id}")
+	public ResponseEntity<DashboardChartDTO> getAdminChartById(@PathVariable Long id,
+			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
+		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+
+		DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(id, start, end);
+
+		return ResponseEntity.ok(dto);
+	}
+
+	@GetMapping("/my-chart")
+	public ResponseEntity<DashboardChartDTO> getMyChart(Authentication authentication,
+			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+
+		DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(currentAdminId, start, end);
+
+		return ResponseEntity.ok(dto);
+	}
+
 	@GetMapping("/user-chart")
 	public ResponseEntity<DashboardChartDTO> getUserChart(@RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
@@ -44,6 +71,17 @@ public class DashboardApiController {
 		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
 		DashboardChartDTO dto = dashboardService.getUserDashboardChart(start, end);
+
+		return ResponseEntity.ok(dto);
+	}
+
+	@GetMapping("/user-chart/{id}")
+	public ResponseEntity<DashboardChartDTO> getUserChartById(@PathVariable Long id,
+			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
+		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+
+		DashboardChartDTO dto = dashboardService.getUserDashboardChartById(id, start, end);
 
 		return ResponseEntity.ok(dto);
 	}

@@ -15,4 +15,6 @@ public interface AdminEventRepository extends JpaRepository<AdminEvent, Long> {
 
 	public List<AdminEvent> findByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atTime);
 
+	public List<AdminEvent> findByCreatedAtBetweenAndAdminId(LocalDateTime atStartOfDay, LocalDateTime atTime, Long id);
+
 }

@@ -15,4 +15,6 @@ public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
 	public List<UserEvent> findByCreatedAtBetweenAndUserIdNotNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
 
 	public List<UserEvent> findByCreatedAtBetweenAndUserIdNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+	public List<UserEvent> findByCreatedAtBetweenAndUserId(LocalDateTime atStartOfDay, LocalDateTime atTime, Long id);
 }

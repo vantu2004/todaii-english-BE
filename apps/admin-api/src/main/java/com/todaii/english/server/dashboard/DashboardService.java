@@ -55,9 +55,23 @@ public class DashboardService {
 		return buildDashboardChart(logs);
 	}
 
+	public DashboardChartDTO getAdminDashboardChartById(Long id, LocalDate start, LocalDate end) {
+		List<AdminEvent> logs = adminEventRepository.findByCreatedAtBetweenAndAdminId(start.atStartOfDay(),
+				end.atTime(23, 59, 59), id);
+
+		return buildDashboardChart(logs);
+	}
+
 	public DashboardChartDTO getUserDashboardChart(LocalDate start, LocalDate end) {
 		List<UserEvent> logs = userEventRepository.findByCreatedAtBetweenAndUserIdNotNull(start.atStartOfDay(),
 				end.atTime(23, 59, 59));
+
+		return buildDashboardChart(logs);
+	}
+
+	public DashboardChartDTO getUserDashboardChartById(Long id, LocalDate start, LocalDate end) {
+		List<UserEvent> logs = userEventRepository.findByCreatedAtBetweenAndUserId(start.atStartOfDay(),
+				end.atTime(23, 59, 59), id);
 
 		return buildDashboardChart(logs);
 	}

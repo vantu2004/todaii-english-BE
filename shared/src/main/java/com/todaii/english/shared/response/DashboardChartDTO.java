@@ -15,7 +15,7 @@ public class DashboardChartDTO {
 	private Map<String, List<ChartPoint>> logTrends; // eventType -> trend theo ngày
 
 	private TokenSummary aiTokenSummary; // AI_REQUEST -> tổng in/out token
-	private Map<String, List<TokenChartPoint>> aiTokenTrends; // AI_REQUEST -> trend theo ngày
+	private Map<String, TokenChartPoint> aiTokenTrends; // AI_REQUEST -> trend theo ngày
 
 	@Getter
 	@Setter
@@ -36,7 +36,6 @@ public class DashboardChartDTO {
 	@Setter
 	@AllArgsConstructor
 	public static class TokenChartPoint {
-		private String date;
 		private Long inputToken = 0L;
 		private Long outputToken = 0L;
 	}

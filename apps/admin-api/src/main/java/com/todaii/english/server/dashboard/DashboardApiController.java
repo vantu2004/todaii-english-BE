@@ -29,7 +29,6 @@ public class DashboardApiController {
 	@GetMapping("/admin-chart")
 	public ResponseEntity<DashboardChartDTO> getAdminChart(@RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
-
 		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
 		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
@@ -41,7 +40,6 @@ public class DashboardApiController {
 	@GetMapping("/user-chart")
 	public ResponseEntity<DashboardChartDTO> getUserChart(@RequestParam(required = false) String startDate,
 			@RequestParam(required = false) String endDate) {
-
 		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
 		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
@@ -50,4 +48,14 @@ public class DashboardApiController {
 		return ResponseEntity.ok(dto);
 	}
 
+	@GetMapping("/guest-chart")
+	public ResponseEntity<DashboardChartDTO> getGuestChart(@RequestParam(required = false) String startDate,
+			@RequestParam(required = false) String endDate) {
+		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+
+		DashboardChartDTO dto = dashboardService.getGuestDashboardChart(start, end);
+
+		return ResponseEntity.ok(dto);
+	}
 }

@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.AdminEvent;
 import com.todaii.english.core.entity.BaseEvent;
 import com.todaii.english.core.entity.UserEvent;
+import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.server.article.ArticleRepository;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.event.AdminEventRepository;
 import com.todaii.english.server.event.UserEventRepository;
+import com.todaii.english.server.user.UserRepository;
 import com.todaii.english.server.video.VideoRepository;
 import com.todaii.english.server.vocabulary.VocabDeckRepository;
 import com.todaii.english.shared.enums.EventType;
@@ -30,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
+	private final AdminRepository adminRepository;
+	private final UserRepository userRepository;
 	private final ArticleRepository articleRepository;
 	private final VideoRepository videoRepository;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
@@ -39,7 +43,8 @@ public class DashboardService {
 	private final ObjectMapper objectMapper;
 
 	public DashboardSummaryDTO getSummary() {
-		return new DashboardSummaryDTO(articleRepository.count(), videoRepository.count(), vocabDeckRepository.count(),
+		return new DashboardSummaryDTO(adminRepository.countByIsDeletedFalse(), userRepository.countByIsDeletedFalse(),
+				articleRepository.count(), videoRepository.count(), vocabDeckRepository.count(),
 				dictionaryEntryRepository.count());
 	}
 
@@ -51,7 +56,15 @@ public class DashboardService {
 	}
 
 	public DashboardChartDTO getUserDashboardChart(LocalDate start, LocalDate end) {
-		List<UserEvent> logs = userEventRepository.findByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
+		List<UserEvent> logs = userEventRepository.findByCreatedAtBetweenAndUserIdNotNull(start.atStartOfDay(),
+				end.atTime(23, 59, 59));
+
+		return buildDashboardChart(logs);
+	}
+
+	public DashboardChartDTO getGuestDashboardChart(LocalDate start, LocalDate end) {
+		List<UserEvent> logs = userEventRepository.findByCreatedAtBetweenAndUserIdNull(start.atStartOfDay(),
+				end.atTime(23, 59, 59));
 
 		return buildDashboardChart(logs);
 	}
@@ -65,7 +78,7 @@ public class DashboardService {
 		List<T> aiEvents = logs.stream().filter(e -> e.getEventType() == EventType.AI_REQUEST).toList();
 
 		TokenSummary aiTokenSummary = buildAiTokenSummary(aiEvents);
-		Map<String, List<TokenChartPoint>> aiTokenTrends = buildAiTokenTrends(aiEvents);
+		Map<String, TokenChartPoint> aiTokenTrends = buildAiTokenTrends(aiEvents);
 
 		return new DashboardChartDTO(logSummary, logTrends, aiTokenSummary, aiTokenTrends);
 	}
@@ -99,16 +112,15 @@ public class DashboardService {
 	}
 
 	// tính token theo ngày
-	private <T extends BaseEvent> Map<String, List<TokenChartPoint>> buildAiTokenTrends(List<T> aiEvents) {
+	private <T extends BaseEvent> Map<String, TokenChartPoint> buildAiTokenTrends(List<T> aiEvents) {
 
 		return aiEvents.stream()
 				.collect(Collectors.groupingBy(e -> e.getCreatedAt().toLocalDate().toString(),
 						Collectors.mapping(e -> parseAiMetadata(e.getMetadata()), Collectors.toList())))
 				.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-					String date = entry.getKey();
 					long totalIn = entry.getValue().stream().mapToLong(TokenSummary::getInputToken).sum();
 					long totalOut = entry.getValue().stream().mapToLong(TokenSummary::getOutputToken).sum();
-					return List.of(new TokenChartPoint(date, totalIn, totalOut));
+					return new TokenChartPoint(totalIn, totalOut);
 				}));
 	}
 
@@ -119,4 +131,5 @@ public class DashboardService {
 			return new TokenSummary();
 		}
 	}
+
 }

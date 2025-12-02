@@ -8,12 +8,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.AdminEvent;
+import com.todaii.english.core.entity.BaseEvent;
+import com.todaii.english.core.entity.UserEvent;
 import com.todaii.english.server.article.ArticleRepository;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
-import com.todaii.english.server.event.EventRepository;
+import com.todaii.english.server.event.AdminEventRepository;
+import com.todaii.english.server.event.UserEventRepository;
 import com.todaii.english.server.video.VideoRepository;
 import com.todaii.english.server.vocabulary.VocabDeckRepository;
 import com.todaii.english.shared.enums.EventType;
@@ -28,84 +30,98 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
+
 	private final ArticleRepository articleRepository;
 	private final VideoRepository videoRepository;
 	private final DictionaryEntryRepository dictionaryEntryRepository;
 	private final VocabDeckRepository vocabDeckRepository;
-	private final EventRepository eventRepository;
+	private final AdminEventRepository adminEventRepository;
+	private final UserEventRepository userEventRepository;
 	private final ObjectMapper objectMapper;
 
-	// lấy số liệu chung nhất
+	/** SUMMARY */
 	public DashboardSummaryDTO getSummary() {
-		return new DashboardSummaryDTO(articleRepository.count(), videoRepository.count(),
-				dictionaryEntryRepository.count(), vocabDeckRepository.count());
+		return new DashboardSummaryDTO(articleRepository.count(), videoRepository.count(), vocabDeckRepository.count(),
+				dictionaryEntryRepository.count());
 	}
 
-	// phục vụ vẽ chart theo ngày
-	public DashboardChartDTO getAdminDashboardChart(LocalDate startDate, LocalDate endDate) {
-		List<AdminEvent> logs = eventRepository.findByCreatedAtBetween(startDate.atStartOfDay(),
-				endDate.atTime(23, 59, 59));
+	/** ADMIN CHART */
+	public DashboardChartDTO getAdminDashboardChart(LocalDate start, LocalDate end) {
+		List<AdminEvent> logs = adminEventRepository.findByCreatedAtBetween(start.atStartOfDay(),
+				end.atTime(23, 59, 59));
 
-		// tất cả eventType
+		return buildDashboardChart(logs);
+	}
+
+	/** USER CHART */
+	public DashboardChartDTO getUserDashboardChart(LocalDate start, LocalDate end) {
+		List<UserEvent> logs = userEventRepository.findByCreatedAtBetween(start.atStartOfDay(), end.atTime(23, 59, 59));
+
+		return buildDashboardChart(logs);
+	}
+
+	/** ----- GENERIC: dùng chung cho cả Admin và User ----- */
+	private <T extends BaseEvent> DashboardChartDTO buildDashboardChart(List<T> logs) {
+
 		Map<String, Long> logSummary = buildLogSummary(logs);
 		Map<String, List<ChartPoint>> logTrends = buildLogTrends(logs);
 
-		// Tách riêng AI_REQUEST
-		List<AdminEvent> aiEvents = logs.stream().filter(e -> e.getEventType() == EventType.AI_REQUEST).toList();
+		// AI only
+		List<T> aiEvents = logs.stream().filter(e -> e.getEventType() == EventType.AI_REQUEST).toList();
 
 		TokenSummary aiTokenSummary = buildAiTokenSummary(aiEvents);
-
 		Map<String, List<TokenChartPoint>> aiTokenTrends = buildAiTokenTrends(aiEvents);
 
 		return new DashboardChartDTO(logSummary, logTrends, aiTokenSummary, aiTokenTrends);
 	}
 
-	private Map<String, Long> buildLogSummary(List<AdminEvent> logs) {
+	/** SUMMARY THEO EVENT TYPE */
+	private <T extends BaseEvent> Map<String, Long> buildLogSummary(List<T> logs) {
 		return logs.stream().collect(
-				Collectors.groupingBy(e -> e.getEventType().name(), Collectors.summingLong(AdminEvent::getQuantity)));
+				Collectors.groupingBy(e -> e.getEventType().name(), Collectors.summingLong(BaseEvent::getQuantity)));
 	}
 
-	private Map<String, List<ChartPoint>> buildLogTrends(List<AdminEvent> logs) {
+	/** TREND THEO NGÀY */
+	private <T extends BaseEvent> Map<String, List<ChartPoint>> buildLogTrends(List<T> logs) {
+
 		return logs.stream()
 				.collect(Collectors.groupingBy(e -> e.getEventType().name(),
 						Collectors.groupingBy(e -> e.getCreatedAt().toLocalDate().toString(),
-								Collectors.summingLong(AdminEvent::getQuantity))))
-				
+								Collectors.summingLong(BaseEvent::getQuantity))))
 				.entrySet().stream()
-				
 				.collect(Collectors.toMap(Map.Entry::getKey,
 						e -> e.getValue().entrySet().stream().map(d -> new ChartPoint(d.getKey(), d.getValue()))
 								.sorted(Comparator.comparing(ChartPoint::getDate)).toList()));
 	}
 
-	private TokenSummary buildAiTokenSummary(List<AdminEvent> aiEvents) {
+	/** TỔNG TOKEN */
+	private <T extends BaseEvent> TokenSummary buildAiTokenSummary(List<T> aiEvents) {
 		return aiEvents.stream().map(e -> parseAiMetadata(e.getMetadata())).reduce(new TokenSummary(), (a, b) -> {
 			a.setInputToken(a.getInputToken() + b.getInputToken());
 			a.setOutputToken(a.getOutputToken() + b.getOutputToken());
-
 			return a;
 		});
 	}
 
-	private Map<String, List<TokenChartPoint>> buildAiTokenTrends(List<AdminEvent> aiEvents) {
+	/** TOKEN TREND THEO NGÀY */
+	private <T extends BaseEvent> Map<String, List<TokenChartPoint>> buildAiTokenTrends(List<T> aiEvents) {
+
 		return aiEvents.stream()
 				.collect(Collectors.groupingBy(e -> e.getCreatedAt().toLocalDate().toString(),
 						Collectors.mapping(e -> parseAiMetadata(e.getMetadata()), Collectors.toList())))
-
 				.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
 					String date = entry.getKey();
 					long totalIn = entry.getValue().stream().mapToLong(TokenSummary::getInputToken).sum();
 					long totalOut = entry.getValue().stream().mapToLong(TokenSummary::getOutputToken).sum();
-
 					return List.of(new TokenChartPoint(date, totalIn, totalOut));
 				}));
 	}
 
+	/** PARSE METADATA */
 	private TokenSummary parseAiMetadata(String json) {
 		try {
 			return objectMapper.readValue(json, TokenSummary.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			return new TokenSummary();
 		}
 	}

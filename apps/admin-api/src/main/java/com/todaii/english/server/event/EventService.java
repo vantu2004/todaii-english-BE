@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.AdminEvent;
-import com.todaii.english.shared.dto.AdminEventDTO;
+import com.todaii.english.shared.dto.EventDTO;
 import com.todaii.english.shared.enums.EventType;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EventService {
-	private final EventRepository eventRepository;
+	private final AdminEventRepository eventRepository;
 	private final ObjectMapper objectMapper;
 
 	public void logAdmin(Long adminId, EventType type, Integer quantity, Map<String, Object> metadata) {
@@ -38,7 +38,7 @@ public class EventService {
 		}
 	}
 
-	public List<AdminEventDTO> findByEventType(EventType eventType) {
+	public List<EventDTO> findByEventType(EventType eventType) {
 		List<AdminEvent> adminEvents = eventRepository.findByEventType(eventType);
 
 		return adminEvents.stream().map(event -> {
@@ -50,7 +50,7 @@ public class EventService {
 				metaObj = null; // hoặc "{}"
 			}
 
-			return AdminEventDTO.builder().id(event.getId()).adminId(event.getAdminId()).eventType(event.getEventType())
+			return EventDTO.builder().id(event.getId()).userId(event.getAdminId()).eventType(event.getEventType())
 					.quantity(event.getQuantity()).metadata(metaObj).createdAt(event.getCreatedAt()).build();
 
 		}).toList();

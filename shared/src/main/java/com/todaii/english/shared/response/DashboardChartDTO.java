@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class DashboardChartDTO {
-
 	private Map<String, Long> logSummary; // eventType -> tổng quantity
 	private Map<String, List<ChartPoint>> logTrends; // eventType -> trend theo ngày
 

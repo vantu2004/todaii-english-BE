@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.shared.dto.AdminEventDTO;
+import com.todaii.english.shared.dto.EventDTO;
 import com.todaii.english.shared.enums.EventType;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class EventApiController {
 	private final EventService eventService;
 
 	@GetMapping("/type")
-	public ResponseEntity<List<AdminEventDTO>> getAdminEventsByType(@RequestParam EventType eventType) {
+	public ResponseEntity<List<EventDTO>> getAdminEventsByType(@RequestParam EventType eventType) {
 		return ResponseEntity.ok(eventService.findByEventType(eventType));
 	}
 }

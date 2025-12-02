@@ -16,12 +16,12 @@ import com.todaii.english.shared.enums.EventType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEvent {
+public class UserEvent implements BaseEvent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "user_id", nullable = false)
+	@Column(name = "user_id")
 	private Long userId;
 
 	@Enumerated(EnumType.STRING)

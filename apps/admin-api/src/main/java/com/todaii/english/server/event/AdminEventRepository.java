@@ -10,7 +10,7 @@ import com.todaii.english.core.entity.AdminEvent;
 import com.todaii.english.shared.enums.EventType;
 
 @Repository
-public interface EventRepository extends JpaRepository<AdminEvent, Long> {
+public interface AdminEventRepository extends JpaRepository<AdminEvent, Long> {
 	public List<AdminEvent> findByEventType(EventType eventType);
 
 	public List<AdminEvent> findByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atTime);

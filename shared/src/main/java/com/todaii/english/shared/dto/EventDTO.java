@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEventDTO {
+public class EventDTO {
 	private Long id;
 	private Long userId;
 	private EventType eventType;

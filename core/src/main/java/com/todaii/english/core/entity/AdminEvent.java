@@ -16,7 +16,7 @@ import com.todaii.english.shared.enums.EventType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminEvent {
+public class AdminEvent implements BaseEvent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

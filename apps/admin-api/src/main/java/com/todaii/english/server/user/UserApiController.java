@@ -4,9 +4,19 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.request.server.UpdateUserRequest;
 import com.todaii.english.shared.response.PagedResponse;
@@ -124,80 +134,29 @@ public class UserApiController {
         return ResponseEntity.ok(userService.findUserDTOById(id));
     }
 
-    @Operation(summary = "Update user", description = "Update user details by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated successfully",
-                    content = @Content(schema = @Schema(
-                            implementation = UserDTO.class,
-                            example = "{\n" +
-                                    "  \"id\": 1,\n" +
-                                    "  \"email\": \"user1@example.com\",\n" +
-                                    "  \"displayName\": \"John Doe Updated\",\n" +
-                                    "  \"avatarUrl\": \"https://example.com/avatar1.png\",\n" +
-                                    "  \"enabled\": true,\n" +
-                                    "  \"status\": \"ACTIVE\",\n" +
-                                    "  \"emailVerifiedAt\": \"2025-11-29T07:00:00\",\n" +
-                                    "  \"lastLoginAt\": \"2025-11-29T07:30:00\",\n" +
-                                    "  \"createdAt\": \"2025-11-01T12:00:00\",\n" +
-                                    "  \"updatedAt\": \"2025-11-29T08:00:00\"\n" +
-                                    "}"))),
-            @ApiResponse(responseCode = "400", description = "Invalid input",
-                    content = @Content(schema = @Schema(
-                            example = "{\n" +
-                                    "  \"timestamp\": \"2025-11-29T07:44:59.347Z\",\n" +
-                                    "  \"status\": 400,\n" +
-                                    "  \"path\": \"/api/v1/user/1\",\n" +
-                                    "  \"errors\": [\"Display name must not be blank\"]\n" +
-                                    "}"))),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content(schema = @Schema(
-                            example = "{\n" +
-                                    "  \"timestamp\": \"2025-11-29T07:44:59.347Z\",\n" +
-                                    "  \"status\": 404,\n" +
-                                    "  \"path\": \"/api/v1/user/99\",\n" +
-                                    "  \"errors\": [\"User not found\"]\n" +
-                                    "}")))
-    })
-    @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(
-            @Parameter(description = "ID of the user to update") @PathVariable Long id,
-            @Valid @RequestBody UpdateUserRequest updateUserRequest) {
-        return ResponseEntity.ok(userService.update(id, updateUserRequest));
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<UserDTO> updateUser(Authentication authentication, @PathVariable Long id,
+			@Valid @RequestBody UpdateUserRequest updateUserRequest) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-    @Operation(summary = "Toggle user enabled status", description = "Enable or disable a user by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User status toggled"),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content(schema = @Schema(
-                            example = "{\n" +
-                                    "  \"timestamp\": \"2025-11-29T07:44:59.347Z\",\n" +
-                                    "  \"status\": 404,\n" +
-                                    "  \"path\": \"/api/v1/user/99/enabled\",\n" +
-                                    "  \"errors\": [\"User not found\"]\n" +
-                                    "}")))
-    })
-    @PatchMapping("/{id}/enabled")
-    public ResponseEntity<Void> toggleEnabled(@Parameter(description = "ID of the user to enable/disable") @PathVariable Long id) {
-        userService.toggleEnabled(id);
-        return ResponseEntity.ok().build();
-    }
+		return ResponseEntity.ok(userService.update(currentAdminId, id, updateUserRequest));
+	}
 
-    @Operation(summary = "Delete user", description = "Delete a user by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "User deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content(schema = @Schema(
-                            example = "{\n" +
-                                    "  \"timestamp\": \"2025-11-29T07:44:59.347Z\",\n" +
-                                    "  \"status\": 404,\n" +
-                                    "  \"path\": \"/api/v1/user/99\",\n" +
-                                    "  \"errors\": [\"User not found\"]\n" +
-                                    "}")))
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@Parameter(description = "ID of the user to delete") @PathVariable Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+	@PatchMapping("/{id}/enabled")
+	public ResponseEntity<Void> toggleEnabled(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		userService.toggleEnabled(currentAdminId, id);
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteUser(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		userService.delete(currentAdminId, id);
+
+		return ResponseEntity.noContent().build();
+	}
 }

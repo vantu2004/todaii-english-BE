@@ -6,10 +6,12 @@ import org.apache.coyote.BadRequestException;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.Video;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.response.PagedResponse;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
@@ -43,13 +45,13 @@ public class VideoApiController {
 	}
 
 	@GetMapping("/youtube-data-api-v3")
-	@Operation(summary = "Search videos via YouTube Data API v3", description = "Search videos based on keyword, type, and size limit.")
-	@ApiResponse(responseCode = "200", description = "Search results returned successfully", content = @Content(schema = @Schema(implementation = YoutubeSearchResponse.class)))
-	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(
-			@RequestParam(defaultValue = "listening english") @NotBlank @Length(max = 191) String keyword,
-			@RequestParam(defaultValue = "video") @NotBlank String type,
-			@RequestParam(defaultValue = "1") @Min(1) int size) {
-		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(keyword, type, size));
+	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(Authentication authentication,
+			@RequestParam(defaultValue = "listening english") @NotBlank(message = "Keyword must not be blank") @Length(max = 191, message = "Keyword must not exceed 191 characters") String keyword,
+			@RequestParam(defaultValue = "video") @NotBlank(message = "Type must not be blank") String type,
+			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		
+		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(currentAdminId, keyword, type, size));
 	}
 
 	@GetMapping("/{id}")

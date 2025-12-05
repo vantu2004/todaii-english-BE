@@ -1,11 +1,13 @@
 package com.todaii.english.core.entity;
 
-import com.todaii.english.shared.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.todaii.english.shared.enums.EventType;
 
 @Entity
 @Table(name = "user_events")
@@ -14,29 +16,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEvent {
+public class UserEvent implements BaseEvent {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 32)
-	private UserEventModule module;
+	@Column(name = "user_id")
+	private Long userId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(length = 32)
-	private UserEventAction action;
+	@Column(name = "event_type", length = 32, nullable = false)
+	private EventType eventType;
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 32)
 	@Builder.Default
-	private EventOutcome outcome = EventOutcome.SUCCESS;
+	private Integer quantity = 0;
+
+	@Column(columnDefinition = "MEDIUMTEXT")
+	private String metadata;
 
 	@CreationTimestamp
-	@Column(name = "created_at", nullable = false)
+	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
-
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
 }

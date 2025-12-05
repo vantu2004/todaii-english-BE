@@ -1,5 +1,6 @@
 package com.todaii.english.server.event;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +10,11 @@ import com.todaii.english.core.entity.UserEvent;
 
 @Repository
 public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
-	public List<UserEvent> findByUserId(Long id);
+	public List<UserEvent> findByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+	public List<UserEvent> findByCreatedAtBetweenAndUserIdNotNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+	public List<UserEvent> findByCreatedAtBetweenAndUserIdNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+	public List<UserEvent> findByCreatedAtBetweenAndUserId(LocalDateTime atStartOfDay, LocalDateTime atTime, Long id);
 }

@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.ArticleParagraph;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleParagraphRequest;
 
@@ -166,29 +168,19 @@ public class ArticleParagraphApiController {
 		}
 	)
 	@PostMapping("/paragraph/translate")
-	public ResponseEntity<String> translateParagraph(
+	public ResponseEntity<String> translateParagraph(Authentication authentication,
 			@RequestBody Map<String, String> body) {
-
 		String textEn = body.get("textEn");
 
 		if (!StringUtils.hasText(textEn) || textEn.length() < 10) {
 			throw new BusinessException(400, "Text to translate must be at least 10 characters");
 		}
 
-		return ResponseEntity.ok(articleParagraphService.translateParagraph(textEn));
+		String translated = articleParagraphService.translateParagraph(AdminUtils.getCurrentAdminId(authentication),
+				textEn);
+		return ResponseEntity.ok(translated);
 	}
 
-	// =============================
-	// DELETE PARAGRAPH
-	// =============================
-
-	@Operation(
-		summary = "Delete a paragraph by its ID",
-		description = "Deletes a paragraph permanently",
-		responses = {
-			@ApiResponse(responseCode = "204", description = "Deleted successfully")
-		}
-	)
 	@DeleteMapping("/paragraph/{paragraphId}")
 	public ResponseEntity<Void> delete(@PathVariable Long paragraphId) {
 		articleParagraphService.delete(paragraphId);

@@ -16,7 +16,10 @@ import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
+import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.enums.AdminStatus;
+import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -32,6 +35,8 @@ public class AdminService {
 	private final AdminRoleRepository adminRoleRepository;
 	private final PasswordHasher passwordHasher;
 	private final CloudinaryPort cloudinaryPort;
+	private final SmtpService smtpService;
+	private final EventService eventService;
 
 	@Deprecated
 	public List<Admin> findAll() {
@@ -53,7 +58,7 @@ public class AdminService {
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 	}
 
-	public Admin create(AdminRequest request) {
+	public Admin create(Long currentAdminId, AdminRequest request) {
 		// chấp nhận lấy cả admin đã bị xóa để check
 		if (this.adminRepository.findByEmail(request.getEmail()).isPresent()) {
 			throw new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS);
@@ -74,6 +79,9 @@ public class AdminService {
 
 		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
 				.displayName(request.getDisplayName()).status(AdminStatus.PENDING).roles(roles).build();
+
+		smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		return this.adminRepository.save(admin);
 	}
@@ -100,6 +108,7 @@ public class AdminService {
 			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
 			admin.setAvatarUrl(uploadedUrl);
 
+			eventService.logAdmin(id, EventType.CLOUDINARY_UPLOAD, 1, null);
 		} else {
 			admin.setAvatarUrl(admin.getAvatarUrl());
 		}
@@ -109,7 +118,7 @@ public class AdminService {
 		return this.adminRepository.save(admin);
 	}
 
-	public Admin updateAdmin(Long id, AdminRequest request) {
+	public Admin updateAdmin(Long currentAdminId, Long id, AdminRequest request) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
@@ -129,6 +138,9 @@ public class AdminService {
 			admin.setRoles(roles);
 		}
 
+		smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+
 		return this.adminRepository.save(admin);
 	}
 
@@ -140,9 +152,12 @@ public class AdminService {
 		return roles;
 	}
 
-	public void delete(Long id) {
+	public void delete(Long currentAdminId, Long id) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+
+		smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		admin.setIsDeleted(true);
 		admin.setDeletedAt(LocalDateTime.now());
@@ -159,9 +174,12 @@ public class AdminService {
 		admin.setLastLoginAt(LocalDateTime.now());
 
 		this.adminRepository.save(admin);
+
+		// log login event
+		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, 1, null);
 	}
 
-	public void toggleEnabled(Long id) {
+	public void toggleEnabled(Long currentAdminId, Long id) {
 		Admin admin = this.adminRepository.findById(id)
 				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
@@ -171,9 +189,15 @@ public class AdminService {
 		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
 		if (admin.getEnabled()) {
 			admin.setStatus(AdminStatus.ACTIVE);
+
+			smtpService.accountUnBannedNotice(admin.getEmail(), admin.getDisplayName());
 		} else {
 			admin.setStatus(AdminStatus.LOCKED);
+
+			smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
 		}
+
+		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
 		this.adminRepository.save(admin);
 	}

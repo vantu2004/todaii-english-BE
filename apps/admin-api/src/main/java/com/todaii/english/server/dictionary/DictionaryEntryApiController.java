@@ -5,10 +5,12 @@ import java.util.List;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
@@ -38,33 +40,14 @@ public class DictionaryEntryApiController {
 
     private final DictionaryEntryService dictionaryService;
 
-    // ---------------------------
-    // RAW WORD LOOKUP
-    // ---------------------------
-    @Operation(
-            summary = "Lookup raw dictionary info",
-            description = "Query external API for raw dictionary definitions of a word"
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Dictionary raw info retrieved successfully",
-            content = @Content(
-                    schema = @Schema(implementation = DictionaryApiResponse[].class),
-                    examples = {
-                            @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                    value = "[{\"word\": \"hello\", \"phonetic\": \"/həˈləʊ/\", \"meanings\": []}]"
-                            )
-                    }
-            )
-    )
-    @GetMapping("/raw-word")
-    public ResponseEntity<DictionaryApiResponse[]> getRawWord(
-            @Parameter(description = "Word to lookup")
-            @RequestParam String word) {
+	@GetMapping("/raw-word")
+	public ResponseEntity<DictionaryApiResponse[]> getRawWord(Authentication authentication,
+			@RequestParam String word) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(currentAdminId, word);
 
-        DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(word);
-        return ResponseEntity.ok(dictionaryApiResponses);
-    }
+		return ResponseEntity.ok(dictionaryApiResponses);
+	}
 
     // ---------------------------
     // PAGED LIST
@@ -153,17 +136,13 @@ public class DictionaryEntryApiController {
         return ResponseEntity.ok(dictionaryService.findById(id));
     }
 
-    // ---------------------------
-    // CREATE VIA GEMINI
-    // ---------------------------
-    @Operation(summary = "Create dictionary entry using Gemini AI")
-    @PostMapping("/gemini")
-    public ResponseEntity<List<DictionaryEntry>> createWordByGemini(
-            @Parameter(description = "Word to generate definition for")
-            @RequestParam @NotBlank @Length(max = 64) String word) throws Exception {
+	@PostMapping("/gemini")
+	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(Authentication authentication,
+			@RequestParam @NotBlank @Length(max = 64) String word) throws Exception {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-        return ResponseEntity.ok(dictionaryService.createWordByGemini(word));
-    }
+		return ResponseEntity.ok(dictionaryService.createWordByGemini(currentAdminId, word));
+	}
 
     // ---------------------------
     // CREATE MANUALLY

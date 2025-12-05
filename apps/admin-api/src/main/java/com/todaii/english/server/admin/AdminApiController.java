@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.Admin;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.server.AdminRequest;
@@ -31,7 +32,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api/v1/admin")
 @Tag(name = "Admin", description = "API for managing admin accounts")
 public class AdminApiController {
-
 	private final AdminService adminService;
 
 	@Deprecated
@@ -79,44 +79,49 @@ public class AdminApiController {
 	@GetMapping("/me")
 	@Operation(summary = "Get current admin profile", description = "Retrieve the profile of the logged-in admin.")
 	public ResponseEntity<Admin> getProfile(Authentication authentication) {
-		CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
-		Long currentAdminId = principal.getAdmin().getId();
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
 		return ResponseEntity.ok(this.adminService.findById(currentAdminId));
 	}
 
 	@PostMapping
-	@Operation(summary = "Create new admin", description = "Create a new admin account.")
-	public ResponseEntity<Admin> createAdmin(@Valid @RequestBody AdminRequest adminRequest) {
-		return ResponseEntity.status(201).body(this.adminService.create(adminRequest));
+	public ResponseEntity<Admin> createAdmin(Authentication authentication,
+			@Valid @RequestBody AdminRequest adminRequest) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		return ResponseEntity.status(201).body(this.adminService.create(currentAdminId, adminRequest));
 	}
 
 	@PutMapping("/me")
 	@Operation(summary = "Update current admin profile", description = "Update profile information of the logged-in admin.")
 	public ResponseEntity<Admin> updateProfile(Authentication authentication,
 			@Valid @RequestBody UpdateProfileRequest updateProfileRequest) {
-		CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
-		Long currentAdminId = principal.getAdmin().getId();
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
 		return ResponseEntity.ok(this.adminService.updateProfile(currentAdminId, updateProfileRequest));
 	}
 
 	@PutMapping("/{id}")
-	@Operation(summary = "Update admin by ID", description = "Update an existing admin's information by ID.")
-	public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @Valid @RequestBody AdminRequest adminRequest) {
-		return ResponseEntity.ok(this.adminService.updateAdmin(id, adminRequest));
+	public ResponseEntity<Admin> updateAdmin(Authentication authentication, @PathVariable Long id,
+			@Valid @RequestBody AdminRequest adminRequest) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+		return ResponseEntity.ok(this.adminService.updateAdmin(currentAdminId, id, adminRequest));
 	}
 
 	@PatchMapping("/{id}/enabled")
-	@Operation(summary = "Toggle admin enabled status", description = "Enable or disable an admin account.")
-	public ResponseEntity<Void> toggleEnabled(@PathVariable Long id) {
-		this.adminService.toggleEnabled(id);
+	public ResponseEntity<Void> toggleEnabled(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		this.adminService.toggleEnabled(currentAdminId, id);
+
 		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "Delete admin", description = "Remove an admin account by ID.")
-	@ApiResponse(responseCode = "204", description = "Admin deleted successfully")
-	public ResponseEntity<Void> deleteAdmin(@PathVariable Long id) {
-		this.adminService.delete(id);
+	public ResponseEntity<Void> deleteAdmin(Authentication authentication, @PathVariable Long id) {
+		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+		this.adminService.delete(currentAdminId, id);
+
 		return ResponseEntity.noContent().build();
 	}
 }

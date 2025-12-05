@@ -1,6 +1,7 @@
 package com.todaii.english.client.user;
 
 import com.todaii.english.client.article.ArticleRepository;
+import com.todaii.english.client.event.EventService;
 import com.todaii.english.client.video.VideoRepository;
 import com.todaii.english.core.entity.Article;
 import com.todaii.english.core.entity.User;
@@ -9,6 +10,7 @@ import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
+import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -39,6 +41,7 @@ public class UserService {
 	private final ArticleRepository articleRepository;
 	private final VideoRepository videoRepository;
 	private final CloudinaryPort cloudinaryPort;
+	private final EventService eventService;
 
 	private String CLIENT_URL = "http://localhost:5173";
 
@@ -58,6 +61,8 @@ public class UserService {
 
 		User savedUser = this.userRepository.save(user);
 		UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
+
+		eventService.logUser(savedUser.getId(), EventType.MAIL_SEND, 1, null);
 
 		return userDTO;
 	}
@@ -101,6 +106,8 @@ public class UserService {
 		this.userRepository.save(user);
 
 		this.smtpService.sendVerifyEmail(email, otp);
+		eventService.logUser(user.getId(), EventType.MAIL_SEND, 1, null);
+
 	}
 
 	public void updateLastLogin(String email) {
@@ -108,6 +115,8 @@ public class UserService {
 				.orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
 		user.setLastLoginAt(LocalDateTime.now());
+
+		eventService.logUser(user.getId(), EventType.USER_LOGIN, 1, null);
 
 		this.userRepository.save(user);
 	}
@@ -128,6 +137,7 @@ public class UserService {
 		String resetURL = CLIENT_URL + "/client/reset-password/" + token;
 
 		this.smtpService.sendForgotPasswordEmail(email, resetURL);
+		eventService.logUser(user.getId(), EventType.MAIL_SEND, 1, null);
 	}
 
 	public void resetPassword(ResetPasswordRequest request) {
@@ -178,6 +188,7 @@ public class UserService {
 			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "user_avatars");
 			user.setAvatarUrl(uploadedUrl);
 
+			eventService.logUser(id, EventType.CLOUDINARY_UPLOAD, 1, null);
 		} else {
 			user.setAvatarUrl(user.getAvatarUrl());
 		}

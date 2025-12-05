@@ -1,42 +1,58 @@
 package com.todaii.english.server.event;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.Admin;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.AdminEvent;
-import com.todaii.english.core.entity.UserEvent;
-import com.todaii.english.shared.enums.AdminEventAction;
-import com.todaii.english.shared.enums.AdminEventModule;
-import com.todaii.english.shared.enums.EventOutcome;
+import com.todaii.english.shared.dto.EventDTO;
+import com.todaii.english.shared.enums.EventType;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
-	private final AdminEventRepository adminEventRepository;
-	private final UserEventRepository userEventRepository;
+	private final AdminEventRepository eventRepository;
+	private final ObjectMapper objectMapper;
 
-	public List<AdminEvent> getAllAdminEvents() {
-		return adminEventRepository.findAll();
+	public void logAdmin(Long adminId, EventType type, Integer quantity, Map<String, Object> metadata) {
+		// Các event khác (DICTIONARY_API, AI_REQUEST)
+		AdminEvent ev = AdminEvent.builder().adminId(adminId).eventType(type).quantity(quantity)
+				.metadata(serializeMetadata(metadata)).build();
+
+		eventRepository.save(ev);
 	}
 
-	public List<AdminEvent> getEventsByAdminId(Long id) {
-		return adminEventRepository.findByAdminId(id);
+	private String serializeMetadata(Map<String, Object> metadata) {
+		if (metadata == null)
+			return null;
+		try {
+			return objectMapper.writeValueAsString(metadata);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public void log(Admin admin, AdminEventModule module, AdminEventAction action, EventOutcome outcome) {
-		AdminEvent event = AdminEvent.builder().admin(admin).module(module).action(action).outcome(outcome).build();
-		adminEventRepository.save(event);
-	}
+	public List<EventDTO> findByEventType(EventType eventType) {
+		List<AdminEvent> adminEvents = eventRepository.findByEventType(eventType);
 
-	public List<UserEvent> getAllUserEvents() {
-		return userEventRepository.findAll();
-	}
+		return adminEvents.stream().map(event -> {
+			Object metaObj = null;
 
-	public List<UserEvent> getEventsByUserId(Long id) {
-		return userEventRepository.findByUserId(id);
+			try {
+				metaObj = objectMapper.readValue(event.getMetadata(), Object.class);
+			} catch (Exception e) {
+				metaObj = null; // hoặc "{}"
+			}
+
+			return EventDTO.builder().id(event.getId()).userId(event.getAdminId()).eventType(event.getEventType())
+					.quantity(event.getQuantity()).metadata(metaObj).createdAt(event.getCreatedAt()).build();
+
+		}).toList();
 	}
 }

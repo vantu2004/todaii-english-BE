@@ -44,4 +44,8 @@
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<finalName>todaii_shared</finalName>
+	</build>
 </project>

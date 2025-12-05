@@ -70,11 +70,20 @@
 	</dependencies>
 
 	<build>
+		<finalName>todaii_user_api</finalName>
 		<plugins>
 			<!-- Build runnable jar -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+	            <!-- QUAN TRỌNG -->
+	            <executions>
+	                <execution>
+	                    <goals>
+	                        <goal>repackage</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
 			</plugin>
 		</plugins>
 	</build>

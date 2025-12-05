@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.shared.response.AIResponse;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +21,7 @@ public class GeminiApiController {
 	private final GeminiService geminiService;
 
 	@GetMapping("/generate")
-	public ResponseEntity<String> generate(
+	public ResponseEntity<AIResponse> generate(
 			@RequestParam @NotBlank(message = "Prompt must not be null") @Length(min = 1, max = 1024, message = "Prompt must be between 1 and 1024 characters") String prompt) {
 		return ResponseEntity.ok(geminiService.askGemini(prompt));
 	}

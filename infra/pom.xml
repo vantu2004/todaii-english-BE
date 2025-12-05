@@ -98,4 +98,8 @@
 			<artifactId>cloudinary-http5</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<finalName>todaii_infra</finalName>
+	</build>
 </project>

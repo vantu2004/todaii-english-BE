@@ -4,17 +4,19 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class PagedResponse<T> {
-	private final List<T> content;
-	private final int page;
-	private final int size;
-	private final long totalElements;
-	private final int totalPages;
-	private final boolean first;
-	private final boolean last;
-	private final String sortBy;
-	private final String direction;
+	private List<T> content;
+	private int page;
+	private int size;
+	private long totalElements;
+	private int totalPages;
+	private boolean first;
+	private boolean last;
+	private String sortBy;
+	private String direction;
 }

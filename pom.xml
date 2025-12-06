@@ -135,14 +135,6 @@
 			</dependency>
 
 			<!--
-			https://mvnrepository.com/artifact/com.google.cloud/spring-cloud-gcp-starter-sql-mysql -->
-			<dependency>
-				<groupId>com.google.cloud</groupId>
-				<artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
-				<version>7.4.1</version>
-			</dependency>
-
-			<!--
 			https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory-connector-j-8 -->
 			<dependency>
 				<groupId>com.google.cloud.sql</groupId>

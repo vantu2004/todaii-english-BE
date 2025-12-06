@@ -13,4 +13,14 @@ public enum UserErrorCode implements ErrorCode {
 		this.status = status;
 		this.message = message;
 	}
+
+	@Override
+    public int getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public String getMessage() {
+        return this.message;
+    }
 }

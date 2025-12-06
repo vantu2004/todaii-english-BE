@@ -52,8 +52,13 @@
 			<artifactId>org.eclipse.persistence.moxy</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>spring-cloud-gcp-starter-sql-mysql</artifactId>
+		</dependency>
+
 	</dependencies>
-	
+
 	<build>
 		<finalName>todaii_core</finalName>
 	</build>

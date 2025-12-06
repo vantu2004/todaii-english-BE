@@ -104,4 +104,14 @@ public class User implements JwtPrincipal {
 	public String getActorType() {
 		return "USER";
 	}
+
+	@Override
+	public Long getId() {
+		return this.id;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return this.displayName;
+	}
 }

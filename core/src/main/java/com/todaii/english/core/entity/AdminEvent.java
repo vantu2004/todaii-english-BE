@@ -38,4 +38,23 @@ public class AdminEvent implements BaseEvent {
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
 
+	@Override
+	public EventType getEventType() {
+		return this.eventType;
+	}
+
+	@Override
+	public Integer getQuantity() {
+		return this.quantity;
+	}
+
+	@Override
+	public LocalDateTime getCreatedAt() {
+		return this.createdAt;
+	}
+
+	@Override
+	public String getMetadata() {
+		return this.metadata;
+	}
 }

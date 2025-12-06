@@ -110,4 +110,14 @@ public class Admin implements JwtPrincipal {
 		return "ADMIN";
 	}
 
+	@Override
+	public Long getId() {
+		return this.id;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return this.displayName;
+	}
+
 }

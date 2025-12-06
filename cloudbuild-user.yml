@@ -15,3 +15,6 @@ steps:
 
 images:
   - "gcr.io/$PROJECT_ID/user-api-image"
+
+options:
+  logging: CLOUD_LOGGING_ONLY

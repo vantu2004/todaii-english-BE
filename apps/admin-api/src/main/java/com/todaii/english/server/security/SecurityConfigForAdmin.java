@@ -1,5 +1,9 @@
 package com.todaii.english.server.security;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +33,10 @@ public class SecurityConfigForAdmin {
 	private final AdminCookieAuthFilter adminCookieAuthFilter;
 	private final JwtTokenFilter jwtTokenFilter;
 	private final JwtAuthEntryPoint jwtAuthEntryPoint;
+
+	// tự tìm trên biến môi trường của cloud trước, ko có thì mới tới local
+	@Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173}")
+	private String allowedOrigin;
 
 	@Bean
 	UserDetailsService adminDetailsService() {
@@ -71,9 +79,10 @@ public class SecurityConfigForAdmin {
 	SecurityFilterChain adminSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(request -> {
 			var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-			corsConfig.setAllowedOrigins(java.util.List.of("http://localhost:5173"));
-			corsConfig.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-			corsConfig.setAllowedHeaders(java.util.List.of("*"));
+			corsConfig.setAllowedOrigins(
+					List.of(StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin));
+			corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+			corsConfig.setAllowedHeaders(List.of("*"));
 			corsConfig.setAllowCredentials(true);
 			return corsConfig;
 		}))

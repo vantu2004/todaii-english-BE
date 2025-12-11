@@ -21,5 +21,3 @@ Thumbs.db
 **/application*.properties
 
 /bin/
-
-todaii_dump.sql

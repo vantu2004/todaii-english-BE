@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -76,7 +75,7 @@ public class Admin implements JwtPrincipal {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
-	@UpdateTimestamp
+	@CreationTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
 
@@ -89,9 +88,9 @@ public class Admin implements JwtPrincipal {
 	@Builder.Default
 	private Set<AdminRole> roles = new HashSet<>();
 
-	public void addRole(AdminRole adminRole) {
-		this.roles.add(adminRole);
-	}
+//	public void addRole(AdminRole adminRole) {
+//		this.roles.add(adminRole);
+//	}
 
 	// chuyển roles về tập string để dùng tạo jwt token
 	/*

@@ -42,16 +42,16 @@ public class ToeicQuestion {
     @Column(length = 1024)
     private String audioUrl;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(name = "option_a", columnDefinition = "MEDIUMTEXT")
     private String optionA;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(name = "option_b", columnDefinition = "MEDIUMTEXT")
     private String optionB;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(name = "option_c", columnDefinition = "MEDIUMTEXT")
     private String optionC;
 
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(name = "option_d", columnDefinition = "MEDIUMTEXT")
     private String optionD;
 
     @Enumerated(EnumType.STRING)

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 public class TestApiController {
     private final TestService testService;
 
-    // ===================== GET PAGED (with optional filter) =====================
     @GetMapping
     public Page<ToeicTestDTO> getPaged(
             @RequestParam(required = false) Long collectionId,

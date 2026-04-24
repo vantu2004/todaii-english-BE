@@ -1,9 +1,12 @@
 package com.todaii.english.server.toeic_test;
 
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.ToeicTestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,29 +18,31 @@ public class TestApiController {
     private final TestService testService;
 
     @GetMapping
-    public Page<ToeicTestDTO> getPaged(
+    public ResponseEntity<Page<ToeicTestDTO>> getPaged(
             @RequestParam(required = false) Long collectionId,
             Pageable pageable
     ) {
-        return testService.getPaged(collectionId, pageable);
+        return ResponseEntity.ok(testService.getPaged(collectionId, pageable));
     }
 
     @GetMapping("/{id}")
-    public ToeicTestDTO getById(@PathVariable Long id) {
-        return testService.getById(id);
+    public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(testService.getById(id));
     }
 
     @PostMapping
-    public ToeicTestDTO createTest(@RequestBody ToeicTestDTO dto) {
-        return testService.create(dto);
+    public ResponseEntity<ToeicTestDTO> createTest(Authentication authentication, @RequestBody ToeicTestDTO dto) {
+        return ResponseEntity.status(201).body(testService.create(AdminUtils.getCurrentAdminId(authentication), dto));
     }
 
-    public ToeicTestDTO updateTest(@PathVariable Long id, @RequestBody ToeicTestDTO dto) {
-        return testService.update(id, dto);
+    @PutMapping
+    public ResponseEntity<ToeicTestDTO> updateTest(@PathVariable Long id, @RequestBody ToeicTestDTO dto) {
+        return ResponseEntity.ok(testService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTest(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTest(@PathVariable Long id) {
         testService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

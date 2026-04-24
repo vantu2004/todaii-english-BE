@@ -5,6 +5,9 @@ import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,10 +32,12 @@ public class ToeicTest {
     @Column(nullable = false, length = 512)
     private String title;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TestType testType = TestType.TOEIC_LR;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer duration = 120;
 
@@ -45,14 +50,17 @@ public class ToeicTest {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private TestStatus status = TestStatus.DRAFT;
 
     private Long creatorId;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 

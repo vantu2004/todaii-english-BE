@@ -40,9 +40,15 @@ public class TestService {
         return toDTO(test);
     }
 
-    public ToeicTestDTO create(ToeicTestDTO dto){
+    public ToeicTestDTO create(Long adminId, ToeicTestDTO dto){
+
+        if (dto.getCollectionId() == null) {
+            throw new BusinessException(400, "collectionId is required");
+        }
+
         ToeicCollection collection = collectionRepository.findById(dto.getCollectionId())
-                .orElseThrow(() -> new RuntimeException("Collection not found"));
+                .orElseThrow(() -> new BusinessException(404, "Collection not found"));
+
         ToeicTest test = ToeicTest.builder()
                 .collection(collection)
                 .title(dto.getTitle())
@@ -52,7 +58,7 @@ public class TestService {
                 .thumbnail(dto.getThumbnail())
                 .description(dto.getDescription())
                 .status(dto.getStatus())
-                .creatorId(dto.getCreatorId())
+                .creatorId(adminId)
                 .build();
 
         return toDTO(testRepository.save(test));

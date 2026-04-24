@@ -17,12 +17,6 @@ public class ToeicQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // FK -> Test
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    private ToeicTest test;
-
-    // FK -> Group (nullable)
     @ManyToOne
     @JoinColumn(name = "group_id")
     private ToeicQuestionGroup group;

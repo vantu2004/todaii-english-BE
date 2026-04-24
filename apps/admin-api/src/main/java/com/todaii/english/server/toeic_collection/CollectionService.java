@@ -1,10 +1,15 @@
-package com.todaii.english.server.toeic.collection;
+package com.todaii.english.server.toeic_collection;
 
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.CollectionRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
@@ -12,8 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CollectionService {
     private final CollectionRepository collectionRepository;
+
     public List<ToeicCollection> findAll() {
         return collectionRepository.findAll();
+    }
+
+    public Page<ToeicCollection> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        return collectionRepository.search(keyword, pageable);
     }
 
     public ToeicCollection findById(Long collectionId){
@@ -36,5 +49,9 @@ public class CollectionService {
         collection.setDescription(request.getDescription());
 
         return collectionRepository.save(collection);
+    }
+
+    public void deleteById(Long id) {
+        collectionRepository.deleteById(id);
     }
 }

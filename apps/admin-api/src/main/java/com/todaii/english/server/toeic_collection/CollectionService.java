@@ -2,7 +2,7 @@ package com.todaii.english.server.toeic_collection;
 
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.shared.exceptions.BusinessException;
-import com.todaii.english.shared.request.server.toeic.CollectionRequest;
+import com.todaii.english.shared.request.server.ToeicCollectionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,7 @@ public class CollectionService {
         return collectionRepository.findById(collectionId).orElseThrow(() -> new BusinessException(404, "Collection not found"));
     }
 
-    public ToeicCollection create(CollectionRequest request) {
+    public ToeicCollection create(ToeicCollectionRequest request) {
         ToeicCollection collection = ToeicCollection.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -42,7 +42,7 @@ public class CollectionService {
         return collectionRepository.save(collection);
     }
 
-    public ToeicCollection update(Long id, CollectionRequest request) {
+    public ToeicCollection update(Long id, ToeicCollectionRequest request) {
         ToeicCollection collection = findById(id);
 
         collection.setName(request.getName());

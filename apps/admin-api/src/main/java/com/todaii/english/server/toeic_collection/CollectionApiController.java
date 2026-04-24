@@ -1,7 +1,7 @@
 package com.todaii.english.server.toeic_collection;
 
 import com.todaii.english.core.entity.ToeicCollection;
-import com.todaii.english.shared.request.server.toeic.CollectionRequest;
+import com.todaii.english.shared.request.server.ToeicCollectionRequest;
 import com.todaii.english.shared.response.PagedResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -52,12 +52,12 @@ public class CollectionApiController {
     }
 
     @PostMapping
-    public ResponseEntity<ToeicCollection> createCollection(@Valid @RequestBody CollectionRequest request) {
+    public ResponseEntity<ToeicCollection> createCollection(@Valid @RequestBody ToeicCollectionRequest request) {
         return ResponseEntity.status(201).body(collectionService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ToeicCollection> updateCollection(@PathVariable Long id, @Valid @RequestBody CollectionRequest request){
+    public ResponseEntity<ToeicCollection> updateCollection(@PathVariable Long id, @Valid @RequestBody ToeicCollectionRequest request){
         return ResponseEntity.ok(collectionService.update(id, request));
     }
 

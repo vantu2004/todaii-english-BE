@@ -1,4 +1,4 @@
-package com.todaii.english.shared.request.server.toeic;
+package com.todaii.english.shared.request.server;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-public class CollectionRequest {
+public class ToeicCollectionRequest {
 
     @NotNull(message = "Collection name cannot be null")
     @Length(max = 191, message = "Collection name must not exceed 191 characters")

@@ -3,8 +3,6 @@ package com.todaii.english.server.toeic_test;
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
-import com.todaii.english.server.toeic_collection.CollectionService;
-import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;

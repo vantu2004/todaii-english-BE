@@ -35,7 +35,7 @@ public class TestApiController {
         return ResponseEntity.status(201).body(testService.create(AdminUtils.getCurrentAdminId(authentication), dto));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<ToeicTestDTO> updateTest(@PathVariable Long id, @RequestBody ToeicTestDTO dto) {
         return ResponseEntity.ok(testService.update(id, dto));
     }

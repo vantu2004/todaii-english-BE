@@ -67,7 +67,13 @@ public class TestService {
         ToeicTest test = testRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "Test not found"));
 
-        modelMapper.map(dto, test);
+        if (dto.getTitle() != null) test.setTitle(dto.getTitle());
+        if (dto.getTestType() != null) test.setTestType(dto.getTestType());
+        if (dto.getDuration() != null) test.setDuration(dto.getDuration());
+        if (dto.getAudioUrl() != null) test.setAudioUrl(dto.getAudioUrl());
+        if (dto.getThumbnail() != null) test.setThumbnail(dto.getThumbnail());
+        if (dto.getDescription() != null) test.setDescription(dto.getDescription());
+        if (dto.getStatus() != null) test.setStatus(dto.getStatus());
 
         if (dto.getCollectionId() != null) {
             ToeicCollection collection = collectionRepository.findById(dto.getCollectionId())

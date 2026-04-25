@@ -1,5 +1,6 @@
 package com.todaii.english.server.toeic_test;
 
+import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.ToeicTestDTO;
 import lombok.RequiredArgsConstructor;
@@ -26,17 +27,17 @@ public class TestApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ToeicTest> getById(@PathVariable Long id) {
         return ResponseEntity.ok(testService.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<ToeicTestDTO> createTest(Authentication authentication, @RequestBody ToeicTestDTO dto) {
+    public ResponseEntity<ToeicTest> createTest(Authentication authentication, @RequestBody ToeicTestDTO dto) {
         return ResponseEntity.status(201).body(testService.create(AdminUtils.getCurrentAdminId(authentication), dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ToeicTestDTO> updateTest(@PathVariable Long id, @RequestBody ToeicTestDTO dto) {
+    public ResponseEntity<ToeicTest> updateTest(@PathVariable Long id, @RequestBody ToeicTestDTO dto) {
         return ResponseEntity.ok(testService.update(id, dto));
     }
 

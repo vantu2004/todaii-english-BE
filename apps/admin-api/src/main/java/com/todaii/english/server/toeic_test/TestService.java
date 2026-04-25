@@ -31,14 +31,12 @@ public class TestService {
         return page.map(this::toDTO);
     }
 
-    public ToeicTestDTO getById(Long id) {
-        ToeicTest test = testRepository.findById(id)
+    public ToeicTest getById(Long id) {
+        return testRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "Test not found"));
-
-        return toDTO(test);
     }
 
-    public ToeicTestDTO create(Long adminId, ToeicTestDTO dto){
+    public ToeicTest create(Long adminId, ToeicTestDTO dto){
 
         if (dto.getCollectionId() == null) {
             throw new BusinessException(400, "collectionId is required");
@@ -47,33 +45,19 @@ public class TestService {
         ToeicCollection collection = collectionRepository.findById(dto.getCollectionId())
                 .orElseThrow(() -> new BusinessException(404, "Collection not found"));
 
-        ToeicTest test = ToeicTest.builder()
-                .collection(collection)
-                .title(dto.getTitle())
-                .testType(dto.getTestType())
-                .duration(dto.getDuration())
-                .audioUrl(dto.getAudioUrl())
-                .thumbnail(dto.getThumbnail())
-                .description(dto.getDescription())
-                .status(dto.getStatus())
-                .creatorId(adminId)
-                .build();
+        ToeicTest test = modelMapper.map(dto, ToeicTest.class);
 
-        return toDTO(testRepository.save(test));
+        test.setCollection(collection);
+        test.setCreatorId(adminId);
+        return testRepository.save(test);
     }
 
-    public ToeicTestDTO update(Long id, ToeicTestDTO dto) {
+    public ToeicTest update(Long id, ToeicTestDTO dto) {
 
         ToeicTest test = testRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "Test not found"));
 
-        if (dto.getTitle() != null) test.setTitle(dto.getTitle());
-        if (dto.getTestType() != null) test.setTestType(dto.getTestType());
-        if (dto.getDuration() != null) test.setDuration(dto.getDuration());
-        if (dto.getAudioUrl() != null) test.setAudioUrl(dto.getAudioUrl());
-        if (dto.getThumbnail() != null) test.setThumbnail(dto.getThumbnail());
-        if (dto.getDescription() != null) test.setDescription(dto.getDescription());
-        if (dto.getStatus() != null) test.setStatus(dto.getStatus());
+        modelMapper.map(dto, test);
 
         if (dto.getCollectionId() != null) {
             ToeicCollection collection = collectionRepository.findById(dto.getCollectionId())
@@ -81,9 +65,7 @@ public class TestService {
             test.setCollection(collection);
         }
 
-        ToeicTest saved = testRepository.save(test);
-
-        return toDTO(saved);
+        return testRepository.save(test);
     }
 
     public void delete(Long id) {

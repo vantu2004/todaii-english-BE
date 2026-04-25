@@ -19,7 +19,7 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping
-    public ResponseEntity<Page<ToeicQuestionDTO>> getAll(
+    public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
             @RequestParam(required = false) Long testId,
             @RequestParam(required = false) Long groupId,
             Pageable pageable
@@ -33,21 +33,21 @@ public class QuestionController {
     }
 
     @PostMapping
-    public ResponseEntity<ToeicQuestion> create(@Valid @RequestBody ToeicQuestionDTO dto) {
-        return ResponseEntity.status(201).body(questionService.createQuestion(dto));
+    public ResponseEntity<ToeicQuestion> createQuestion(@Valid @RequestBody ToeicQuestionDTO dto) {
+        return ResponseEntity.status(201).body(questionService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ToeicQuestion> update(
+    public ResponseEntity<ToeicQuestion> updateQuestion(
             @PathVariable Long id,
             @Valid @RequestBody ToeicQuestionDTO dto
     ) {
-        return ResponseEntity.ok(questionService.updateQuestion(id, dto));
+        return ResponseEntity.ok(questionService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        questionService.deleteQuestion(id);
+    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
+        questionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

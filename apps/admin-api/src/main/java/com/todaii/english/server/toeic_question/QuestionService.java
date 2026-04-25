@@ -46,20 +46,20 @@ public class QuestionService {
                 .orElseThrow(() -> new BusinessException(404, "Question not found"));
     }
 
-    public ToeicQuestion createQuestion(ToeicQuestionDTO dto) {
+    public ToeicQuestion create(ToeicQuestionDTO dto) {
         ToeicQuestion question = modelMapper.map(dto, ToeicQuestion.class);
         setRelations(question, dto);
         return questionRepository.save(question);
     }
 
-    public ToeicQuestion updateQuestion(Long id, ToeicQuestionDTO dto) {
+    public ToeicQuestion update(Long id, ToeicQuestionDTO dto) {
         ToeicQuestion question = findById(id);
         modelMapper.map(dto, question);
         setRelations(question, dto);
         return questionRepository.save(question);
     }
 
-    public void deleteQuestion(Long id) {
+    public void delete(Long id) {
         questionRepository.delete(findById(id));
     }
 

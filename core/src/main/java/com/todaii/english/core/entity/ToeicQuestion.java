@@ -1,5 +1,6 @@
 package com.todaii.english.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.Answer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,14 +18,14 @@ public class ToeicQuestion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // FK -> Test
     @ManyToOne
     @JoinColumn(name = "test_id")
+    @JsonIgnore
     private ToeicTest test;
 
-    // FK -> Group (nullable)
     @ManyToOne
     @JoinColumn(name = "group_id")
+    @JsonIgnore
     private ToeicQuestionGroup group;
 
     @Column(nullable = false)

@@ -31,6 +31,11 @@ public class QuestionGroupService {
 
         return page.map(this::toDTO);
     }
+
+    public ToeicQuestionGroupDTO getById(Long id){
+        return toDTO(findById(id));
+    }
+
     public ToeicQuestionGroup findById(Long id){
         return questionGroupRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "Question group not found"));

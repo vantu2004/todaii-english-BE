@@ -26,8 +26,8 @@ public class QuestionGroupController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ToeicQuestionGroup> getById(@PathVariable Long id) {
-        ToeicQuestionGroup entity = questionGroupService.findById(id);
+    public ResponseEntity<ToeicQuestionGroupDTO> getById(@PathVariable Long id) {
+        ToeicQuestionGroupDTO entity = questionGroupService.getById(id);
         return ResponseEntity.ok(entity);
     }
 

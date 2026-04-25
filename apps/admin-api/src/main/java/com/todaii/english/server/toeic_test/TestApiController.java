@@ -19,11 +19,11 @@ public class TestApiController {
     private final TestService testService;
 
     @GetMapping
-    public ResponseEntity<Page<ToeicTestDTO>> getPaged(
+    public ResponseEntity<Page<ToeicTestDTO>> getAllPaged(
             @RequestParam(required = false) Long collectionId,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(testService.getPaged(collectionId, pageable));
+        return ResponseEntity.ok(testService.getAllPaged(collectionId, pageable));
     }
 
     @GetMapping("/{id}")

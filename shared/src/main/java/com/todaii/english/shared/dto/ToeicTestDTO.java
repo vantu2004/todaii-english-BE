@@ -29,15 +29,15 @@ public class ToeicTestDTO {
     private Integer duration;
 
     @NotBlank(message = "Audio url cannot be blank")
-    @Length(max = 512, message = "Audio url must not exceed 512 characters")
+    @Length(max = 1024, message = "Audio url must not exceed 1024 characters")
     private String audioUrl;
 
     @NotBlank(message = "Thumbnail cannot be blank")
-    @Length(max = 512, message = "Thumbnail must not exceed 512 characters")
+    @Length(max = 1024, message = "Thumbnail must not exceed 1024 characters")
     private String thumbnail;
 
     @NotBlank(message = "Description cannot be blank")
-    @Length(max = 512, message = "Description must not exceed 1024 characters")
+    @Length(max = 1024, message = "Description must not exceed 1024 characters")
     private String description;
 
     @NotBlank(message = "Status cannot be blank")

@@ -19,6 +19,7 @@ public class ToeicQuestionGroup {
 
     @ManyToOne
     @JoinColumn(name = "test_id")
+    @JsonIgnore
     private ToeicTest test;
 
     @Column(nullable = false)

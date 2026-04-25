@@ -18,7 +18,7 @@ public class TestService {
     private final TestRepository testRepository;
     private final CollectionRepository collectionRepository;
 
-    public Page<ToeicTestDTO> getPaged(Long collectionId, Pageable pageable) {
+    public Page<ToeicTestDTO> getAllPaged(Long collectionId, Pageable pageable) {
 
         Page<ToeicTest> page;
 

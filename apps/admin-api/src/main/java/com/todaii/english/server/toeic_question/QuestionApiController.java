@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/v1/toeic/question")
-public class QuestionController {
+public class QuestionApiController {
 
     private final QuestionService questionService;
 

@@ -5,6 +5,9 @@ import com.todaii.english.shared.enums.Answer;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "toeic_questions")
 @Getter
@@ -64,4 +67,9 @@ public class ToeicQuestion {
 
     @Column(columnDefinition = "LONGTEXT")
     private String translation;
+
+    @ManyToMany
+    @JoinTable(name = "toeic_question_tags", joinColumns = @JoinColumn(name = "question_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @Builder.Default
+    private Set<ToeicTag> tags = new HashSet<>();
 }

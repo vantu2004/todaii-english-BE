@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/v1/toeic/question-group")
-public class QuestionGroupController {
+public class QuestionGroupApiController {
     private  final QuestionGroupService questionGroupService;
 
     @GetMapping

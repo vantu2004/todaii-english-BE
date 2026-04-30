@@ -21,6 +21,6 @@ public class ToeicTag {
     private String name;
 
     @Column(nullable = false, length = 512)
-    private String tag_type;
+    private String tagType;
 
 }

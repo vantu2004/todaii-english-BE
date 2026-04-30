@@ -11,6 +11,8 @@ import lombok.*;
 @Builder
 public class ToeicQuestionDTO {
 
+    private Long id;
+
     private Long testId;
     private Long groupId;
 

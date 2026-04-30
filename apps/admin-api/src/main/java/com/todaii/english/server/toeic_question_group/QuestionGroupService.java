@@ -48,6 +48,7 @@ public class QuestionGroupService {
     }
 
     public ToeicQuestionGroup update(Long id, ToeicQuestionGroupDTO dto) {
+        dto.setId(id);
         ToeicQuestionGroup group = findById(id);
         modelMapper.map(dto, group);
         setTest(group, dto.getTestId());

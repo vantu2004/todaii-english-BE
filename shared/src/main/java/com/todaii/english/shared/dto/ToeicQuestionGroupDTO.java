@@ -11,6 +11,9 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @Builder
 public class ToeicQuestionGroupDTO {
+
+    private Long id;
+
     @NotNull(message = "Test_id cannot be null")
     private Long testId;
 

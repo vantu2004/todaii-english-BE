@@ -53,6 +53,7 @@ public class QuestionService {
     }
 
     public ToeicQuestion update(Long id, ToeicQuestionDTO dto) {
+        dto.setId(id);
         ToeicQuestion question = findById(id);
         modelMapper.map(dto, question);
         setRelations(question, dto);

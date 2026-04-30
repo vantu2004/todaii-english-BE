@@ -24,7 +24,7 @@ public class QuestionApiController {
     public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
             @RequestParam(required = false) Long testId,
             @RequestParam(required = false) Long groupId,
-            List<Long> tagIds,
+            @RequestParam List<Long> tagIds,
             Pageable pageable
     ) {
         return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, tagIds, pageable));

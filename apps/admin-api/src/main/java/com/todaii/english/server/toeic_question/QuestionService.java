@@ -31,7 +31,7 @@ public class QuestionService {
     private final QuestionGroupRepository groupRepository;
     private final ModelMapper modelMapper;
 
-    public Page<ToeicQuestionDTO> getAllPaged(Long testId, Long groupId, List<Long> tagIds ,Pageable pageable) {
+    public Page<ToeicQuestionDTO> getAllPaged(Long testId, Long groupId, List<Long> tagIds, Pageable pageable) {
 
         Specification<ToeicQuestion> spec = (root, query, cb) -> cb.conjunction();
 

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -22,9 +24,10 @@ public class QuestionApiController {
     public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
             @RequestParam(required = false) Long testId,
             @RequestParam(required = false) Long groupId,
+            List<Long> tagIds,
             Pageable pageable
     ) {
-        return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, pageable));
+        return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, tagIds, pageable));
     }
 
     @GetMapping("/{id}")

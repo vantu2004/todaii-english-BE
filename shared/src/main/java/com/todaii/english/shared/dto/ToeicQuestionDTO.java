@@ -4,6 +4,8 @@ import com.todaii.english.shared.enums.Answer;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -36,4 +38,6 @@ public class ToeicQuestionDTO {
 
     private String explanation;
     private String translation;
+
+    private Set<Long> tagIds;
 }

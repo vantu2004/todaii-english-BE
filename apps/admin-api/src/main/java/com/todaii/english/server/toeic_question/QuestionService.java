@@ -2,8 +2,10 @@ package com.todaii.english.server.toeic_question;
 
 import com.todaii.english.core.entity.ToeicQuestion;
 import com.todaii.english.core.entity.ToeicQuestionGroup;
+import com.todaii.english.core.entity.ToeicTag;
 import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.toeic_question_group.QuestionGroupRepository;
+import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -12,27 +14,46 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
+
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final TagRepository tagRepository;
     private final TestRepository testRepository;
     private final QuestionGroupRepository groupRepository;
     private final ModelMapper modelMapper;
 
-    public Page<ToeicQuestionDTO> getAllPaged(Long testId, Long groupId, Pageable pageable) {
+    public Page<ToeicQuestionDTO> getAllPaged(Long testId, Long groupId, List<Long> tagIds ,Pageable pageable) {
 
-        Page<ToeicQuestion> page;
+        Specification<ToeicQuestion> spec = (root, query, cb) -> cb.conjunction();
+
+        if (testId != null) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("test").get("id"), testId));
+        }
 
         if (groupId != null) {
-            page = questionRepository.findByGroupId(groupId, pageable);
-        } else if (testId != null) {
-            page = questionRepository.findByTestId(testId, pageable);
-        } else {
-            page = questionRepository.findAll(pageable);
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(root.get("group").get("id"), groupId));
         }
+
+        if (tagIds != null && !tagIds.isEmpty()) {
+            spec = spec.and((root, query, cb) -> {
+                query.distinct(true);
+
+                return root.join("tags").get("id").in(tagIds);
+            });
+        }
+
+        Page<ToeicQuestion> page = questionRepository.findAll(spec, pageable);
 
         return page.map(this::toDTO);
     }
@@ -77,6 +98,17 @@ public class QuestionService {
                     .orElseThrow(() -> new BusinessException(404, "Group not found"));
             question.setGroup(group);
         }
+
+        if (dto.getTagIds() != null) {
+            List<ToeicTag> tags = tagRepository.findAllById(dto.getTagIds());
+
+            if (tags.size() != dto.getTagIds().size()) {
+                throw new BusinessException(400, "Some question tags not found");
+            }
+
+            question.setTags(Set.copyOf(tags));
+        }
+
     }
 
     private ToeicQuestionDTO toDTO(ToeicQuestion entity) {
@@ -88,6 +120,12 @@ public class QuestionService {
 
         if (entity.getGroup() != null) {
             dto.setGroupId(entity.getGroup().getId());
+        }
+
+        if (entity.getTags() != null) {
+            dto.setTagIds(entity.getTags().stream()
+                            .map(ToeicTag::getId)
+                            .collect(Collectors.toSet()));
         }
 
         return dto;

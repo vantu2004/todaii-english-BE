@@ -3,8 +3,6 @@ package com.todaii.english.core.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
-    import java.util.Set;
 
 @Entity
 @Table(name = "toeic_tags")

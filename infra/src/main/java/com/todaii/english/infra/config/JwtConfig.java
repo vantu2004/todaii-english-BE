@@ -8,6 +8,4 @@ import com.todaii.english.infra.security.jwt.JwtProperties;
 // đóng vai trò như class JpaConfig giúp Spring quét qua các class cấu hình (JwtProperties)
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
-public class JwtConfig {
-	
-}
+public class JwtConfig {}

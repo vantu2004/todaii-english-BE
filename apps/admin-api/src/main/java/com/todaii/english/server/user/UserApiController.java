@@ -2,6 +2,9 @@ package com.todaii.english.server.user;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,8 +24,6 @@ import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.request.server.UpdateUserRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,61 +31,74 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/user")
 public class UserApiController {
-	private final UserService userService;
+  private final UserService userService;
 
-	@Deprecated
-	public ResponseEntity<List<UserDTO>> getAllUsers() {
-		List<UserDTO> userDTOs = userService.findAll();
-		if (userDTOs.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(userDTOs);
-	}
+  @Deprecated
+  public ResponseEntity<List<UserDTO>> getAllUsers() {
+    List<UserDTO> userDTOs = userService.findAll();
+    if (userDTOs.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
+    return ResponseEntity.ok(userDTOs);
+  }
 
-	@GetMapping
-	public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = false) String keyword) {
+  @GetMapping
+  public ResponseEntity<PagedResponse<UserDTO>> getAllUsersPaged(
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		Page<UserDTO> userDTOs = userService.findAllPaged(page, size, sortBy, direction, keyword);
+    Page<UserDTO> userDTOs = userService.findAllPaged(page, size, sortBy, direction, keyword);
 
-		PagedResponse<UserDTO> response = new PagedResponse<>(userDTOs.getContent(), page, size,
-				userDTOs.getTotalElements(), userDTOs.getTotalPages(), userDTOs.isFirst(), userDTOs.isLast(), sortBy,
-				direction);
+    PagedResponse<UserDTO> response =
+        new PagedResponse<>(
+            userDTOs.getContent(),
+            page,
+            size,
+            userDTOs.getTotalElements(),
+            userDTOs.getTotalPages(),
+            userDTOs.isFirst(),
+            userDTOs.isLast(),
+            sortBy,
+            direction);
 
-		return ResponseEntity.ok(response);
-	}
+    return ResponseEntity.ok(response);
+  }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-		return ResponseEntity.ok(userService.findUserDTOById(id));
-	}
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
+    return ResponseEntity.ok(userService.findUserDTOById(id));
+  }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<UserDTO> updateUser(Authentication authentication, @PathVariable Long id,
-			@Valid @RequestBody UpdateUserRequest updateUserRequest) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @PutMapping("/{id}")
+  public ResponseEntity<UserDTO> updateUser(
+      Authentication authentication,
+      @PathVariable Long id,
+      @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		return ResponseEntity.ok(userService.update(currentAdminId, id, updateUserRequest));
-	}
+    return ResponseEntity.ok(userService.update(currentAdminId, id, updateUserRequest));
+  }
 
-	@PatchMapping("/{id}/enabled")
-	public ResponseEntity<Void> toggleEnabled(Authentication authentication, @PathVariable Long id) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @PatchMapping("/{id}/enabled")
+  public ResponseEntity<Void> toggleEnabled(Authentication authentication, @PathVariable Long id) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		userService.toggleEnabled(currentAdminId, id);
+    userService.toggleEnabled(currentAdminId, id);
 
-		return ResponseEntity.ok().build();
-	}
+    return ResponseEntity.ok().build();
+  }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteUser(Authentication authentication, @PathVariable Long id) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteUser(Authentication authentication, @PathVariable Long id) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		userService.delete(currentAdminId, id);
+    userService.delete(currentAdminId, id);
 
-		return ResponseEntity.noContent().build();
-	}
+    return ResponseEntity.noContent().build();
+  }
 }

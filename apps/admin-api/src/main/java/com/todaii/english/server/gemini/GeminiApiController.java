@@ -1,5 +1,7 @@
 package com.todaii.english.server.gemini;
 
+import jakarta.validation.constraints.NotBlank;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.shared.response.AIResponse;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,12 +19,14 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/gemini")
 public class GeminiApiController {
-	private final GeminiService geminiService;
+  private final GeminiService geminiService;
 
-	@GetMapping("/generate")
-	public ResponseEntity<AIResponse> generate(
-			@RequestParam @NotBlank(message = "Prompt must not be null") @Length(min = 1, max = 1024, message = "Prompt must be between 1 and 1024 characters") String prompt) {
-		return ResponseEntity.ok(geminiService.askGemini(prompt));
-	}
-
+  @GetMapping("/generate")
+  public ResponseEntity<AIResponse> generate(
+      @RequestParam
+          @NotBlank(message = "Prompt must not be null")
+          @Length(min = 1, max = 1024, message = "Prompt must be between 1 and 1024 characters")
+          String prompt) {
+    return ResponseEntity.ok(geminiService.askGemini(prompt));
+  }
 }

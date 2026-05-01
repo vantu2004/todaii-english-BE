@@ -10,11 +10,14 @@ import com.todaii.english.core.entity.UserEvent;
 
 @Repository
 public interface UserEventRepository extends JpaRepository<UserEvent, Long> {
-	public List<UserEvent> findByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atTime);
+  public List<UserEvent> findByCreatedAtBetween(LocalDateTime atStartOfDay, LocalDateTime atTime);
 
-	public List<UserEvent> findByCreatedAtBetweenAndUserIdNotNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
+  public List<UserEvent> findByCreatedAtBetweenAndUserIdNotNull(
+      LocalDateTime atStartOfDay, LocalDateTime atTime);
 
-	public List<UserEvent> findByCreatedAtBetweenAndUserIdNull(LocalDateTime atStartOfDay, LocalDateTime atTime);
+  public List<UserEvent> findByCreatedAtBetweenAndUserIdNull(
+      LocalDateTime atStartOfDay, LocalDateTime atTime);
 
-	public List<UserEvent> findByCreatedAtBetweenAndUserId(LocalDateTime atStartOfDay, LocalDateTime atTime, Long id);
+  public List<UserEvent> findByCreatedAtBetweenAndUserId(
+      LocalDateTime atStartOfDay, LocalDateTime atTime, Long id);
 }

@@ -22,114 +22,128 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VocabDeckService {
-	private final VocabDeckRepository vocabDeckRepository;
-	private final DictionaryEntryRepository dictionaryEntryRepository;
-	private final VocabGroupRepository vocabGroupRepository;
+  private final VocabDeckRepository vocabDeckRepository;
+  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final VocabGroupRepository vocabGroupRepository;
 
-	public VocabDeck createDraftDeck(DeckRequest deckRequest) {
-		VocabDeck vocabDeck = VocabDeck.builder().name(deckRequest.getName()).description(deckRequest.getDescription())
-				.cefrLevel(deckRequest.getCefrLevel()).build();
+  public VocabDeck createDraftDeck(DeckRequest deckRequest) {
+    VocabDeck vocabDeck =
+        VocabDeck.builder()
+            .name(deckRequest.getName())
+            .description(deckRequest.getDescription())
+            .cefrLevel(deckRequest.getCefrLevel())
+            .build();
 
-		Set<VocabGroup> groups = new HashSet<>();
-		for (Long groupId : deckRequest.getGroupIds()) {
-			VocabGroup group = vocabGroupRepository.findById(groupId)
-					.orElseThrow(() -> new BusinessException(404, "Group not found: " + groupId));
-			groups.add(group);
-		}
-		vocabDeck.setGroups(groups);
+    Set<VocabGroup> groups = new HashSet<>();
+    for (Long groupId : deckRequest.getGroupIds()) {
+      VocabGroup group =
+          vocabGroupRepository
+              .findById(groupId)
+              .orElseThrow(() -> new BusinessException(404, "Group not found: " + groupId));
+      groups.add(group);
+    }
+    vocabDeck.setGroups(groups);
 
-		return vocabDeckRepository.save(vocabDeck);
-	}
+    return vocabDeckRepository.save(vocabDeck);
+  }
 
-	@Deprecated
-	public List<VocabDeck> findAll() {
-		return vocabDeckRepository.findAll();
-	}
+  @Deprecated
+  public List<VocabDeck> findAll() {
+    return vocabDeckRepository.findAll();
+  }
 
-	public Page<VocabDeck> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
-		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-		Pageable pageable = PageRequest.of(page - 1, size, sort);
+  public Page<VocabDeck> findAllPaged(
+      int page, int size, String sortBy, String direction, String keyword) {
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return vocabDeckRepository.search(null, keyword, pageable);
-	}
+    return vocabDeckRepository.search(null, keyword, pageable);
+  }
 
-	public Page<VocabDeck> findByGroupId(Long groupId, int page, int size, String sortBy, String direction,
-			String keyword) {
-		if (!vocabGroupRepository.existsById(groupId)) {
-			throw new BusinessException(404, "Vocabulary group not found");
-		}
+  public Page<VocabDeck> findByGroupId(
+      Long groupId, int page, int size, String sortBy, String direction, String keyword) {
+    if (!vocabGroupRepository.existsById(groupId)) {
+      throw new BusinessException(404, "Vocabulary group not found");
+    }
 
-		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-		Pageable pageable = PageRequest.of(page - 1, size, sort);
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return vocabDeckRepository.search(groupId, keyword, pageable);
-	}
+    return vocabDeckRepository.search(groupId, keyword, pageable);
+  }
 
-	public VocabDeck findById(Long deckId) {
-		return vocabDeckRepository.findById(deckId).orElseThrow(() -> new BusinessException(404, "Deck not found"));
-	}
+  public VocabDeck findById(Long deckId) {
+    return vocabDeckRepository
+        .findById(deckId)
+        .orElseThrow(() -> new BusinessException(404, "Deck not found"));
+  }
 
-	// ko check trùng vì có nhiều từ giống nhau
-	public VocabDeck addWordToDeck(Long deckId, Long wordId) {
-		VocabDeck vocabDeck = findById(deckId);
+  // ko check trùng vì có nhiều từ giống nhau
+  public VocabDeck addWordToDeck(Long deckId, Long wordId) {
+    VocabDeck vocabDeck = findById(deckId);
 
-		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
-				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+    DictionaryEntry dictionaryEntry =
+        dictionaryEntryRepository
+            .findById(wordId)
+            .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-		vocabDeck.getWords().add(dictionaryEntry);
-		return vocabDeckRepository.save(vocabDeck);
-	}
+    vocabDeck.getWords().add(dictionaryEntry);
+    return vocabDeckRepository.save(vocabDeck);
+  }
 
-	public VocabDeck removeWordFromDeck(Long deckId, Long wordId) {
-		VocabDeck vocabDeck = findById(deckId);
-		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
-				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+  public VocabDeck removeWordFromDeck(Long deckId, Long wordId) {
+    VocabDeck vocabDeck = findById(deckId);
+    DictionaryEntry dictionaryEntry =
+        dictionaryEntryRepository
+            .findById(wordId)
+            .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-		boolean removed = vocabDeck.getWords().remove(dictionaryEntry);
-		if (!removed) {
-			throw new BusinessException(400, "Word not found in deck");
-		}
+    boolean removed = vocabDeck.getWords().remove(dictionaryEntry);
+    if (!removed) {
+      throw new BusinessException(400, "Word not found in deck");
+    }
 
-		return vocabDeckRepository.save(vocabDeck);
-	}
+    return vocabDeckRepository.save(vocabDeck);
+  }
 
-	public VocabDeck removeAllWordsFromDeck(Long deckId) {
-		VocabDeck vocabDeck = findById(deckId);
-		vocabDeck.getWords().clear();
+  public VocabDeck removeAllWordsFromDeck(Long deckId) {
+    VocabDeck vocabDeck = findById(deckId);
+    vocabDeck.getWords().clear();
 
-		return vocabDeckRepository.save(vocabDeck);
-	}
+    return vocabDeckRepository.save(vocabDeck);
+  }
 
-	public VocabDeck updateVocabDeck(Long deckId, DeckRequest deckRequest) {
-		VocabDeck vocabDeck = findById(deckId);
-		vocabDeck.setName(deckRequest.getName());
-		vocabDeck.setDescription(deckRequest.getDescription());
-		vocabDeck.setCefrLevel(deckRequest.getCefrLevel());
+  public VocabDeck updateVocabDeck(Long deckId, DeckRequest deckRequest) {
+    VocabDeck vocabDeck = findById(deckId);
+    vocabDeck.setName(deckRequest.getName());
+    vocabDeck.setDescription(deckRequest.getDescription());
+    vocabDeck.setCefrLevel(deckRequest.getCefrLevel());
 
-		Set<VocabGroup> groups = new HashSet<>();
-		for (Long groupId : deckRequest.getGroupIds()) {
-			VocabGroup group = vocabGroupRepository.findById(groupId)
-					.orElseThrow(() -> new BusinessException(404, "Group not found: " + groupId));
-			groups.add(group);
-		}
-		vocabDeck.setGroups(groups);
+    Set<VocabGroup> groups = new HashSet<>();
+    for (Long groupId : deckRequest.getGroupIds()) {
+      VocabGroup group =
+          vocabGroupRepository
+              .findById(groupId)
+              .orElseThrow(() -> new BusinessException(404, "Group not found: " + groupId));
+      groups.add(group);
+    }
+    vocabDeck.setGroups(groups);
 
-		return vocabDeckRepository.save(vocabDeck);
-	}
+    return vocabDeckRepository.save(vocabDeck);
+  }
 
-	public void toggleEnabled(Long deckId) {
-		VocabDeck vocabDeck = findById(deckId);
-		vocabDeck.setEnabled(!vocabDeck.getEnabled());
+  public void toggleEnabled(Long deckId) {
+    VocabDeck vocabDeck = findById(deckId);
+    vocabDeck.setEnabled(!vocabDeck.getEnabled());
 
-		vocabDeckRepository.save(vocabDeck);
-	}
+    vocabDeckRepository.save(vocabDeck);
+  }
 
-	public void deleteById(Long deckId) {
-		if (!vocabDeckRepository.existsById(deckId)) {
-			throw new BusinessException(404, "Deck not found");
-		}
+  public void deleteById(Long deckId) {
+    if (!vocabDeckRepository.existsById(deckId)) {
+      throw new BusinessException(404, "Deck not found");
+    }
 
-		vocabDeckRepository.deleteById(deckId);
-	}
-
+    vocabDeckRepository.deleteById(deckId);
+  }
 }

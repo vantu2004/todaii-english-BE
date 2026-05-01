@@ -1,10 +1,12 @@
 package com.todaii.english.shared.dto;
 
-import com.todaii.english.shared.enums.Answer;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-
 import java.util.Set;
+
+import jakarta.validation.constraints.NotNull;
+
+import com.todaii.english.shared.enums.Answer;
+
+import lombok.*;
 
 @Getter
 @Setter
@@ -13,31 +15,28 @@ import java.util.Set;
 @Builder
 public class ToeicQuestionDTO {
 
-    private Long id;
+  private Long id;
 
-    private Long testId;
-    private Long groupId;
+  private Long testId;
+  private Long groupId;
 
-    @NotNull
-    private Integer partNumber;
+  @NotNull private Integer partNumber;
 
-    @NotNull
-    private Integer questionNo;
+  @NotNull private Integer questionNo;
 
-    private String question;
-    private String imageUrl;
-    private String audioUrl;
+  private String question;
+  private String imageUrl;
+  private String audioUrl;
 
-    private String optionA;
-    private String optionB;
-    private String optionC;
-    private String optionD;
+  private String optionA;
+  private String optionB;
+  private String optionC;
+  private String optionD;
 
-    @NotNull
-    private Answer correctAns;
+  @NotNull private Answer correctAns;
 
-    private String explanation;
-    private String translation;
+  private String explanation;
+  private String translation;
 
-    private Set<Long> tagIds;
+  private Set<Long> tagIds;
 }

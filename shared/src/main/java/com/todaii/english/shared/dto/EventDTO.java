@@ -16,10 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class EventDTO {
-	private Long id;
-	private Long userId;
-	private EventType eventType;
-	private Integer quantity;
-	private Object metadata;
-	private LocalDateTime createdAt;
+  private Long id;
+  private Long userId;
+  private EventType eventType;
+  private Integer quantity;
+  private Object metadata;
+  private LocalDateTime createdAt;
 }

@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import com.todaii.english.core.entity.ArticleParagraph;
 
 @Repository
-public interface ArticleParagraphRepository extends JpaRepository<ArticleParagraph, Long> {
-
-}
+public interface ArticleParagraphRepository extends JpaRepository<ArticleParagraph, Long> {}

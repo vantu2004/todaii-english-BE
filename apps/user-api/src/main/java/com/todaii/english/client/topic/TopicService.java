@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class TopicService {
-	private final TopicRepository topicRepository;
+  private final TopicRepository topicRepository;
 
-	public List<Topic> findAll(TopicType topicType) {
-		return topicRepository.findAllByTopicType(topicType);
-	}
+  public List<Topic> findAll(TopicType topicType) {
+    return topicRepository.findAllByTopicType(topicType);
+  }
 }

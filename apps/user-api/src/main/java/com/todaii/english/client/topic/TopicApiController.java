@@ -17,10 +17,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/topic")
 public class TopicApiController {
-	private final TopicService topicService;
+  private final TopicService topicService;
 
-	@GetMapping
-	public ResponseEntity<List<Topic>> getAllTopics(@RequestParam(required = true) TopicType topicType) {
-		return ResponseEntity.ok(topicService.findAll(topicType));
-	}
+  @GetMapping
+  public ResponseEntity<List<Topic>> getAllTopics(
+      @RequestParam(required = true) TopicType topicType) {
+    return ResponseEntity.ok(topicService.findAll(topicType));
+  }
 }

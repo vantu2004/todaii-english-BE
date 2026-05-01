@@ -10,5 +10,5 @@ import com.todaii.english.shared.enums.SettingCategory;
 
 @Repository
 public interface SettingRepository extends JpaRepository<Setting, String> {
-	public List<Setting> findBySettingCategory(SettingCategory settingCategory);
+  public List<Setting> findBySettingCategory(SettingCategory settingCategory);
 }

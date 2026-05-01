@@ -3,6 +3,11 @@ package com.todaii.english.infra.security.jwt;
 import java.io.IOException;
 import java.util.Map;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,10 +23,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import com.todaii.english.shared.constants.SecurityConstants;
 
 import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,95 +31,99 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
-	private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenFilter.class);
 
-	private final JwtUtility jwtUtility;
+  private final JwtUtility jwtUtility;
 
-	/*
-	 * có interface JwtUserDetailsFactory chứa hàm trích thông tin từ claim và 2
-	 * class AdminDetailsFactory/UserDetaildFactory implements interface này, khi
-	 * inject kiểu này Spring sẽ tự nhận diện và inject thành map
-	 * 
-	 * { "adminDetailsFactory" -> AdminDetailsFactory instance, "userDetailsFactory"
-	 * -> UserDetailsFactory instance }
-	 */
-	private final Map<String, JwtUserDetailsFactory> factories;
+  /*
+   * có interface JwtUserDetailsFactory chứa hàm trích thông tin từ claim và 2
+   * class AdminDetailsFactory/UserDetaildFactory implements interface này, khi
+   * inject kiểu này Spring sẽ tự nhận diện và inject thành map
+   *
+   * { "adminDetailsFactory" -> AdminDetailsFactory instance, "userDetailsFactory"
+   * -> UserDetailsFactory instance }
+   */
+  private final Map<String, JwtUserDetailsFactory> factories;
 
-	@Qualifier("handlerExceptionResolver")
-	private final HandlerExceptionResolver handlerExceptionResolver;
+  @Qualifier("handlerExceptionResolver")
+  private final HandlerExceptionResolver handlerExceptionResolver;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
 
-		try {
-			long start = System.nanoTime();
+    try {
+      long start = System.nanoTime();
 
-			// 1. Nếu không có Authorization header → cho đi luôn
-			if (!hasAuthorizationBearer(request)) {
-				filterChain.doFilter(request, response);
-				return;
-			}
+      // 1. Nếu không có Authorization header → cho đi luôn
+      if (!hasAuthorizationBearer(request)) {
+        filterChain.doFilter(request, response);
+        return;
+      }
 
-			// 2. Lấy token và validate
-			String token = getBearerToken(request);
-			Claims claims = jwtUtility.validateAccessToken(token);
+      // 2. Lấy token và validate
+      String token = getBearerToken(request);
+      Claims claims = jwtUtility.validateAccessToken(token);
 
-			// 3. Xác định actorType (ADMIN/USER)
-			String actorType = claims.get("actorType", String.class);
-			/*
-			 * factories hiện tại là map chứa các key(tên bean đã implements
-			 * JwtUserDetailsFactory)-value(class implements)
-			 * 
-			 * đang ghép lại thành tên bean để lấy trong map
-			 */
-			JwtUserDetailsFactory factory = factories.get(actorType.toLowerCase() + "DetailsFactory");
-			if (factory == null) {
-				throw new JwtValidationException("Unsupported actorType: " + actorType);
-			}
+      // 3. Xác định actorType (ADMIN/USER)
+      String actorType = claims.get("actorType", String.class);
+      /*
+       * factories hiện tại là map chứa các key(tên bean đã implements
+       * JwtUserDetailsFactory)-value(class implements)
+       *
+       * đang ghép lại thành tên bean để lấy trong map
+       */
+      JwtUserDetailsFactory factory = factories.get(actorType.toLowerCase() + "DetailsFactory");
+      if (factory == null) {
+        throw new JwtValidationException("Unsupported actorType: " + actorType);
+      }
 
-			// 4. Build UserDetails và set vào SecurityContext
-			UserDetails userDetails = factory.build(claims);
-			setAuthenticationContext(userDetails, request);
+      // 4. Build UserDetails và set vào SecurityContext
+      UserDetails userDetails = factory.build(claims);
+      setAuthenticationContext(userDetails, request);
 
-			// 5. Cho request tiếp tục
-			filterChain.doFilter(request, response);
+      // 5. Cho request tiếp tục
+      filterChain.doFilter(request, response);
 
-			/*
-			 * đo tổng tg phản hồi 1 request cả middleware, security, exception, còn AOP là
-			 * chỉ tính riêng business logic trong JVM
-			 */
-			long end = System.nanoTime();
-			double durationMs = (end - start) / 1_000_000.0;
-			log.info("🌐 [{} {}] completed in {} ms", request.getMethod(), request.getRequestURI(),
-					String.format("%.3f", durationMs));
+      /*
+       * đo tổng tg phản hồi 1 request cả middleware, security, exception, còn AOP là
+       * chỉ tính riêng business logic trong JVM
+       */
+      long end = System.nanoTime();
+      double durationMs = (end - start) / 1_000_000.0;
+      log.info(
+          "🌐 [{} {}] completed in {} ms",
+          request.getMethod(),
+          request.getRequestURI(),
+          String.format("%.3f", durationMs));
 
-		} catch (Exception ex) {
-			LOGGER.error("JWT filter error: {}", ex.getMessage(), ex);
-			throw ex;
-		} finally {
-			// 6. Clear context cho request này (tránh rò rỉ qua thread khác)
-			SecurityContextHolder.clearContext();
-		}
-	}
+    } catch (Exception ex) {
+      LOGGER.error("JWT filter error: {}", ex.getMessage(), ex);
+      throw ex;
+    } finally {
+      // 6. Clear context cho request này (tránh rò rỉ qua thread khác)
+      SecurityContextHolder.clearContext();
+    }
+  }
 
-	private boolean hasAuthorizationBearer(HttpServletRequest request) {
-		String header = request.getHeader(SecurityConstants.HEADER_STRING);
-		LOGGER.debug("Authorization header: {}", header);
-		return !(ObjectUtils.isEmpty(header) || !header.startsWith(SecurityConstants.TOKEN_PREFIX));
-	}
+  private boolean hasAuthorizationBearer(HttpServletRequest request) {
+    String header = request.getHeader(SecurityConstants.HEADER_STRING);
+    LOGGER.debug("Authorization header: {}", header);
+    return !(ObjectUtils.isEmpty(header) || !header.startsWith(SecurityConstants.TOKEN_PREFIX));
+  }
 
-	private String getBearerToken(HttpServletRequest request) {
-		String header = request.getHeader(SecurityConstants.HEADER_STRING);
-		String[] array = header.split(" ");
-		return array.length == 2 ? array[1] : null;
-	}
+  private String getBearerToken(HttpServletRequest request) {
+    String header = request.getHeader(SecurityConstants.HEADER_STRING);
+    String[] array = header.split(" ");
+    return array.length == 2 ? array[1] : null;
+  }
 
-	private void setAuthenticationContext(UserDetails userDetails, HttpServletRequest request) {
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-				userDetails.getAuthorities());
+  private void setAuthenticationContext(UserDetails userDetails, HttpServletRequest request) {
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-		authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		SecurityContextHolder.getContext().setAuthentication(authToken);
-	}
+    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    SecurityContextHolder.getContext().setAuthentication(authToken);
+  }
 }

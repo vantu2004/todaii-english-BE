@@ -12,11 +12,12 @@ import com.todaii.english.core.entity.VocabDeck;
 
 @Repository
 public interface VocabDeckRepository extends JpaRepository<VocabDeck, Long> {
-	/*
-	 * nếu groupId != null nghĩa là tìm các deck dựa theo groupId, dùng chung cho 2
-	 * hàm getDecks
-	 */
-	@Query("""
+  /*
+   * nếu groupId != null nghĩa là tìm các deck dựa theo groupId, dùng chung cho 2
+   * hàm getDecks
+   */
+  @Query(
+      """
 			SELECT DISTINCT d FROM VocabDeck d
 			LEFT JOIN d.groups g
 			WHERE
@@ -29,7 +30,7 @@ public interface VocabDeckRepository extends JpaRepository<VocabDeck, Long> {
 			        OR LOWER(d.cefrLevel) LIKE LOWER(CONCAT('%', ?2, '%'))
 			    )
 			""")
-	public Page<VocabDeck> search(Long groupId, String keyword, Pageable pageable);
+  public Page<VocabDeck> search(Long groupId, String keyword, Pageable pageable);
 
-	public List<VocabDeck> findAllByWords_Id(Long entryId);
+  public List<VocabDeck> findAllByWords_Id(Long entryId);
 }

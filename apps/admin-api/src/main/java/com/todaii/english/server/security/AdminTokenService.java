@@ -22,68 +22,68 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminTokenService {
-	private final RefreshTokenRepository adminRefreshTokenRepository;
-	private final JwtUtility jwtUtility;
-	private final PasswordEncoder passwordEncoder;
+  private final RefreshTokenRepository adminRefreshTokenRepository;
+  private final JwtUtility jwtUtility;
+  private final PasswordEncoder passwordEncoder;
 
-	public AuthResponse generateToken(Admin admin) {
-		String accessToken = this.jwtUtility.generateAccessToken(admin); // admin implement JwtPrincipal
-		String randomUUID = UUID.randomUUID().toString();
+  public AuthResponse generateToken(Admin admin) {
+    String accessToken = this.jwtUtility.generateAccessToken(admin); // admin implement JwtPrincipal
+    String randomUUID = UUID.randomUUID().toString();
 
-		AdminRefreshToken adminRefreshToken = new AdminRefreshToken();
-		adminRefreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
-		adminRefreshToken.setAdmin(admin);
+    AdminRefreshToken adminRefreshToken = new AdminRefreshToken();
+    adminRefreshToken.setTokenHash(this.passwordEncoder.encode(randomUUID));
+    adminRefreshToken.setAdmin(admin);
 
-		// set thời gian hết hạn là 7 ngày
-		adminRefreshToken
-				.setExpiresAt(LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES));
+    // set thời gian hết hạn là 7 ngày
+    adminRefreshToken.setExpiresAt(
+        LocalDateTime.now().plusMinutes(SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES));
 
-		this.adminRefreshTokenRepository.save(adminRefreshToken);
+    this.adminRefreshTokenRepository.save(adminRefreshToken);
 
-		AuthResponse authResponse = new AuthResponse();
-		authResponse.setAccessToken(accessToken);
-		authResponse.setRefreshToken(randomUUID);
+    AuthResponse authResponse = new AuthResponse();
+    authResponse.setAccessToken(accessToken);
+    authResponse.setRefreshToken(randomUUID);
 
-		return authResponse;
-	}
+    return authResponse;
+  }
 
-	public AuthResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
-		String rawRefreshToken = refreshTokenRequest.getRefreshToken();
+  public AuthResponse refreshTokens(RefreshTokenRequest refreshTokenRequest) {
+    String rawRefreshToken = refreshTokenRequest.getRefreshToken();
 
-		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository
-				.findByAdminEmail(refreshTokenRequest.getEmail());
+    List<AdminRefreshToken> adminRefreshTokens =
+        this.adminRefreshTokenRepository.findByAdminEmail(refreshTokenRequest.getEmail());
 
-		for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
-			if (this.passwordEncoder.matches(rawRefreshToken, adminRefreshToken.getTokenHash())) {
-				LocalDateTime currentDate = LocalDateTime.now();
-				if (adminRefreshToken.getExpiresAt().isBefore(currentDate)) {
-					throw new BusinessException(AuthErrorCode.TOKEN_EXPIRED);
-				}
+    for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
+      if (this.passwordEncoder.matches(rawRefreshToken, adminRefreshToken.getTokenHash())) {
+        LocalDateTime currentDate = LocalDateTime.now();
+        if (adminRefreshToken.getExpiresAt().isBefore(currentDate)) {
+          throw new BusinessException(AuthErrorCode.TOKEN_EXPIRED);
+        }
 
-				this.adminRefreshTokenRepository.delete(adminRefreshToken);
+        this.adminRefreshTokenRepository.delete(adminRefreshToken);
 
-				return this.generateToken(adminRefreshToken.getAdmin());
-			}
-		}
+        return this.generateToken(adminRefreshToken.getAdmin());
+      }
+    }
 
-		throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
-	}
+    throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
+  }
 
-	public void revokeRefreshToken(String email, String refreshToken) {
-		List<AdminRefreshToken> adminRefreshTokens = this.adminRefreshTokenRepository.findByAdminEmail(email);
+  public void revokeRefreshToken(String email, String refreshToken) {
+    List<AdminRefreshToken> adminRefreshTokens =
+        this.adminRefreshTokenRepository.findByAdminEmail(email);
 
-		boolean found = false;
-		for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
-			if (this.passwordEncoder.matches(refreshToken, adminRefreshToken.getTokenHash())) {
-				this.adminRefreshTokenRepository.delete(adminRefreshToken);
-				found = true;
-				break;
-			}
-		}
+    boolean found = false;
+    for (AdminRefreshToken adminRefreshToken : adminRefreshTokens) {
+      if (this.passwordEncoder.matches(refreshToken, adminRefreshToken.getTokenHash())) {
+        this.adminRefreshTokenRepository.delete(adminRefreshToken);
+        found = true;
+        break;
+      }
+    }
 
-		if (!found) {
-			throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
-		}
-	}
-
+    if (!found) {
+      throw new BusinessException(AuthErrorCode.TOKEN_NOT_FOUND);
+    }
+  }
 }

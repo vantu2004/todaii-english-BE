@@ -13,14 +13,14 @@ import com.todaii.english.shared.exceptions.BusinessException;
 
 @Service
 public class CustomAdminDetailsService implements UserDetailsService {
-	@Autowired
-	private AdminRepository adminRepository;
+  @Autowired private AdminRepository adminRepository;
 
-	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Admin admin = this.adminRepository.findActiveByEmail(email)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-		return new CustomAdminDetails(admin);
-	}
-
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    Admin admin =
+        this.adminRepository
+            .findActiveByEmail(email)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+    return new CustomAdminDetails(admin);
+  }
 }

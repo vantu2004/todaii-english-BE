@@ -16,17 +16,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ArticleDTO {
-	private Long id;
-	private String sourceId;
-	private String sourceName;
-	private String author;
-	private String title;
-	private String description;
-	private String sourceUrl;
-	private String imageUrl;
-	private LocalDateTime publishedAt;
-	private CefrLevel cefrLevel;
-	private Integer views;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+  private Long id;
+  private String sourceId;
+  private String sourceName;
+  private String author;
+  private String title;
+  private String description;
+  private String sourceUrl;
+  private String imageUrl;
+  private LocalDateTime publishedAt;
+  private CefrLevel cefrLevel;
+  private Integer views;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

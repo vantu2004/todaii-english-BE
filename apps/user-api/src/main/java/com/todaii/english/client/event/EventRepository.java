@@ -10,6 +10,5 @@ import com.todaii.english.shared.enums.EventType;
 
 @Repository
 public interface EventRepository extends JpaRepository<UserEvent, Long> {
-	public List<UserEvent> findByEventType(EventType eventType);
-
+  public List<UserEvent> findByEventType(EventType eventType);
 }

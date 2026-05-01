@@ -10,6 +10,6 @@ import com.todaii.english.core.entity.AdminRefreshToken;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<AdminRefreshToken, Long> {
-	@Query("SELECT a FROM AdminRefreshToken a WHERE a.admin.email = ?1")
-	public List<AdminRefreshToken> findByAdminEmail(String email);
+  @Query("SELECT a FROM AdminRefreshToken a WHERE a.admin.email = ?1")
+  public List<AdminRefreshToken> findByAdminEmail(String email);
 }

@@ -20,24 +20,26 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notebook")
 public class NoteDictApiController {
-	private final NoteDictService noteDictService;
+  private final NoteDictService noteDictService;
 
-	@GetMapping("/{noteId}/words")
-	public ResponseEntity<List<DictionaryEntry>> getWords(Authentication authentication, @PathVariable Long noteId) {
-		return ResponseEntity.ok(noteDictService.getEntries(UserUtils.getCurrentAdminId(authentication), noteId));
-	}
+  @GetMapping("/{noteId}/words")
+  public ResponseEntity<List<DictionaryEntry>> getWords(
+      Authentication authentication, @PathVariable Long noteId) {
+    return ResponseEntity.ok(
+        noteDictService.getEntries(UserUtils.getCurrentAdminId(authentication), noteId));
+  }
 
-	@PutMapping("/{noteId}/word/{entryId}")
-	public ResponseEntity<Void> addWord(Authentication authentication, @PathVariable Long noteId,
-			@PathVariable Long entryId) {
-		noteDictService.addEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
-		return ResponseEntity.ok().build();
-	}
+  @PutMapping("/{noteId}/word/{entryId}")
+  public ResponseEntity<Void> addWord(
+      Authentication authentication, @PathVariable Long noteId, @PathVariable Long entryId) {
+    noteDictService.addEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
+    return ResponseEntity.ok().build();
+  }
 
-	@DeleteMapping("/{noteId}/word/{entryId}")
-	public ResponseEntity<Void> removeWord(Authentication authentication, @PathVariable Long noteId,
-			@PathVariable Long entryId) {
-		noteDictService.removeEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
-		return ResponseEntity.ok().build();
-	}
+  @DeleteMapping("/{noteId}/word/{entryId}")
+  public ResponseEntity<Void> removeWord(
+      Authentication authentication, @PathVariable Long noteId, @PathVariable Long entryId) {
+    noteDictService.removeEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
+    return ResponseEntity.ok().build();
+  }
 }

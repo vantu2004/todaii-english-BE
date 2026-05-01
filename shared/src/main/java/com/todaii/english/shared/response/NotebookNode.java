@@ -11,8 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NotebookNode {
-	private Long id;
-	private String name;
-	private NotebookType type;
-	private List<NotebookNode> children = new ArrayList<>();
+  private Long id;
+  private String name;
+  private NotebookType type;
+  private List<NotebookNode> children = new ArrayList<>();
 }

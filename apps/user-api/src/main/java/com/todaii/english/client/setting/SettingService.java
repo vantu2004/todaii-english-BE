@@ -14,16 +14,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class SettingService implements SettingQueryPort {
-	private final SettingRepository settingRepository;
+  private final SettingRepository settingRepository;
 
-	@Override
-	public List<Setting> getSettingsByCategory(SettingCategory mailServer) {
-		return this.settingRepository.findBySettingCategory(mailServer);
-	}
+  @Override
+  public List<Setting> getSettingsByCategory(SettingCategory mailServer) {
+    return this.settingRepository.findBySettingCategory(mailServer);
+  }
 
-	@Override
-	public Setting getSettingByKey(String key) {
-		return settingRepository.findById(key).orElseThrow(() -> new BusinessException(404, "Setting not found"));
-	}
-
+  @Override
+  public Setting getSettingByKey(String key) {
+    return settingRepository
+        .findById(key)
+        .orElseThrow(() -> new BusinessException(404, "Setting not found"));
+  }
 }

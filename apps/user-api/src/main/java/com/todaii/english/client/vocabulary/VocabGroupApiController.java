@@ -15,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/vocab-group")
 public class VocabGroupApiController {
-	private final VocabGroupService vocabGroupService;
+  private final VocabGroupService vocabGroupService;
 
-	@GetMapping
-	public ResponseEntity<List<VocabGroup>> getAllVocabGroups() {
-		return ResponseEntity.ok(vocabGroupService.findAll());
-	}
+  @GetMapping
+  public ResponseEntity<List<VocabGroup>> getAllVocabGroups() {
+    return ResponseEntity.ok(vocabGroupService.findAll());
+  }
 }

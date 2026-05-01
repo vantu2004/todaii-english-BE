@@ -13,11 +13,12 @@ import com.todaii.english.core.entity.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	@Deprecated
-	@Query("SELECT u FROM User u WHERE u.isDeleted = false")
-	public List<User> findAll();
+  @Deprecated
+  @Query("SELECT u FROM User u WHERE u.isDeleted = false")
+  public List<User> findAll();
 
-	@Query("""
+  @Query(
+      """
 			SELECT u FROM User u
 			WHERE u.isDeleted = false
 			AND (
@@ -27,10 +28,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			    OR LOWER(u.displayName) LIKE LOWER(CONCAT('%', ?1, '%'))
 			)
 			""")
-	public Page<User> findAllActive(String keyword, Pageable pageable);
+  public Page<User> findAllActive(String keyword, Pageable pageable);
 
-	@Query("SELECT u FROM User u WHERE u.id = ?1 AND u.isDeleted = false")
-	public Optional<User> findById(Long id);
+  @Query("SELECT u FROM User u WHERE u.id = ?1 AND u.isDeleted = false")
+  public Optional<User> findById(Long id);
 
-	public Long countByIsDeletedFalse();
+  public Long countByIsDeletedFalse();
 }

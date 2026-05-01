@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // phục vụ validate chung
 public interface JwtPrincipal {
-	Long getId();
+  Long getId();
 
-	String getDisplayName();
+  String getDisplayName();
 
-	@JsonIgnore
-	default Set<String> getRoleCodes() {
-		return Set.of();
-	} // mặc định rỗng (tính cho trường hợp của USER)
+  @JsonIgnore
+  default Set<String> getRoleCodes() {
+    return Set.of();
+  } // mặc định rỗng (tính cho trường hợp của USER)
 
-	String getActorType(); // "ADMIN" hoặc "USER"
+  String getActorType(); // "ADMIN" hoặc "USER"
 }

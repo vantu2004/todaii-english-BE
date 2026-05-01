@@ -5,8 +5,5 @@ import org.springframework.stereotype.Repository;
 
 import com.todaii.english.core.entity.AdminRole;
 
-
 @Repository
-public interface AdminRoleRepository extends JpaRepository<AdminRole, String> {
-
-}
+public interface AdminRoleRepository extends JpaRepository<AdminRole, String> {}

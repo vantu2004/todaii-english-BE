@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 import com.todaii.english.core.entity.VocabDeck;
 
 @Repository
-public interface VocabDeckRepository extends JpaRepository<VocabDeck, Long>, JpaSpecificationExecutor<VocabDeck> {
-	@Query("SELECT v FROM VocabDeck v WHERE v.enabled = true AND v.id = ?1")
-	public Optional<VocabDeck> findById(Long id);
+public interface VocabDeckRepository
+    extends JpaRepository<VocabDeck, Long>, JpaSpecificationExecutor<VocabDeck> {
+  @Query("SELECT v FROM VocabDeck v WHERE v.enabled = true AND v.id = ?1")
+  public Optional<VocabDeck> findById(Long id);
 }

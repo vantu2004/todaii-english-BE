@@ -17,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/event")
 public class EventApiController {
-	private final EventService eventService;
+  private final EventService eventService;
 
-	@GetMapping("/type")
-	public ResponseEntity<List<EventDTO>> getAdminEventsByType(@RequestParam EventType eventType) {
-		return ResponseEntity.ok(eventService.findByEventType(eventType));
-	}
+  @GetMapping("/type")
+  public ResponseEntity<List<EventDTO>> getAdminEventsByType(@RequestParam EventType eventType) {
+    return ResponseEntity.ok(eventService.findByEventType(eventType));
+  }
 }

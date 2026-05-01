@@ -1,13 +1,14 @@
 package com.todaii.english.core.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.todaii.english.shared.enums.EventType;
+
+import lombok.*;
 
 @Entity
 @Table(name = "user_events")
@@ -17,44 +18,43 @@ import com.todaii.english.shared.enums.EventType;
 @AllArgsConstructor
 @Builder
 public class UserEvent implements BaseEvent {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "user_id")
-	private Long userId;
+  @Column(name = "user_id")
+  private Long userId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "event_type", length = 32, nullable = false)
-	private EventType eventType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "event_type", length = 32, nullable = false)
+  private EventType eventType;
 
-	@Builder.Default
-	private Integer quantity = 0;
+  @Builder.Default private Integer quantity = 0;
 
-	@Column(columnDefinition = "MEDIUMTEXT")
-	private String metadata;
+  @Column(columnDefinition = "MEDIUMTEXT")
+  private String metadata;
 
-	@CreationTimestamp
-	@Column(name = "created_at", updatable = false)
-	private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", updatable = false)
+  private LocalDateTime createdAt;
 
-	@Override
-	public EventType getEventType() {
-		return this.eventType;
-	}
+  @Override
+  public EventType getEventType() {
+    return this.eventType;
+  }
 
-	@Override
-	public Integer getQuantity() {
-		return this.quantity;
-	}
+  @Override
+  public Integer getQuantity() {
+    return this.quantity;
+  }
 
-	@Override
-	public LocalDateTime getCreatedAt() {
-		return this.createdAt;
-	}
+  @Override
+  public LocalDateTime getCreatedAt() {
+    return this.createdAt;
+  }
 
-	@Override
-	public String getMetadata() {
-		return this.metadata;
-	}
+  @Override
+  public String getMetadata() {
+    return this.metadata;
+  }
 }

@@ -16,43 +16,56 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EventService {
-	private final AdminEventRepository eventRepository;
-	private final ObjectMapper objectMapper;
+  private final AdminEventRepository eventRepository;
+  private final ObjectMapper objectMapper;
 
-	public void logAdmin(Long adminId, EventType type, Integer quantity, Map<String, Object> metadata) {
-		// Các event khác (DICTIONARY_API, AI_REQUEST)
-		AdminEvent ev = AdminEvent.builder().adminId(adminId).eventType(type).quantity(quantity)
-				.metadata(serializeMetadata(metadata)).build();
+  public void logAdmin(
+      Long adminId, EventType type, Integer quantity, Map<String, Object> metadata) {
+    // Các event khác (DICTIONARY_API, AI_REQUEST)
+    AdminEvent ev =
+        AdminEvent.builder()
+            .adminId(adminId)
+            .eventType(type)
+            .quantity(quantity)
+            .metadata(serializeMetadata(metadata))
+            .build();
 
-		eventRepository.save(ev);
-	}
+    eventRepository.save(ev);
+  }
 
-	private String serializeMetadata(Map<String, Object> metadata) {
-		if (metadata == null)
-			return null;
-		try {
-			return objectMapper.writeValueAsString(metadata);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+  private String serializeMetadata(Map<String, Object> metadata) {
+    if (metadata == null) return null;
+    try {
+      return objectMapper.writeValueAsString(metadata);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
 
-	public List<EventDTO> findByEventType(EventType eventType) {
-		List<AdminEvent> adminEvents = eventRepository.findByEventType(eventType);
+  public List<EventDTO> findByEventType(EventType eventType) {
+    List<AdminEvent> adminEvents = eventRepository.findByEventType(eventType);
 
-		return adminEvents.stream().map(event -> {
-			Object metaObj = null;
+    return adminEvents.stream()
+        .map(
+            event -> {
+              Object metaObj = null;
 
-			try {
-				metaObj = objectMapper.readValue(event.getMetadata(), Object.class);
-			} catch (Exception e) {
-				metaObj = null; // hoặc "{}"
-			}
+              try {
+                metaObj = objectMapper.readValue(event.getMetadata(), Object.class);
+              } catch (Exception e) {
+                metaObj = null; // hoặc "{}"
+              }
 
-			return EventDTO.builder().id(event.getId()).userId(event.getAdminId()).eventType(event.getEventType())
-					.quantity(event.getQuantity()).metadata(metaObj).createdAt(event.getCreatedAt()).build();
-
-		}).toList();
-	}
+              return EventDTO.builder()
+                  .id(event.getId())
+                  .userId(event.getAdminId())
+                  .eventType(event.getEventType())
+                  .quantity(event.getQuantity())
+                  .metadata(metaObj)
+                  .createdAt(event.getCreatedAt())
+                  .build();
+            })
+        .toList();
+  }
 }

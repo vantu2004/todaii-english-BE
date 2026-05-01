@@ -16,10 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/video")
 public class VideoLyricLineApiController {
-	private final VideoLyricLineService videoLyricLineService;
+  private final VideoLyricLineService videoLyricLineService;
 
-	@GetMapping("/{videoId}/lyric")
-	public ResponseEntity<List<VideoLyricLine>> getAllLyricsByVideoId(@PathVariable Long videoId) {
-		return ResponseEntity.ok(videoLyricLineService.findAllByVideoId(videoId));
-	}
+  @GetMapping("/{videoId}/lyric")
+  public ResponseEntity<List<VideoLyricLine>> getAllLyricsByVideoId(@PathVariable Long videoId) {
+    return ResponseEntity.ok(videoLyricLineService.findAllByVideoId(videoId));
+  }
 }

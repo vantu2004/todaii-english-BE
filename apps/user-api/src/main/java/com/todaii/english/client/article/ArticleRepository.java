@@ -16,14 +16,16 @@ import com.todaii.english.core.entity.DictionaryEntry;
 import com.todaii.english.shared.enums.CefrLevel;
 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
-	// lấy 10 bài báo đã enabled gần nhất sort theo createdAt chiều giảm dần
-	public Page<Article> findAllByEnabledTrueOrderByCreatedAtDesc(Pageable pageable);
+public interface ArticleRepository
+    extends JpaRepository<Article, Long>, JpaSpecificationExecutor<Article> {
+  // lấy 10 bài báo đã enabled gần nhất sort theo createdAt chiều giảm dần
+  public Page<Article> findAllByEnabledTrueOrderByCreatedAtDesc(Pageable pageable);
 
-	// lấy 10 bài báo đã enabled gần nhất sort theo views chiều giảm dần
-	public Page<Article> findAllByEnabledTrueOrderByViewsDesc(Pageable pageable);
+  // lấy 10 bài báo đã enabled gần nhất sort theo views chiều giảm dần
+  public Page<Article> findAllByEnabledTrueOrderByViewsDesc(Pageable pageable);
 
-	@Query("""
+  @Query(
+      """
 			    SELECT a FROM Article a
 			    WHERE a.enabled = true
 			      AND a.createdAt BETWEEN ?1 AND ?2
@@ -37,14 +39,15 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 					   OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?3, '%'))
 			      )
 			""")
-	public Page<Article> findByCreatedDateRangeAndKeyword(LocalDateTime startOfDay, LocalDateTime endOfDay,
-			String keyword, Pageable pageable);
+  public Page<Article> findByCreatedDateRangeAndKeyword(
+      LocalDateTime startOfDay, LocalDateTime endOfDay, String keyword, Pageable pageable);
 
-	@Query("SELECT a FROM Article a WHERE a.enabled = true AND a.id = ?1")
-	public Optional<Article> findById(Long id);
+  @Query("SELECT a FROM Article a WHERE a.enabled = true AND a.id = ?1")
+  public Optional<Article> findById(Long id);
 
-	@Deprecated
-	@Query("""
+  @Deprecated
+  @Query(
+      """
 			    SELECT a FROM Article a
 			    WHERE a.enabled = true
 			      AND (
@@ -57,17 +60,19 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 					   OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?1, '%'))
 			      )
 			""")
-	public Page<Article> search(String keyword, Pageable pageable);
+  public Page<Article> search(String keyword, Pageable pageable);
 
-	@Query("""
+  @Query(
+      """
 			    SELECT d FROM Article a
 			    JOIN a.words d
 			    WHERE a.id = ?1
 			    ORDER BY d.headword ASC
 			""")
-	public Page<DictionaryEntry> findPagedWordsByArticleId(Long articleId, Pageable pageable);
+  public Page<DictionaryEntry> findPagedWordsByArticleId(Long articleId, Pageable pageable);
 
-	@Query("""
+  @Query(
+      """
 			    SELECT DISTINCT a
 			    FROM Article a
 			    JOIN a.topics t
@@ -75,18 +80,18 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
 			      AND a.id <> ?1
 			      AND t.id IN ?2
 			""")
-	public List<Article> findRelatedByTopics(Long articleId, List<Long> topicIds);
+  public List<Article> findRelatedByTopics(Long articleId, List<Long> topicIds);
 
-	@Query("""
+  @Query(
+      """
 			    SELECT a
 			    FROM Article a
 			    WHERE a.enabled = true
 			      AND a.id <> ?1
 			      AND a.cefrLevel = ?2
 			""")
-	public List<Article> findFallbackByCefr(Long articleId, CefrLevel cefrLevel, Pageable pageable);
+  public List<Article> findFallbackByCefr(Long articleId, CefrLevel cefrLevel, Pageable pageable);
 
-	@Query("SELECT DISTINCT a.sourceName FROM Article a WHERE a.enabled = true")
-	public List<String> findAllDistinctSourceNames();
-
+  @Query("SELECT DISTINCT a.sourceName FROM Article a WHERE a.enabled = true")
+  public List<String> findAllDistinctSourceNames();
 }

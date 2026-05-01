@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 import com.todaii.english.shared.enums.EventType;
 
 public interface BaseEvent {
-	EventType getEventType();
+  EventType getEventType();
 
-	Integer getQuantity();
+  Integer getQuantity();
 
-	LocalDateTime getCreatedAt();
+  LocalDateTime getCreatedAt();
 
-	String getMetadata();
+  String getMetadata();
 }

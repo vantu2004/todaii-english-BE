@@ -9,6 +9,5 @@ import com.todaii.english.core.entity.VideoLyricLine;
 
 @Repository
 public interface VideoLyricLineRepository extends JpaRepository<VideoLyricLine, Long> {
-	public List<VideoLyricLine> findAllByVideoId(Long videoId);
-
+  public List<VideoLyricLine> findAllByVideoId(Long videoId);
 }

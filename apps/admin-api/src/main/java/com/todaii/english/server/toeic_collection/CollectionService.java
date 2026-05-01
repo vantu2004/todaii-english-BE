@@ -1,57 +1,91 @@
 package com.todaii.english.server.toeic_collection;
 
-import com.todaii.english.core.entity.ToeicCollection;
-import com.todaii.english.shared.exceptions.BusinessException;
-import com.todaii.english.shared.request.server.ToeicCollectionRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.entity.ToeicCollection;
+import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.server.ToeicCollectionRequest;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CollectionService {
-    private final CollectionRepository collectionRepository;
+  private final CollectionRepository collectionRepository;
 
-    public List<ToeicCollection> findAll() {
-        return collectionRepository.findAll();
+  public Page<ToeicCollection> findAllPaged(
+      int page, int size, String sortBy, String direction, String keyword) {
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+    return collectionRepository.search(keyword, pageable);
+  }
+
+  public ToeicCollection findById(Long collectionId) {
+    return collectionRepository
+        .findById(collectionId)
+        .orElseThrow(() -> new BusinessException(404, "Collection not found"));
+  }
+
+  public ToeicCollection create(ToeicCollectionRequest request) {
+    String alias = toAlias(request.getName());
+    if (collectionRepository.existsByAlias(alias)) {
+      throw new BusinessException(409, "Alias already exists: " + alias);
     }
 
-    public Page<ToeicCollection> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
-        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+    ToeicCollection collection =
+        ToeicCollection.builder()
+            .name(request.getName())
+            .alias(alias)
+            .description(request.getDescription())
+            .build();
 
-        return collectionRepository.search(keyword, pageable);
+    return collectionRepository.save(collection);
+  }
+
+  public ToeicCollection update(Long id, ToeicCollectionRequest request) {
+    ToeicCollection collection = findById(id);
+
+    String alias = toAlias(request.getName());
+
+    // chỉ check khi alias thực sự thay đổi
+    if (!alias.equals(collection.getAlias())) {
+      boolean aliasExists = collectionRepository.existsByAlias(alias);
+
+      if (aliasExists) {
+        throw new BusinessException(409, "Alias already exists: " + alias);
+      }
     }
 
-    public ToeicCollection findById(Long collectionId){
-        return collectionRepository.findById(collectionId).orElseThrow(() -> new BusinessException(404, "Collection not found"));
-    }
+    collection.setName(request.getName().trim());
+    collection.setAlias(alias);
+    collection.setDescription(request.getDescription());
 
-    public ToeicCollection create(ToeicCollectionRequest request) {
-        ToeicCollection collection = ToeicCollection.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .build();
+    return collectionRepository.save(collection);
+  }
 
-        return collectionRepository.save(collection);
-    }
+  private String toAlias(String name) {
+    return name.trim().toLowerCase().replaceAll("\\s+", "-");
+  }
 
-    public ToeicCollection update(Long id, ToeicCollectionRequest request) {
-        ToeicCollection collection = findById(id);
+  public void softDelete(Long id) {
+    ToeicCollection toeicCollection = findById(id);
 
-        collection.setName(request.getName());
-        collection.setDescription(request.getDescription());
+    toeicCollection.setName("deleted-" + toeicCollection.getName());
+    toeicCollection.setAlias("deleted-" + toeicCollection.getAlias());
+    toeicCollection.setIsDeleted(true);
 
-        return collectionRepository.save(collection);
-    }
+    collectionRepository.save(toeicCollection);
+  }
 
-    public void deleteById(Long id) {
-        collectionRepository.deleteById(id);
-    }
+  public void toggleEnabled(Long id) {
+    ToeicCollection toeicCollection = findById(id);
+    toeicCollection.setEnabled(!toeicCollection.getEnabled());
+
+    collectionRepository.save(toeicCollection);
+  }
 }

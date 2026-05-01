@@ -2,6 +2,10 @@ package com.todaii.english.server.dictionary;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +27,6 @@ import com.todaii.english.shared.dto.DictionaryEntryDTO;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,70 +34,85 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/dictionary")
 public class DictionaryEntryApiController {
-	private final DictionaryEntryService dictionaryService;
+  private final DictionaryEntryService dictionaryService;
 
-	@GetMapping("/raw-word")
-	public ResponseEntity<DictionaryApiResponse[]> getRawWord(Authentication authentication,
-			@RequestParam String word) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
-		DictionaryApiResponse[] dictionaryApiResponses = dictionaryService.lookupWord(currentAdminId, word);
+  @GetMapping("/raw-word")
+  public ResponseEntity<DictionaryApiResponse[]> getRawWord(
+      Authentication authentication, @RequestParam String word) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+    DictionaryApiResponse[] dictionaryApiResponses =
+        dictionaryService.lookupWord(currentAdminId, word);
 
-		return ResponseEntity.ok(dictionaryApiResponses);
-	}
+    return ResponseEntity.ok(dictionaryApiResponses);
+  }
 
-	@Deprecated
-	public ResponseEntity<List<DictionaryEntry>> getAllWords() {
-		List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
-		if (dictionaryEntries.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
+  @Deprecated
+  public ResponseEntity<List<DictionaryEntry>> getAllWords() {
+    List<DictionaryEntry> dictionaryEntries = dictionaryService.findAll();
+    if (dictionaryEntries.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
 
-		return ResponseEntity.ok(dictionaryEntries);
-	}
+    return ResponseEntity.ok(dictionaryEntries);
+  }
 
-	@GetMapping
-	public ResponseEntity<PagedResponse<DictionaryEntry>> getAllPaged(
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "20") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "headword") String sortBy,
-			@RequestParam(defaultValue = "asc") String direction, @RequestParam(required = false) String keyword) {
+  @GetMapping
+  public ResponseEntity<PagedResponse<DictionaryEntry>> getAllPaged(
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "20") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "headword") String sortBy,
+      @RequestParam(defaultValue = "asc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		Page<DictionaryEntry> entries = dictionaryService.findAllPaged(page, size, sortBy, direction, keyword);
+    Page<DictionaryEntry> entries =
+        dictionaryService.findAllPaged(page, size, sortBy, direction, keyword);
 
-		PagedResponse<DictionaryEntry> response = new PagedResponse<>(entries.getContent(), page, size,
-				entries.getTotalElements(), entries.getTotalPages(), entries.isFirst(), entries.isLast(), sortBy,
-				direction);
+    PagedResponse<DictionaryEntry> response =
+        new PagedResponse<>(
+            entries.getContent(),
+            page,
+            size,
+            entries.getTotalElements(),
+            entries.getTotalPages(),
+            entries.isFirst(),
+            entries.isLast(),
+            sortBy,
+            direction);
 
-		return ResponseEntity.ok(response);
-	}
+    return ResponseEntity.ok(response);
+  }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<DictionaryEntry> getWord(@PathVariable Long id) {
-		return ResponseEntity.ok(dictionaryService.findById(id));
-	}
+  @GetMapping("/{id}")
+  public ResponseEntity<DictionaryEntry> getWord(@PathVariable Long id) {
+    return ResponseEntity.ok(dictionaryService.findById(id));
+  }
 
-	@PostMapping("/gemini")
-	public ResponseEntity<List<DictionaryEntry>> createWordByGemini(Authentication authentication,
-			@RequestParam @NotBlank @Length(max = 64) String word) throws Exception {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @PostMapping("/gemini")
+  public ResponseEntity<List<DictionaryEntry>> createWordByGemini(
+      Authentication authentication, @RequestParam @NotBlank @Length(max = 64) String word)
+      throws Exception {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		return ResponseEntity.ok(dictionaryService.createWordByGemini(currentAdminId, word));
-	}
+    return ResponseEntity.ok(dictionaryService.createWordByGemini(currentAdminId, word));
+  }
 
-	@PostMapping
-	public ResponseEntity<DictionaryEntry> createWord(@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
-		return ResponseEntity.status(201).body(dictionaryService.createWord(dictionaryEntryDTO));
-	}
+  @PostMapping
+  public ResponseEntity<DictionaryEntry> createWord(
+      @Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
+    return ResponseEntity.status(201).body(dictionaryService.createWord(dictionaryEntryDTO));
+  }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<DictionaryEntry> updateWord(@PathVariable Long id,
-			@Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
-		return ResponseEntity.ok(dictionaryService.updateWord(id, dictionaryEntryDTO));
-	}
+  @PutMapping("/{id}")
+  public ResponseEntity<DictionaryEntry> updateWord(
+      @PathVariable Long id, @Valid @RequestBody DictionaryEntryDTO dictionaryEntryDTO) {
+    return ResponseEntity.ok(dictionaryService.updateWord(id, dictionaryEntryDTO));
+  }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteWord(@PathVariable Long id) {
-		dictionaryService.deleteWord(id);
-		return ResponseEntity.noContent().build();
-	}
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteWord(@PathVariable Long id) {
+    dictionaryService.deleteWord(id);
+    return ResponseEntity.noContent().build();
+  }
 }

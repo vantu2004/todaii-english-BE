@@ -9,6 +9,5 @@ import com.todaii.english.core.entity.DictionaryEntry;
 
 @Repository
 public interface DictionaryRepository extends JpaRepository<DictionaryEntry, Long> {
-	public List<DictionaryEntry> findAllByHeadword(String word);
-
+  public List<DictionaryEntry> findAllByHeadword(String word);
 }

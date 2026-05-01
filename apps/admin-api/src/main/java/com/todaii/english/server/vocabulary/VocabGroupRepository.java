@@ -13,13 +13,14 @@ import com.todaii.english.core.entity.VocabGroup;
 
 @Repository
 public interface VocabGroupRepository extends JpaRepository<VocabGroup, Long> {
-	@Query("SELECT v FROM VocabGroup v WHERE v.id = ?1 AND v.isDeleted = false")
-	public Optional<VocabGroup> findById(Long id);
+  @Query("SELECT v FROM VocabGroup v WHERE v.id = ?1 AND v.isDeleted = false")
+  public Optional<VocabGroup> findById(Long id);
 
-	@Query("SELECT v FROM VocabGroup v WHERE v.isDeleted = false")
-	public List<VocabGroup> findAll();
+  @Query("SELECT v FROM VocabGroup v WHERE v.isDeleted = false")
+  public List<VocabGroup> findAll();
 
-	@Query("""
+  @Query(
+      """
 			SELECT v FROM VocabGroup v
 			WHERE v.isDeleted = false
 			AND (
@@ -29,7 +30,7 @@ public interface VocabGroupRepository extends JpaRepository<VocabGroup, Long> {
 			    OR LOWER(v.alias) LIKE LOWER(CONCAT('%', ?1, '%'))
 			)
 			""")
-	public Page<VocabGroup> search(String keyword, Pageable pageable);
+  public Page<VocabGroup> search(String keyword, Pageable pageable);
 
-	public boolean existsByAlias(String alias);
+  public boolean existsByAlias(String alias);
 }

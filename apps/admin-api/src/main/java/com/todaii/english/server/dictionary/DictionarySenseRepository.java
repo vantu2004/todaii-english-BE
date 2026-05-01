@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import com.todaii.english.core.entity.DictionarySense;
 
 @Repository
-public interface DictionarySenseRepository extends JpaRepository<DictionarySense, Long> {
-
-}
+public interface DictionarySenseRepository extends JpaRepository<DictionarySense, Long> {}

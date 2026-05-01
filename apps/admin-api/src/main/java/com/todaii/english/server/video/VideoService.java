@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.transaction.Transactional;
+
 import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -30,176 +32,193 @@ import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class VideoService {
-	private final VideoRepository videoRepository;
-	private final VideoLyricLineRepository videoLyricLineRepository;
-	private final ObjectMapper objectMapper;
-	private final ModelMapper modelMapper;
-	private final TopicRepository topicRepository;
-	private final YoutubeDataApiV3Port youtubeDataApiV3Port;
-	private final DictionaryEntryRepository dictionaryEntryRepository;
-	private final EventService eventService;
+  private final VideoRepository videoRepository;
+  private final VideoLyricLineRepository videoLyricLineRepository;
+  private final ObjectMapper objectMapper;
+  private final ModelMapper modelMapper;
+  private final TopicRepository topicRepository;
+  private final YoutubeDataApiV3Port youtubeDataApiV3Port;
+  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final EventService eventService;
 
-	public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
-		String requestUri = ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
+  public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
+    String requestUri =
+        ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
 
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			String response = restTemplate.getForObject(requestUri, String.class);
+    try {
+      RestTemplate restTemplate = new RestTemplate();
+      String response = restTemplate.getForObject(requestUri, String.class);
 
-			JsonNode json = objectMapper.readTree(response);
+      JsonNode json = objectMapper.readTree(response);
 
-			String title = json.path("title").asText();
-			String authorName = json.path("author_name").asText();
-			String providerName = json.path("provider_name").asText();
-			String providerUrl = json.path("provider_url").asText();
-			String thumbnailUrl = json.path("thumbnail_url").asText();
+      String title = json.path("title").asText();
+      String authorName = json.path("author_name").asText();
+      String providerName = json.path("provider_name").asText();
+      String providerUrl = json.path("provider_url").asText();
+      String thumbnailUrl = json.path("thumbnail_url").asText();
 
-			String embedHtml = json.path("html").asText();
+      String embedHtml = json.path("html").asText();
 
-			// Thay width bất kỳ thành 100%
-			embedHtml = embedHtml.replaceAll("width=\"\\d+\"", "width=\"100%\"");
+      // Thay width bất kỳ thành 100%
+      embedHtml = embedHtml.replaceAll("width=\"\\d+\"", "width=\"100%\"");
 
-			// Thay height bất kỳ thành 100%
-			embedHtml = embedHtml.replaceAll("height=\"\\d+\"", "height=\"100%\"");
+      // Thay height bất kỳ thành 100%
+      embedHtml = embedHtml.replaceAll("height=\"\\d+\"", "height=\"100%\"");
 
-			VideoDTO videoDTO = VideoDTO.builder().title(title).authorName(authorName).providerName(providerName)
-					.providerUrl(providerUrl).thumbnailUrl(thumbnailUrl).embedHtml(embedHtml).videoUrl(youtubeUrl)
-					.cefrLevel(CefrLevel.A1).topicIds(null).build();
+      VideoDTO videoDTO =
+          VideoDTO.builder()
+              .title(title)
+              .authorName(authorName)
+              .providerName(providerName)
+              .providerUrl(providerUrl)
+              .thumbnailUrl(thumbnailUrl)
+              .embedHtml(embedHtml)
+              .videoUrl(youtubeUrl)
+              .cefrLevel(CefrLevel.A1)
+              .topicIds(null)
+              .build();
 
-			return videoDTO;
+      return videoDTO;
 
-		} catch (HttpClientErrorException e) {
-			throw new BusinessException(e.getStatusCode().value(), e.getStatusText());
-		} catch (Exception e) {
-			// Bắt mọi lỗi còn lại (JSON parse, network, v.v.)
-			throw new RuntimeException("Failed to import YouTube video: " + e.getMessage(), e);
-		}
-	}
+    } catch (HttpClientErrorException e) {
+      throw new BusinessException(e.getStatusCode().value(), e.getStatusText());
+    } catch (Exception e) {
+      // Bắt mọi lỗi còn lại (JSON parse, network, v.v.)
+      throw new RuntimeException("Failed to import YouTube video: " + e.getMessage(), e);
+    }
+  }
 
-	public YoutubeSearchResponse getYoutubeSearchResponse(Long currentAdminId, String keyword, String type, int size) {
-		YoutubeSearchResponse youtubeSearchResponse = youtubeDataApiV3Port.fetchFromYoutube(keyword, type, size);
+  public YoutubeSearchResponse getYoutubeSearchResponse(
+      Long currentAdminId, String keyword, String type, int size) {
+    YoutubeSearchResponse youtubeSearchResponse =
+        youtubeDataApiV3Port.fetchFromYoutube(keyword, type, size);
 
-		/*
-		 * mặc định youtube data api v3 tính 1 lần search videos hay playlists là
-		 * 100units
-		 */
-		eventService.logAdmin(currentAdminId, EventType.YOUTUBE_SEARCH, 100, null);
+    /*
+     * mặc định youtube data api v3 tính 1 lần search videos hay playlists là
+     * 100units
+     */
+    eventService.logAdmin(currentAdminId, EventType.YOUTUBE_SEARCH, 100, null);
 
-		return youtubeSearchResponse;
-	}
+    return youtubeSearchResponse;
+  }
 
-	public Video findById(Long id) {
-		return videoRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Video not found"));
-	}
+  public Video findById(Long id) {
+    return videoRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(404, "Video not found"));
+  }
 
-	@Deprecated
-	public List<Video> findAll() {
-		return videoRepository.findAll();
-	}
+  @Deprecated
+  public List<Video> findAll() {
+    return videoRepository.findAll();
+  }
 
-	public Page<Video> findAllPaged(int page, int size, String sortBy, String direction, String keyword) {
-		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-		Pageable pageable = PageRequest.of(page - 1, size, sort);
-		Page<Video> videos = videoRepository.search(null, keyword, pageable);
+  public Page<Video> findAllPaged(
+      int page, int size, String sortBy, String direction, String keyword) {
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
+    Page<Video> videos = videoRepository.search(null, keyword, pageable);
 
-		return videos;
-	}
+    return videos;
+  }
 
-	public Page<Video> findByTopicId(Long topicId, int page, int size, String sortBy, String direction,
-			String keyword) {
-		if (!topicRepository.existsById(topicId)) {
-			throw new BusinessException(404, "Topic not found");
-		}
+  public Page<Video> findByTopicId(
+      Long topicId, int page, int size, String sortBy, String direction, String keyword) {
+    if (!topicRepository.existsById(topicId)) {
+      throw new BusinessException(404, "Topic not found");
+    }
 
-		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-		Pageable pageable = PageRequest.of(page - 1, size, sort);
-		Page<Video> videos = videoRepository.search(topicId, keyword, pageable);
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
+    Page<Video> videos = videoRepository.search(topicId, keyword, pageable);
 
-		return videos;
-	}
+    return videos;
+  }
 
-	public Video createVideo(VideoDTO videoDTO) {
-		if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())) {
-			throw new BusinessException(409, "Video already exists with this URL.");
-		}
+  public Video createVideo(VideoDTO videoDTO) {
+    if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())) {
+      throw new BusinessException(409, "Video already exists with this URL.");
+    }
 
-		Video video = modelMapper.map(videoDTO, Video.class);
+    Video video = modelMapper.map(videoDTO, Video.class);
 
-		Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
-		if (topics.size() != videoDTO.getTopicIds().size()) {
-			throw new BusinessException(404, "One or more topics not found");
-		}
+    Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
+    if (topics.size() != videoDTO.getTopicIds().size()) {
+      throw new BusinessException(404, "One or more topics not found");
+    }
 
-		video.setTopics(topics);
-		return videoRepository.save(video);
-	}
+    video.setTopics(topics);
+    return videoRepository.save(video);
+  }
 
-	public Video updateVideo(Long id, VideoDTO videoDTO) {
-		Video existingVideo = findById(id);
-		if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())
-				&& !existingVideo.getVideoUrl().equals(videoDTO.getVideoUrl())) {
-			throw new BusinessException(409, "Another video already exists with this URL.");
-		}
+  public Video updateVideo(Long id, VideoDTO videoDTO) {
+    Video existingVideo = findById(id);
+    if (videoRepository.existsByVideoUrl(videoDTO.getVideoUrl())
+        && !existingVideo.getVideoUrl().equals(videoDTO.getVideoUrl())) {
+      throw new BusinessException(409, "Another video already exists with this URL.");
+    }
 
-		modelMapper.map(videoDTO, existingVideo);
+    modelMapper.map(videoDTO, existingVideo);
 
-		Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
-		if (topics.size() != videoDTO.getTopicIds().size()) {
-			throw new BusinessException(404, "One or more topics not found");
-		}
-		existingVideo.setTopics(topics);
+    Set<Topic> topics = new HashSet<>(topicRepository.findAllById(videoDTO.getTopicIds()));
+    if (topics.size() != videoDTO.getTopicIds().size()) {
+      throw new BusinessException(404, "One or more topics not found");
+    }
+    existingVideo.setTopics(topics);
 
-		return videoRepository.save(existingVideo);
-	}
+    return videoRepository.save(existingVideo);
+  }
 
-	public void toggleEnabled(Long id) {
-		Video video = findById(id);
-		video.setEnabled(!video.getEnabled());
+  public void toggleEnabled(Long id) {
+    Video video = findById(id);
+    video.setEnabled(!video.getEnabled());
 
-		videoRepository.save(video);
-	}
+    videoRepository.save(video);
+  }
 
-	@Transactional
-	public void deleteVideo(Long id) {
-		videoLyricLineRepository.deleteAllByVideoId(id);
-		videoRepository.deleteById(id);
-	}
+  @Transactional
+  public void deleteVideo(Long id) {
+    videoLyricLineRepository.deleteAllByVideoId(id);
+    videoRepository.deleteById(id);
+  }
 
-	public Video addWordToVideo(Long videoId, Long wordId) {
-		Video video = findById(videoId);
+  public Video addWordToVideo(Long videoId, Long wordId) {
+    Video video = findById(videoId);
 
-		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
-				.orElseThrow(() -> new BusinessException(404, "Word not found"));
-		video.getWords().add(dictionaryEntry);
+    DictionaryEntry dictionaryEntry =
+        dictionaryEntryRepository
+            .findById(wordId)
+            .orElseThrow(() -> new BusinessException(404, "Word not found"));
+    video.getWords().add(dictionaryEntry);
 
-		return videoRepository.save(video);
-	}
+    return videoRepository.save(video);
+  }
 
-	public Video removeWordFromVideo(Long videoId, Long wordId) {
-		Video video = findById(videoId);
+  public Video removeWordFromVideo(Long videoId, Long wordId) {
+    Video video = findById(videoId);
 
-		DictionaryEntry dictionaryEntry = dictionaryEntryRepository.findById(wordId)
-				.orElseThrow(() -> new BusinessException(404, "Word not found"));
+    DictionaryEntry dictionaryEntry =
+        dictionaryEntryRepository
+            .findById(wordId)
+            .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-		boolean removed = video.getWords().remove(dictionaryEntry);
-		if (!removed) {
-			throw new BusinessException(400, "Word not found in video");
-		}
+    boolean removed = video.getWords().remove(dictionaryEntry);
+    if (!removed) {
+      throw new BusinessException(400, "Word not found in video");
+    }
 
-		return videoRepository.save(video);
-	}
+    return videoRepository.save(video);
+  }
 
-	public Video removeAllWordsFromVideo(Long videoId) {
-		Video video = findById(videoId);
-		video.getWords().clear();
+  public Video removeAllWordsFromVideo(Long videoId) {
+    Video video = findById(videoId);
+    video.getWords().clear();
 
-		return videoRepository.save(video);
-	}
-
+    return videoRepository.save(video);
+  }
 }

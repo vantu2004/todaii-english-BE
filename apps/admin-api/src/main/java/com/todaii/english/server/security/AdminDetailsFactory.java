@@ -19,28 +19,30 @@ import lombok.RequiredArgsConstructor;
 @Component("adminDetailsFactory")
 @RequiredArgsConstructor
 public class AdminDetailsFactory implements JwtUserDetailsFactory {
-	private final AdminRoleRepository adminRoleRepository;
+  private final AdminRoleRepository adminRoleRepository;
 
-	@Override
-	public UserDetails build(Claims claims) {
-		String[] subjectArr = claims.getSubject().split(",");
-		Long id = Long.parseLong(subjectArr[0]);
-		String displayName = subjectArr[1];
+  @Override
+  public UserDetails build(Claims claims) {
+    String[] subjectArr = claims.getSubject().split(",");
+    Long id = Long.parseLong(subjectArr[0]);
+    String displayName = subjectArr[1];
 
-		String rolesClaim = claims.get("roles", String.class);
-		Set<AdminRole> roles = new HashSet<>();
-		if (rolesClaim != null && !rolesClaim.isBlank()) {
-			for (String code : rolesClaim.split(",")) {
-				roles.add(adminRoleRepository.findById(code)
-						.orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)));
-			}
-		}
+    String rolesClaim = claims.get("roles", String.class);
+    Set<AdminRole> roles = new HashSet<>();
+    if (rolesClaim != null && !rolesClaim.isBlank()) {
+      for (String code : rolesClaim.split(",")) {
+        roles.add(
+            adminRoleRepository
+                .findById(code)
+                .orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)));
+      }
+    }
 
-		Admin admin = new Admin();
-		admin.setId(id);
-		admin.setDisplayName(displayName);
-		admin.setRoles(roles);
+    Admin admin = new Admin();
+    admin.setId(id);
+    admin.setDisplayName(displayName);
+    admin.setRoles(roles);
 
-		return new CustomAdminDetails(admin); // implements UserDetails
-	}
+    return new CustomAdminDetails(admin); // implements UserDetails
+  }
 }

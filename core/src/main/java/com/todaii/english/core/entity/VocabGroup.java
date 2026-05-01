@@ -2,14 +2,15 @@ package com.todaii.english.core.entity;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import org.hibernate.annotations.UpdateTimestamp;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,25 +25,23 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class VocabGroup {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(length = 191, nullable = false)
-	private String name;
+  @Column(length = 191, nullable = false)
+  private String name;
 
-	@Column(length = 191, nullable = false)
-	private String alias;
+  @Column(length = 191, nullable = false)
+  private String alias;
 
-	@Builder.Default
-	private Boolean enabled = false;
+  @Builder.Default private Boolean enabled = false;
 
-	@Builder.Default
-	@Column(name = "is_deleted")
-	private Boolean isDeleted = false;
+  @Builder.Default
+  @Column(name = "is_deleted")
+  private Boolean isDeleted = false;
 
-	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
-
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 }

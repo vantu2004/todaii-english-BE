@@ -28,91 +28,109 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DictionaryService {
-	private final DictionaryRepository dictionaryRepository;
-	private final DictionaryPort dictionaryPort;
-	private final GeminiPort geminiPort;
-	private final ObjectMapper objectMapper;
-	private final ModelMapper modelMapper;
-	private final EventService eventService;
+  private final DictionaryRepository dictionaryRepository;
+  private final DictionaryPort dictionaryPort;
+  private final GeminiPort geminiPort;
+  private final ObjectMapper objectMapper;
+  private final ModelMapper modelMapper;
+  private final EventService eventService;
 
-	public DictionaryApiResponse[] lookupWord(Long currentUserId, String word) {
-		DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupWord(word);
+  public DictionaryApiResponse[] lookupWord(Long currentUserId, String word) {
+    DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupWord(word);
 
-		eventService.logUser(currentUserId, EventType.DICTIONARY_API, 1, null);
+    eventService.logUser(currentUserId, EventType.DICTIONARY_API, 1, null);
 
-		return dictionaryApiResponses;
-	}
+    return dictionaryApiResponses;
+  }
 
-	public DictionaryEntry findById(Long id) {
-		return dictionaryRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Word not found"));
-	}
+  public DictionaryEntry findById(Long id) {
+    return dictionaryRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(404, "Word not found"));
+  }
 
-	public List<DictionaryEntry> findByHeadword(String word) {
-		return dictionaryRepository.findAllByHeadword(word);
-	}
+  public List<DictionaryEntry> findByHeadword(String word) {
+    return dictionaryRepository.findAllByHeadword(word);
+  }
 
-	public List<DictionaryEntry> getWordByGemini(Long currentUserId, String word) throws Exception {
-		List<DictionaryEntry> dictionaryEntries = dictionaryRepository.findAllByHeadword(word);
-		if (!dictionaryEntries.isEmpty()) {
-			return dictionaryEntries;
-		}
-		// Gọi Free Dictionary API
-		DictionaryApiResponse[] rawData = lookupWord(currentUserId, word);
-		String rawJson = objectMapper.writeValueAsString(rawData);
+  public List<DictionaryEntry> getWordByGemini(Long currentUserId, String word) throws Exception {
+    List<DictionaryEntry> dictionaryEntries = dictionaryRepository.findAllByHeadword(word);
+    if (!dictionaryEntries.isEmpty()) {
+      return dictionaryEntries;
+    }
+    // Gọi Free Dictionary API
+    DictionaryApiResponse[] rawData = lookupWord(currentUserId, word);
+    String rawJson = objectMapper.writeValueAsString(rawData);
 
-		// Gọi Gemini (luôn trả về mảng JSON)
-		String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
-		String rawResponseText = askGemini(currentUserId, prompt);
+    // Gọi Gemini (luôn trả về mảng JSON)
+    String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
+    String rawResponseText = askGemini(currentUserId, prompt);
 
-		// Parse mảng DTO
-		DictionaryEntryDTO[] dtoArray = objectMapper.readValue(rawResponseText, DictionaryEntryDTO[].class);
+    // Parse mảng DTO
+    DictionaryEntryDTO[] dtoArray =
+        objectMapper.readValue(rawResponseText, DictionaryEntryDTO[].class);
 
-		dictionaryEntries = Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryRepository::save).toList();
+    dictionaryEntries =
+        Arrays.stream(dtoArray).map(this::toEntity).map(dictionaryRepository::save).toList();
 
-		return dictionaryEntries;
-	}
+    return dictionaryEntries;
+  }
 
-	public DictionaryEntry toEntity(DictionaryEntryDTO dto) {
-		DictionaryEntry entry = DictionaryEntry.builder().headword(dto.getHeadword()).ipa(dto.getIpa())
-				.audioUrl(dto.getAudioUrl()).build();
+  public DictionaryEntry toEntity(DictionaryEntryDTO dto) {
+    DictionaryEntry entry =
+        DictionaryEntry.builder()
+            .headword(dto.getHeadword())
+            .ipa(dto.getIpa())
+            .audioUrl(dto.getAudioUrl())
+            .build();
 
-		Set<DictionarySense> senses = buildDictionarySense(dto, entry);
+    Set<DictionarySense> senses = buildDictionarySense(dto, entry);
 
-		entry.setSenses(senses);
+    entry.setSenses(senses);
 
-		dictionaryRepository.save(entry);
+    dictionaryRepository.save(entry);
 
-		return entry;
-	}
+    return entry;
+  }
 
-	private Set<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
-		Set<DictionarySense> senses = new HashSet<DictionarySense>(dto.getSenses().stream().map(s -> {
-			DictionarySense sense = modelMapper.map(s, DictionarySense.class);
-			sense.setEntry(entry);
+  private Set<DictionarySense> buildDictionarySense(DictionaryEntryDTO dto, DictionaryEntry entry) {
+    Set<DictionarySense> senses =
+        new HashSet<DictionarySense>(
+            dto.getSenses().stream()
+                .map(
+                    s -> {
+                      DictionarySense sense = modelMapper.map(s, DictionarySense.class);
+                      sense.setEntry(entry);
 
-			return sense;
-		}).toList());
-		return senses;
-	}
+                      return sense;
+                    })
+                .toList());
+    return senses;
+  }
 
-	public List<String> getRelatedWord(Long currentUserId, String word) {
-		String prompt = String.format(Gemini.RELATED_WORD_PROMPT, word);
-		String responseText = askGemini(currentUserId, prompt);
+  public List<String> getRelatedWord(Long currentUserId, String word) {
+    String prompt = String.format(Gemini.RELATED_WORD_PROMPT, word);
+    String responseText = askGemini(currentUserId, prompt);
 
-		try {
-			return objectMapper.readValue(responseText, new TypeReference<List<String>>() {
-			});
-		} catch (Exception e) {
-			throw new RuntimeException("Invalid JSON from Gemini: " + responseText, e);
-		}
-	}
+    try {
+      return objectMapper.readValue(responseText, new TypeReference<List<String>>() {});
+    } catch (Exception e) {
+      throw new RuntimeException("Invalid JSON from Gemini: " + responseText, e);
+    }
+  }
 
-	public String askGemini(Long currentUserId, String prompt) {
-		AIResponse aiResponse = geminiPort.generateText(prompt);
-		eventService.logUser(currentUserId, EventType.AI_REQUEST, 1,
-				Map.of("input_token", aiResponse.getInputToken(), "output_token", aiResponse.getOutputToken()));
+  public String askGemini(Long currentUserId, String prompt) {
+    AIResponse aiResponse = geminiPort.generateText(prompt);
+    eventService.logUser(
+        currentUserId,
+        EventType.AI_REQUEST,
+        1,
+        Map.of(
+            "input_token",
+            aiResponse.getInputToken(),
+            "output_token",
+            aiResponse.getOutputToken()));
 
-		return aiResponse.getText();
-	}
-
+    return aiResponse.getText();
+  }
 }

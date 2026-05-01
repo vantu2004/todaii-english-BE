@@ -11,9 +11,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VocabGroupService {
-	private final VocabGroupRepository vocabGroupRepository;
+  private final VocabGroupRepository vocabGroupRepository;
 
-	public List<VocabGroup> findAll() {
-		return vocabGroupRepository.findAll();
-	}
+  public List<VocabGroup> findAll() {
+    return vocabGroupRepository.findAll();
+  }
 }

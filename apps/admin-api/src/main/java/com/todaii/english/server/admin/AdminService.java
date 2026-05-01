@@ -31,175 +31,195 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-	private final AdminRepository adminRepository;
-	private final AdminRoleRepository adminRoleRepository;
-	private final PasswordHasher passwordHasher;
-	private final CloudinaryPort cloudinaryPort;
-	private final SmtpService smtpService;
-	private final EventService eventService;
+  private final AdminRepository adminRepository;
+  private final AdminRoleRepository adminRoleRepository;
+  private final PasswordHasher passwordHasher;
+  private final CloudinaryPort cloudinaryPort;
+  private final SmtpService smtpService;
+  private final EventService eventService;
 
-	@Deprecated
-	public List<Admin> findAll() {
-		// chỉ lấy những admin chưa bị xóa
-		return this.adminRepository.findAll();
-	}
+  @Deprecated
+  public List<Admin> findAll() {
+    // chỉ lấy những admin chưa bị xóa
+    return this.adminRepository.findAll();
+  }
 
-	public Page<Admin> findAllPaged(Long currentAdminId, int page, int size, String sortBy, String direction,
-			String keyword) {
-		Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
-		Pageable pageable = PageRequest.of(page - 1, size, sort);
+  public Page<Admin> findAllPaged(
+      Long currentAdminId, int page, int size, String sortBy, String direction, String keyword) {
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-		return this.adminRepository.findAllActive(currentAdminId, keyword, pageable);
-	}
+    return this.adminRepository.findAllActive(currentAdminId, keyword, pageable);
+  }
 
-	public Admin findById(Long id) {
-		// chỉ lấy những admin chưa bị xóa
-		return this.adminRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
-	}
+  public Admin findById(Long id) {
+    // chỉ lấy những admin chưa bị xóa
+    return this.adminRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  }
 
-	public Admin create(Long currentAdminId, AdminRequest request) {
-		// chấp nhận lấy cả admin đã bị xóa để check
-		if (this.adminRepository.findByEmail(request.getEmail()).isPresent()) {
-			throw new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS);
-		}
+  public Admin create(Long currentAdminId, AdminRequest request) {
+    // chấp nhận lấy cả admin đã bị xóa để check
+    if (this.adminRepository.findByEmail(request.getEmail()).isPresent()) {
+      throw new BusinessException(AdminErrorCode.ADMIN_ALREADY_EXISTS);
+    }
 
-		if (StringUtils.hasText(request.getPassword())) {
-			if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
-				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
-			}
-		} else {
-			throw new BusinessException(400, "Password not blank");
-		}
+    if (StringUtils.hasText(request.getPassword())) {
+      if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
+        throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+      }
+    } else {
+      throw new BusinessException(400, "Password not blank");
+    }
 
-		String passwordHash = this.passwordHasher.hash(request.getPassword());
+    String passwordHash = this.passwordHasher.hash(request.getPassword());
 
-		// tìm role trong db
-		Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
+    // tìm role trong db
+    Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
 
-		Admin admin = Admin.builder().email(request.getEmail()).passwordHash(passwordHash)
-				.displayName(request.getDisplayName()).status(AdminStatus.PENDING).roles(roles).build();
+    Admin admin =
+        Admin.builder()
+            .email(request.getEmail())
+            .passwordHash(passwordHash)
+            .displayName(request.getDisplayName())
+            .status(AdminStatus.PENDING)
+            .roles(roles)
+            .build();
 
-		smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
-		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+    smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
+    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
-		return this.adminRepository.save(admin);
-	}
+    return this.adminRepository.save(admin);
+  }
 
-	public Admin updateProfile(Long id, UpdateProfileRequest request) {
-		Admin admin = this.adminRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  public Admin updateProfile(Long id, UpdateProfileRequest request) {
+    Admin admin =
+        this.adminRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		if (StringUtils.hasText(request.getNewPassword())) {
-			if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
-				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
-			}
+    if (StringUtils.hasText(request.getNewPassword())) {
+      if (request.getNewPassword().length() < 6 || request.getNewPassword().length() > 20) {
+        throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+      }
 
-			if (!StringUtils.hasText(request.getOldPassword())
-					|| !passwordHasher.matches(request.getOldPassword(), admin.getPasswordHash())) {
-				throw new BusinessException(AuthErrorCode.PASSWORD_INCORRECT);
-			}
+      if (!StringUtils.hasText(request.getOldPassword())
+          || !passwordHasher.matches(request.getOldPassword(), admin.getPasswordHash())) {
+        throw new BusinessException(AuthErrorCode.PASSWORD_INCORRECT);
+      }
 
-			admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
-		}
+      admin.setPasswordHash(passwordHasher.hash(request.getNewPassword()));
+    }
 
-		String avatar = request.getAvatarUrl();
-		if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
-			String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
-			admin.setAvatarUrl(uploadedUrl);
+    String avatar = request.getAvatarUrl();
+    if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
+      String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
+      admin.setAvatarUrl(uploadedUrl);
 
-			eventService.logAdmin(id, EventType.CLOUDINARY_UPLOAD, 1, null);
-		} else {
-			admin.setAvatarUrl(admin.getAvatarUrl());
-		}
+      eventService.logAdmin(id, EventType.CLOUDINARY_UPLOAD, 1, null);
+    } else {
+      admin.setAvatarUrl(admin.getAvatarUrl());
+    }
 
-		admin.setDisplayName(request.getDisplayName());
+    admin.setDisplayName(request.getDisplayName());
 
-		return this.adminRepository.save(admin);
-	}
+    return this.adminRepository.save(admin);
+  }
 
-	public Admin updateAdmin(Long currentAdminId, Long id, AdminRequest request) {
-		Admin admin = this.adminRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  public Admin updateAdmin(Long currentAdminId, Long id, AdminRequest request) {
+    Admin admin =
+        this.adminRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		// Xử lý password (super admin không cần oldPassword)
-		if (StringUtils.hasText(request.getPassword())) {
-			if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
-				throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
-			}
-			admin.setPasswordHash(passwordHasher.hash(request.getPassword()));
-		}
+    // Xử lý password (super admin không cần oldPassword)
+    if (StringUtils.hasText(request.getPassword())) {
+      if (request.getPassword().length() < 6 || request.getPassword().length() > 20) {
+        throw new BusinessException(AuthErrorCode.PASSWORD_INVALID_LENGTH);
+      }
+      admin.setPasswordHash(passwordHasher.hash(request.getPassword()));
+    }
 
-		admin.setDisplayName(request.getDisplayName());
+    admin.setDisplayName(request.getDisplayName());
 
-		// Update roles
-		if (request.getRoleCodes() != null && !request.getRoleCodes().isEmpty()) {
-			Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
-			admin.setRoles(roles);
-		}
+    // Update roles
+    if (request.getRoleCodes() != null && !request.getRoleCodes().isEmpty()) {
+      Set<AdminRole> roles = this.getAdminRoles(request.getRoleCodes());
+      admin.setRoles(roles);
+    }
 
-		smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
-		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+    smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
+    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
-		return this.adminRepository.save(admin);
-	}
+    return this.adminRepository.save(admin);
+  }
 
-	private Set<AdminRole> getAdminRoles(Set<String> roleCodes) {
-		Set<AdminRole> roles = roleCodes.stream()
-				.map(code -> this.adminRoleRepository.findById(code)
-						.orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)))
-				.collect(Collectors.toSet());
-		return roles;
-	}
+  private Set<AdminRole> getAdminRoles(Set<String> roleCodes) {
+    Set<AdminRole> roles =
+        roleCodes.stream()
+            .map(
+                code ->
+                    this.adminRoleRepository
+                        .findById(code)
+                        .orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)))
+            .collect(Collectors.toSet());
+    return roles;
+  }
 
-	public void delete(Long currentAdminId, Long id) {
-		Admin admin = this.adminRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  public void delete(Long currentAdminId, Long id) {
+    Admin admin =
+        this.adminRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
-		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+    smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
+    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
-		admin.setIsDeleted(true);
-		admin.setDeletedAt(LocalDateTime.now());
-		admin.setEnabled(false);
-		admin.setStatus(AdminStatus.LOCKED);
+    admin.setIsDeleted(true);
+    admin.setDeletedAt(LocalDateTime.now());
+    admin.setEnabled(false);
+    admin.setStatus(AdminStatus.LOCKED);
 
-		this.adminRepository.save(admin);
-	}
+    this.adminRepository.save(admin);
+  }
 
-	public void updateLastLogin(String email) {
-		Admin admin = this.adminRepository.findActiveByEmail(email)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  public void updateLastLogin(String email) {
+    Admin admin =
+        this.adminRepository
+            .findActiveByEmail(email)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		admin.setLastLoginAt(LocalDateTime.now());
+    admin.setLastLoginAt(LocalDateTime.now());
 
-		this.adminRepository.save(admin);
+    this.adminRepository.save(admin);
 
-		// log login event
-		eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, 1, null);
-	}
+    // log login event
+    eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, 1, null);
+  }
 
-	public void toggleEnabled(Long currentAdminId, Long id) {
-		Admin admin = this.adminRepository.findById(id)
-				.orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+  public void toggleEnabled(Long currentAdminId, Long id) {
+    Admin admin =
+        this.adminRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
-		// Đảo ngược trạng thái enable
-		admin.setEnabled(!admin.getEnabled());
+    // Đảo ngược trạng thái enable
+    admin.setEnabled(!admin.getEnabled());
 
-		// Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
-		if (admin.getEnabled()) {
-			admin.setStatus(AdminStatus.ACTIVE);
+    // Nếu disable thì đổi status về LOCKED, nếu enable thì ACTIVE
+    if (admin.getEnabled()) {
+      admin.setStatus(AdminStatus.ACTIVE);
 
-			smtpService.accountUnBannedNotice(admin.getEmail(), admin.getDisplayName());
-		} else {
-			admin.setStatus(AdminStatus.LOCKED);
+      smtpService.accountUnBannedNotice(admin.getEmail(), admin.getDisplayName());
+    } else {
+      admin.setStatus(AdminStatus.LOCKED);
 
-			smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
-		}
+      smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
+    }
 
-		eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
+    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
-		this.adminRepository.save(admin);
-	}
-
+    this.adminRepository.save(admin);
+  }
 }

@@ -13,7 +13,8 @@ import com.todaii.english.core.entity.DictionaryEntry;
 
 @Repository
 public interface DictionaryEntryRepository extends JpaRepository<DictionaryEntry, Long> {
-	@Query("""
+  @Query(
+      """
 			    SELECT DISTINCT e FROM DictionaryEntry e
 			    WHERE
 			        ?1 IS NULL
@@ -21,16 +22,16 @@ public interface DictionaryEntryRepository extends JpaRepository<DictionaryEntry
 			        OR LOWER(e.headword) LIKE LOWER(CONCAT('%', ?1, '%'))
 			        OR LOWER(e.ipa) LIKE LOWER(CONCAT('%', ?1, '%'))
 			""")
-	public Page<DictionaryEntry> search(String keyword, Pageable pageable);
+  public Page<DictionaryEntry> search(String keyword, Pageable pageable);
 
-	/*
-	 * truyền vào 1 collection và xét các row trong db thỏa vs collection truyền vào
-	 * ko
-	 */
-	@Query("SELECT e FROM DictionaryEntry e WHERE LOWER(e.headword) IN ?1")
-	public List<DictionaryEntry> findByHeadwordInIgnoreCase(Collection<String> words);
+  /*
+   * truyền vào 1 collection và xét các row trong db thỏa vs collection truyền vào
+   * ko
+   */
+  @Query("SELECT e FROM DictionaryEntry e WHERE LOWER(e.headword) IN ?1")
+  public List<DictionaryEntry> findByHeadwordInIgnoreCase(Collection<String> words);
 
-	public boolean existsByHeadword(String headword);
+  public boolean existsByHeadword(String headword);
 
-	public List<DictionaryEntry> findAllByHeadword(String word);
+  public List<DictionaryEntry> findAllByHeadword(String word);
 }

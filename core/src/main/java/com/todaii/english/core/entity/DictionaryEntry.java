@@ -1,13 +1,14 @@
 package com.todaii.english.core.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.*;
+
 import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.*;
 
 @Entity
 @Table(name = "dictionary_entries")
@@ -18,25 +19,25 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Builder
 @ToString
 public class DictionaryEntry {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(nullable = false, length = 191)
-	private String headword; // Từ gốc
+  @Column(nullable = false, length = 191)
+  private String headword; // Từ gốc
 
-	@Column(length = 191)
-	private String ipa; // phiên âm
+  @Column(length = 191)
+  private String ipa; // phiên âm
 
-	@Column(name = "audio_url", length = 1024)
-	private String audioUrl; // audio phát âm
+  @Column(name = "audio_url", length = 1024)
+  private String audioUrl; // audio phát âm
 
-	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 
-	// Quan hệ 1-N: 1 entry có nhiều sense
-	@OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
-	@Builder.Default
-	private Set<DictionarySense> senses = new HashSet();
+  // Quan hệ 1-N: 1 entry có nhiều sense
+  @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private Set<DictionarySense> senses = new HashSet();
 }

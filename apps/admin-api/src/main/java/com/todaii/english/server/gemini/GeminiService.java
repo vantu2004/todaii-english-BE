@@ -10,10 +10,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class GeminiService {
-	private final GeminiPort geminiPort;
+  private final GeminiPort geminiPort;
 
-	public AIResponse askGemini(String prompt) {
-		return geminiPort.generateText(prompt);
-	}
-
+  public AIResponse askGemini(String prompt) {
+    return geminiPort.generateText(prompt);
+  }
 }

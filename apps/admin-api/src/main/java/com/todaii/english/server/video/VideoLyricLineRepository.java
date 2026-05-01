@@ -11,14 +11,15 @@ import com.todaii.english.core.entity.VideoLyricLine;
 
 @Repository
 public interface VideoLyricLineRepository extends JpaRepository<VideoLyricLine, Long> {
-	@Query("SELECT v FROM VideoLyricLine v WHERE v.video.id = ?1 ORDER BY v.lineOrder ASC")
-	public List<VideoLyricLine> findAll(Long videoId);
+  @Query("SELECT v FROM VideoLyricLine v WHERE v.video.id = ?1 ORDER BY v.lineOrder ASC")
+  public List<VideoLyricLine> findAll(Long videoId);
 
-	public void deleteAllByVideoId(Long videoId);
+  public void deleteAllByVideoId(Long videoId);
 
-	public boolean existsByVideoId(Long id);
+  public boolean existsByVideoId(Long id);
 
-	@Query("""
+  @Query(
+      """
 			SELECT v FROM VideoLyricLine v
 			WHERE
 			    ( v.video.id = ?1) AND
@@ -32,6 +33,5 @@ public interface VideoLyricLineRepository extends JpaRepository<VideoLyricLine, 
 			        OR v.textVi LIKE CONCAT('%', ?2, '%')
 			    )
 			""")
-	public List<VideoLyricLine> findAll(Long videoId, String keyword, Sort sort);
-
+  public List<VideoLyricLine> findAll(Long videoId, String keyword, Sort sort);
 }

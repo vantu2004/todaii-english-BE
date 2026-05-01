@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 @Configuration
 public class JacksonConfig {
 
-	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer customizer() {
-		return builder -> builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-	}
+  @Bean
+  public Jackson2ObjectMapperBuilderCustomizer customizer() {
+    return builder -> builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+  }
 }

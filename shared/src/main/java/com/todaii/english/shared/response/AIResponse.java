@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AIResponse {
-	private String text;
-	private int inputToken;
-	private int outputToken;
+  private String text;
+  private int inputToken;
+  private int outputToken;
 }

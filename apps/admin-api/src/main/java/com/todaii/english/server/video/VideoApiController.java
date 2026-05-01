@@ -2,6 +2,10 @@ package com.todaii.english.server.video;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+
 import org.apache.coyote.BadRequestException;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Page;
@@ -25,9 +29,6 @@ import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.response.PagedResponse;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,104 +36,143 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/video")
 public class VideoApiController {
-	private final VideoService videoService;
+  private final VideoService videoService;
 
-	@GetMapping("/youtube")
-	public ResponseEntity<VideoDTO> importFromYoutube(
-			@RequestParam @NotBlank(message = "URL must not be blank") @Length(max = 1024, message = "URL must not exceed 1024 characters") String url)
-			throws BadRequestException {
-		return ResponseEntity.ok(videoService.importFromYoutube(url));
-	}
+  @GetMapping("/youtube")
+  public ResponseEntity<VideoDTO> importFromYoutube(
+      @RequestParam
+          @NotBlank(message = "URL must not be blank")
+          @Length(max = 1024, message = "URL must not exceed 1024 characters")
+          String url)
+      throws BadRequestException {
+    return ResponseEntity.ok(videoService.importFromYoutube(url));
+  }
 
-	@GetMapping("/youtube-data-api-v3")
-	public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(Authentication authentication,
-			@RequestParam(defaultValue = "listening english") @NotBlank(message = "Keyword must not be blank") @Length(max = 191, message = "Keyword must not exceed 191 characters") String keyword,
-			@RequestParam(defaultValue = "video") @NotBlank(message = "Type must not be blank") String type,
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1") int size) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
-		
-		return ResponseEntity.ok(videoService.getYoutubeSearchResponse(currentAdminId, keyword, type, size));
-	}
+  @GetMapping("/youtube-data-api-v3")
+  public ResponseEntity<YoutubeSearchResponse> getYoutubeSearchResponse(
+      Authentication authentication,
+      @RequestParam(defaultValue = "listening english")
+          @NotBlank(message = "Keyword must not be blank")
+          @Length(max = 191, message = "Keyword must not exceed 191 characters")
+          String keyword,
+      @RequestParam(defaultValue = "video") @NotBlank(message = "Type must not be blank")
+          String type,
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1")
+          int size) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Video> getVideo(@PathVariable Long id) {
-		return ResponseEntity.ok(videoService.findById(id));
-	}
+    return ResponseEntity.ok(
+        videoService.getYoutubeSearchResponse(currentAdminId, keyword, type, size));
+  }
 
-	@Deprecated
-	public ResponseEntity<List<Video>> getAllVideos() {
-		List<Video> videos = videoService.findAll();
-		if (videos.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
+  @GetMapping("/{id}")
+  public ResponseEntity<Video> getVideo(@PathVariable Long id) {
+    return ResponseEntity.ok(videoService.findById(id));
+  }
 
-		return ResponseEntity.ok(videos);
-	}
+  @Deprecated
+  public ResponseEntity<List<Video>> getAllVideos() {
+    List<Video> videos = videoService.findAll();
+    if (videos.isEmpty()) {
+      return ResponseEntity.noContent().build();
+    }
 
-	@GetMapping
-	public ResponseEntity<PagedResponse<Video>> getAllPaged(
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = false) String keyword) {
+    return ResponseEntity.ok(videos);
+  }
 
-		Page<Video> videos = videoService.findAllPaged(page, size, sortBy, direction, keyword);
+  @GetMapping
+  public ResponseEntity<PagedResponse<Video>> getAllPaged(
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		PagedResponse<Video> response = new PagedResponse<>(videos.getContent(), page, size, videos.getTotalElements(),
-				videos.getTotalPages(), videos.isFirst(), videos.isLast(), sortBy, direction);
+    Page<Video> videos = videoService.findAllPaged(page, size, sortBy, direction, keyword);
 
-		return ResponseEntity.ok(response);
-	}
+    PagedResponse<Video> response =
+        new PagedResponse<>(
+            videos.getContent(),
+            page,
+            size,
+            videos.getTotalElements(),
+            videos.getTotalPages(),
+            videos.isFirst(),
+            videos.isLast(),
+            sortBy,
+            direction);
 
-	@GetMapping("/topic/{topicId}")
-	public ResponseEntity<PagedResponse<Video>> getVideosByTopicId(@PathVariable Long topicId,
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = false) String keyword) {
+    return ResponseEntity.ok(response);
+  }
 
-		Page<Video> videos = videoService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
+  @GetMapping("/topic/{topicId}")
+  public ResponseEntity<PagedResponse<Video>> getVideosByTopicId(
+      @PathVariable Long topicId,
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		PagedResponse<Video> response = new PagedResponse<>(videos.getContent(), page, size, videos.getTotalElements(),
-				videos.getTotalPages(), videos.isFirst(), videos.isLast(), sortBy, direction);
+    Page<Video> videos =
+        videoService.findByTopicId(topicId, page, size, sortBy, direction, keyword);
 
-		return ResponseEntity.ok(response);
-	}
+    PagedResponse<Video> response =
+        new PagedResponse<>(
+            videos.getContent(),
+            page,
+            size,
+            videos.getTotalElements(),
+            videos.getTotalPages(),
+            videos.isFirst(),
+            videos.isLast(),
+            sortBy,
+            direction);
 
-	@PostMapping
-	public ResponseEntity<Video> createVideo(@Valid @RequestBody VideoDTO videoDTO) {
-		return ResponseEntity.status(201).body(videoService.createVideo(videoDTO));
-	}
+    return ResponseEntity.ok(response);
+  }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Video> updateVideo(@PathVariable Long id, @Valid @RequestBody VideoDTO videoDTO) {
-		return ResponseEntity.status(200).body(videoService.updateVideo(id, videoDTO));
-	}
+  @PostMapping
+  public ResponseEntity<Video> createVideo(@Valid @RequestBody VideoDTO videoDTO) {
+    return ResponseEntity.status(201).body(videoService.createVideo(videoDTO));
+  }
 
-	@PatchMapping("/{id}/enabled")
-	public ResponseEntity<Void> toggleEnabled(@PathVariable Long id) {
-		videoService.toggleEnabled(id);
-		return ResponseEntity.ok().build();
-	}
+  @PutMapping("/{id}")
+  public ResponseEntity<Video> updateVideo(
+      @PathVariable Long id, @Valid @RequestBody VideoDTO videoDTO) {
+    return ResponseEntity.status(200).body(videoService.updateVideo(id, videoDTO));
+  }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
-		videoService.deleteVideo(id);
-		return ResponseEntity.noContent().build();
-	}
+  @PatchMapping("/{id}/enabled")
+  public ResponseEntity<Void> toggleEnabled(@PathVariable Long id) {
+    videoService.toggleEnabled(id);
+    return ResponseEntity.ok().build();
+  }
 
-	@PostMapping("/{videoId}/word/{wordId}")
-	public ResponseEntity<Video> addWordToVideo(@PathVariable Long videoId, @PathVariable Long wordId) {
-		return ResponseEntity.ok(videoService.addWordToVideo(videoId, wordId));
-	}
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
+    videoService.deleteVideo(id);
+    return ResponseEntity.noContent().build();
+  }
 
-	@DeleteMapping("/{videoId}/word/{wordId}")
-	public ResponseEntity<Video> removeWordFromVideo(@PathVariable Long videoId, @PathVariable Long wordId) {
-		return ResponseEntity.ok(videoService.removeWordFromVideo(videoId, wordId));
-	}
+  @PostMapping("/{videoId}/word/{wordId}")
+  public ResponseEntity<Video> addWordToVideo(
+      @PathVariable Long videoId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(videoService.addWordToVideo(videoId, wordId));
+  }
 
-	@DeleteMapping("/{videoId}/word")
-	public ResponseEntity<Video> removeAllWordsFromVideo(@PathVariable Long videoId) {
-		return ResponseEntity.ok(videoService.removeAllWordsFromVideo(videoId));
-	}
+  @DeleteMapping("/{videoId}/word/{wordId}")
+  public ResponseEntity<Video> removeWordFromVideo(
+      @PathVariable Long videoId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(videoService.removeWordFromVideo(videoId, wordId));
+  }
+
+  @DeleteMapping("/{videoId}/word")
+  public ResponseEntity<Video> removeAllWordsFromVideo(@PathVariable Long videoId) {
+    return ResponseEntity.ok(videoService.removeAllWordsFromVideo(videoId));
+  }
 }

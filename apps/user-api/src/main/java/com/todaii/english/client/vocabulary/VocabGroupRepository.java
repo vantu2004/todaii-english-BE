@@ -10,6 +10,8 @@ import com.todaii.english.core.entity.VocabGroup;
 
 @Repository
 public interface VocabGroupRepository extends JpaRepository<VocabGroup, Long> {
-	@Query("SELECT v FROM VocabGroup v WHERE v.enabled = true AND v.isDeleted = false ORDER BY v.name ASC")
-	public List<VocabGroup> findAll();
+  @Query(
+      "SELECT v FROM VocabGroup v WHERE v.enabled = true AND v.isDeleted = false ORDER BY v.name"
+          + " ASC")
+  public List<VocabGroup> findAll();
 }

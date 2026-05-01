@@ -2,6 +2,9 @@ package com.todaii.english.server.vocabulary;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,8 +25,6 @@ import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.request.server.DeckRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,91 +32,121 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/vocab-deck")
 public class VocabDeckApiController {
-	private final VocabDeckService vocabDeckService;
-	private final VocabDeckGeneratorService vocabDeckGeneratorService;
+  private final VocabDeckService vocabDeckService;
+  private final VocabDeckGeneratorService vocabDeckGeneratorService;
 
-	@Deprecated
-	public ResponseEntity<List<VocabDeck>> getAllVocabDecks() {
-		return ResponseEntity.ok(vocabDeckService.findAll());
-	}
+  @Deprecated
+  public ResponseEntity<List<VocabDeck>> getAllVocabDecks() {
+    return ResponseEntity.ok(vocabDeckService.findAll());
+  }
 
-	@GetMapping
-	public ResponseEntity<PagedResponse<VocabDeck>> getAllPaged(
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = false) String keyword) {
+  @GetMapping
+  public ResponseEntity<PagedResponse<VocabDeck>> getAllPaged(
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		Page<VocabDeck> decks = vocabDeckService.findAllPaged(page, size, sortBy, direction, keyword);
+    Page<VocabDeck> decks = vocabDeckService.findAllPaged(page, size, sortBy, direction, keyword);
 
-		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,
-				decks.getTotalElements(), decks.getTotalPages(), decks.isFirst(), decks.isLast(), sortBy, direction);
+    PagedResponse<VocabDeck> response =
+        new PagedResponse<>(
+            decks.getContent(),
+            page,
+            size,
+            decks.getTotalElements(),
+            decks.getTotalPages(),
+            decks.isFirst(),
+            decks.isLast(),
+            sortBy,
+            direction);
 
-		return ResponseEntity.ok(response);
-	}
+    return ResponseEntity.ok(response);
+  }
 
-	@GetMapping("/group/{groupId}")
-	public ResponseEntity<PagedResponse<VocabDeck>> getDecksByGroupId(@PathVariable Long groupId,
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size,
-			@RequestParam(defaultValue = "id") String sortBy, @RequestParam(defaultValue = "desc") String direction,
-			@RequestParam(required = false) String keyword) {
+  @GetMapping("/group/{groupId}")
+  public ResponseEntity<PagedResponse<VocabDeck>> getDecksByGroupId(
+      @PathVariable Long groupId,
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
 
-		Page<VocabDeck> decks = vocabDeckService.findByGroupId(groupId, page, size, sortBy, direction, keyword);
+    Page<VocabDeck> decks =
+        vocabDeckService.findByGroupId(groupId, page, size, sortBy, direction, keyword);
 
-		PagedResponse<VocabDeck> response = new PagedResponse<>(decks.getContent(), page, size,
-				decks.getTotalElements(), decks.getTotalPages(), decks.isFirst(), decks.isLast(), sortBy, direction);
+    PagedResponse<VocabDeck> response =
+        new PagedResponse<>(
+            decks.getContent(),
+            page,
+            size,
+            decks.getTotalElements(),
+            decks.getTotalPages(),
+            decks.isFirst(),
+            decks.isLast(),
+            sortBy,
+            direction);
 
-		return ResponseEntity.ok(response);
-	}
+    return ResponseEntity.ok(response);
+  }
 
-	@GetMapping("/{deckId}")
-	public ResponseEntity<VocabDeck> getVocabDeck(@PathVariable Long deckId) {
-		return ResponseEntity.ok(vocabDeckService.findById(deckId));
-	}
+  @GetMapping("/{deckId}")
+  public ResponseEntity<VocabDeck> getVocabDeck(@PathVariable Long deckId) {
+    return ResponseEntity.ok(vocabDeckService.findById(deckId));
+  }
 
-	@PostMapping
-	public ResponseEntity<VocabDeck> createDraftDeck(@Valid @RequestBody DeckRequest deckRequest) {
-		return ResponseEntity.ok(vocabDeckService.createDraftDeck(deckRequest));
-	}
+  @PostMapping
+  public ResponseEntity<VocabDeck> createDraftDeck(@Valid @RequestBody DeckRequest deckRequest) {
+    return ResponseEntity.ok(vocabDeckService.createDraftDeck(deckRequest));
+  }
 
-	@PostMapping("/{deckId}/word/{wordId}")
-	public ResponseEntity<VocabDeck> addWordToDeck(@PathVariable Long deckId, @PathVariable Long wordId) {
-		return ResponseEntity.ok(vocabDeckService.addWordToDeck(deckId, wordId));
-	}
+  @PostMapping("/{deckId}/word/{wordId}")
+  public ResponseEntity<VocabDeck> addWordToDeck(
+      @PathVariable Long deckId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(vocabDeckService.addWordToDeck(deckId, wordId));
+  }
 
-	@PostMapping("/{deckId}")
-	public ResponseEntity<VocabDeck> autoGenerateDeckWords(Authentication authentication, @PathVariable Long deckId) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @PostMapping("/{deckId}")
+  public ResponseEntity<VocabDeck> autoGenerateDeckWords(
+      Authentication authentication, @PathVariable Long deckId) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		return ResponseEntity.ok(vocabDeckGeneratorService.autoGenerateDeckWords(currentAdminId, deckId));
-	}
+    return ResponseEntity.ok(
+        vocabDeckGeneratorService.autoGenerateDeckWords(currentAdminId, deckId));
+  }
 
-	@DeleteMapping("/{deckId}/word/{wordId}")
-	public ResponseEntity<VocabDeck> removeWordFromDeck(@PathVariable Long deckId, @PathVariable Long wordId) {
-		return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
-	}
+  @DeleteMapping("/{deckId}/word/{wordId}")
+  public ResponseEntity<VocabDeck> removeWordFromDeck(
+      @PathVariable Long deckId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
+  }
 
-	@DeleteMapping("/{deckId}/word")
-	public ResponseEntity<VocabDeck> removeAllWordsFromDeck(@PathVariable Long deckId) {
-		return ResponseEntity.ok(vocabDeckService.removeAllWordsFromDeck(deckId));
-	}
+  @DeleteMapping("/{deckId}/word")
+  public ResponseEntity<VocabDeck> removeAllWordsFromDeck(@PathVariable Long deckId) {
+    return ResponseEntity.ok(vocabDeckService.removeAllWordsFromDeck(deckId));
+  }
 
-	@PutMapping("/{deckId}")
-	public ResponseEntity<VocabDeck> updateVocabDeck(@PathVariable Long deckId,
-			@Valid @RequestBody DeckRequest deckRequest) {
-		return ResponseEntity.ok(vocabDeckService.updateVocabDeck(deckId, deckRequest));
-	}
+  @PutMapping("/{deckId}")
+  public ResponseEntity<VocabDeck> updateVocabDeck(
+      @PathVariable Long deckId, @Valid @RequestBody DeckRequest deckRequest) {
+    return ResponseEntity.ok(vocabDeckService.updateVocabDeck(deckId, deckRequest));
+  }
 
-	@PatchMapping("/{deckId}/enabled")
-	public ResponseEntity<Void> toggleEnabled(@PathVariable Long deckId) {
-		vocabDeckService.toggleEnabled(deckId);
-		return ResponseEntity.noContent().build();
-	}
+  @PatchMapping("/{deckId}/enabled")
+  public ResponseEntity<Void> toggleEnabled(@PathVariable Long deckId) {
+    vocabDeckService.toggleEnabled(deckId);
+    return ResponseEntity.noContent().build();
+  }
 
-	@DeleteMapping("/{deckId}")
-	public ResponseEntity<Void> deleteVocabDeck(@PathVariable Long deckId) {
-		vocabDeckService.deleteById(deckId);
-		return ResponseEntity.noContent().build();
-	}
+  @DeleteMapping("/{deckId}")
+  public ResponseEntity<Void> deleteVocabDeck(@PathVariable Long deckId) {
+    vocabDeckService.deleteById(deckId);
+    return ResponseEntity.noContent().build();
+  }
 }

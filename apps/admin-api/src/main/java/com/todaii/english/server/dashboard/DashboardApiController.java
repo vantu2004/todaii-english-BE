@@ -22,78 +22,93 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/dashboard")
 public class DashboardApiController {
-	private final DashboardService dashboardService;
+  private final DashboardService dashboardService;
 
-	@GetMapping("/summary")
-	public ResponseEntity<DashboardSummaryDTO> getSummary() {
-		return ResponseEntity.ok(dashboardService.getSummary());
-	}
+  @GetMapping("/summary")
+  public ResponseEntity<DashboardSummaryDTO> getSummary() {
+    return ResponseEntity.ok(dashboardService.getSummary());
+  }
 
-	@GetMapping("/admin-chart")
-	public ResponseEntity<DashboardChartDTO> getAdminChart(@RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate) {
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+  @GetMapping("/admin-chart")
+  public ResponseEntity<DashboardChartDTO> getAdminChart(
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getAdminDashboardChart(start, end);
+    DashboardChartDTO dto = dashboardService.getAdminDashboardChart(start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 
-	@GetMapping("/admin-chart/{id}")
-	public ResponseEntity<DashboardChartDTO> getAdminChartById(@PathVariable Long id,
-			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+  @GetMapping("/admin-chart/{id}")
+  public ResponseEntity<DashboardChartDTO> getAdminChartById(
+      @PathVariable Long id,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(id, start, end);
+    DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(id, start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 
-	@GetMapping("/my-chart")
-	public ResponseEntity<DashboardChartDTO> getMyChart(Authentication authentication,
-			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-		Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+  @GetMapping("/my-chart")
+  public ResponseEntity<DashboardChartDTO> getMyChart(
+      Authentication authentication,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(currentAdminId, start, end);
+    DashboardChartDTO dto = dashboardService.getAdminDashboardChartById(currentAdminId, start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 
-	@GetMapping("/user-chart")
-	public ResponseEntity<DashboardChartDTO> getUserChart(@RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate) {
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+  @GetMapping("/user-chart")
+  public ResponseEntity<DashboardChartDTO> getUserChart(
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getUserDashboardChart(start, end);
+    DashboardChartDTO dto = dashboardService.getUserDashboardChart(start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 
-	@GetMapping("/user-chart/{id}")
-	public ResponseEntity<DashboardChartDTO> getUserChartById(@PathVariable Long id,
-			@RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+  @GetMapping("/user-chart/{id}")
+  public ResponseEntity<DashboardChartDTO> getUserChartById(
+      @PathVariable Long id,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getUserDashboardChartById(id, start, end);
+    DashboardChartDTO dto = dashboardService.getUserDashboardChartById(id, start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 
-	@GetMapping("/guest-chart")
-	public ResponseEntity<DashboardChartDTO> getGuestChart(@RequestParam(required = false) String startDate,
-			@RequestParam(required = false) String endDate) {
-		LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
-		LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
+  @GetMapping("/guest-chart")
+  public ResponseEntity<DashboardChartDTO> getGuestChart(
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate) {
+    LocalDate start =
+        startDate != null ? LocalDate.parse(startDate) : LocalDate.now().minusDays(30);
+    LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.now();
 
-		DashboardChartDTO dto = dashboardService.getGuestDashboardChart(start, end);
+    DashboardChartDTO dto = dashboardService.getGuestDashboardChart(start, end);
 
-		return ResponseEntity.ok(dto);
-	}
+    return ResponseEntity.ok(dto);
+  }
 }

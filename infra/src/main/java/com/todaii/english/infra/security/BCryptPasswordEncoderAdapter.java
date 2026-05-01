@@ -7,15 +7,15 @@ import com.todaii.english.core.security.PasswordHasher;
 
 @Component
 public class BCryptPasswordEncoderAdapter implements PasswordHasher {
-	private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+  private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-	@Override
-	public String hash(String rawPassword) {
-		return bCryptPasswordEncoder.encode(rawPassword);
-	}
+  @Override
+  public String hash(String rawPassword) {
+    return bCryptPasswordEncoder.encode(rawPassword);
+  }
 
-	@Override
-	public boolean matches(String rawPassword, String encodedPassword) {
-		return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
-	}
+  @Override
+  public boolean matches(String rawPassword, String encodedPassword) {
+    return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
+  }
 }

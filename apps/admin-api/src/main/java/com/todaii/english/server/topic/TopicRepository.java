@@ -14,14 +14,15 @@ import com.todaii.english.shared.enums.TopicType;
 
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long> {
-	@Query("SELECT t FROM Topic t WHERE t.id = ?1 AND t.isDeleted = false")
-	public Optional<Topic> findById(Long id);
+  @Query("SELECT t FROM Topic t WHERE t.id = ?1 AND t.isDeleted = false")
+  public Optional<Topic> findById(Long id);
 
-	@Deprecated
-	@Query("SELECT t FROM Topic t WHERE t.isDeleted = false")
-	public List<Topic> findAll();
+  @Deprecated
+  @Query("SELECT t FROM Topic t WHERE t.isDeleted = false")
+  public List<Topic> findAll();
 
-	@Query("""
+  @Query(
+      """
 			SELECT t FROM Topic t
 			WHERE t.isDeleted = false AND LOWER(t.topicType) = LOWER(?2)
 			AND (
@@ -32,11 +33,10 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
 			    OR LOWER(t.topicType) LIKE LOWER(CONCAT('%', ?1, '%'))
 			)
 			""")
-	public Page<Topic> findAllActive(String keyword, String topicType, Pageable pageable);
+  public Page<Topic> findAllActive(String keyword, String topicType, Pageable pageable);
 
-	@Query("SELECT t FROM Topic t WHERE t.topicType = ?1 AND t.isDeleted = false ORDER BY t.name ASC")
-	List<Topic> findAllNopaged(TopicType topicType);
+  @Query("SELECT t FROM Topic t WHERE t.topicType = ?1 AND t.isDeleted = false ORDER BY t.name ASC")
+  List<Topic> findAllNopaged(TopicType topicType);
 
-	public boolean existsByAlias(String alias);
-
+  public boolean existsByAlias(String alias);
 }

@@ -1,7 +1,8 @@
 package com.todaii.english.shared.constants;
 
 public class MailTemplate {
-	public static final String VERIFICATION_EMAIL_TEMPLATE = """
+  public static final String VERIFICATION_EMAIL_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -46,7 +47,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String PASSWORD_RESET_SUCCESS_TEMPLATE = """
+  public static final String PASSWORD_RESET_SUCCESS_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -95,7 +97,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String PASSWORD_RESET_REQUEST_TEMPLATE = """
+  public static final String PASSWORD_RESET_REQUEST_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -140,7 +143,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String WELCOME_EMAIL_TEMPLATE = """
+  public static final String WELCOME_EMAIL_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -188,7 +192,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String ACCOUNT_BANNED_TEMPLATE = """
+  public static final String ACCOUNT_BANNED_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -240,7 +245,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String ACCOUNT_UNBANNED_TEMPLATE = """
+  public static final String ACCOUNT_UNBANNED_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -292,7 +298,8 @@ public class MailTemplate {
 			</html>
 			""";
 
-	public static final String ACCOUNT_DELETED_TEMPLATE = """
+  public static final String ACCOUNT_DELETED_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -344,8 +351,9 @@ public class MailTemplate {
 			</html>
 			""";
 
-	// --- TEMPLATE: ADMIN TẠO TÀI KHOẢN (GỬI KÈM MẬT KHẨU) ---
-	public static final String ACCOUNT_CREATED_BY_ADMIN_TEMPLATE = """
+  // --- TEMPLATE: ADMIN TẠO TÀI KHOẢN (GỬI KÈM MẬT KHẨU) ---
+  public static final String ACCOUNT_CREATED_BY_ADMIN_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>
@@ -410,8 +418,9 @@ public class MailTemplate {
 			</html>
 			""";
 
-	// --- TEMPLATE: ADMIN CẬP NHẬT THÔNG TIN TÀI KHOẢN ---
-	public static final String ACCOUNT_UPDATED_BY_ADMIN_TEMPLATE = """
+  // --- TEMPLATE: ADMIN CẬP NHẬT THÔNG TIN TÀI KHOẢN ---
+  public static final String ACCOUNT_UPDATED_BY_ADMIN_TEMPLATE =
+      """
 			<!DOCTYPE html>
 			<html>
 			<head>

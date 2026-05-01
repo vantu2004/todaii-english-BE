@@ -12,10 +12,11 @@ import com.todaii.english.core.entity.Video;
 
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Long> {
-	public boolean existsByVideoUrl(String videoUrl);
+  public boolean existsByVideoUrl(String videoUrl);
 
-	// nếu topicId != null nghĩa là tìm các video dựa theo topicId, dùng chung cho 2 hàm getVideos
-	@Query("""
+  // nếu topicId != null nghĩa là tìm các video dựa theo topicId, dùng chung cho 2 hàm getVideos
+  @Query(
+      """
 			SELECT DISTINCT v FROM Video v
 			LEFT JOIN v.topics t
 			WHERE
@@ -29,7 +30,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 			        OR LOWER(v.cefrLevel) LIKE LOWER(CONCAT('%', ?2, '%'))
 			    )
 			""")
-	public Page<Video> search(Long topicId, String keyword, Pageable pageable);
+  public Page<Video> search(Long topicId, String keyword, Pageable pageable);
 
-	public List<Video> findAllByWords_Id(Long entryId);
+  public List<Video> findAllByWords_Id(Long entryId);
 }

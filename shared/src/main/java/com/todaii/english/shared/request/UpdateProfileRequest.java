@@ -1,8 +1,9 @@
 package com.todaii.english.shared.request;
 
+import jakarta.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,13 +13,13 @@ import lombok.Setter;
 @Builder
 public class UpdateProfileRequest {
 
-	private String oldPassword;
+  private String oldPassword;
 
-	private String newPassword;
+  private String newPassword;
 
-	@NotNull(message = "Display name cannot be null")
-	@Length(min = 1, max = 191, message = "Display name must be between 1 and 191 characters")
-	private String displayName;
+  @NotNull(message = "Display name cannot be null")
+  @Length(min = 1, max = 191, message = "Display name must be between 1 and 191 characters")
+  private String displayName;
 
-	private String avatarUrl;
+  private String avatarUrl;
 }

@@ -1,16 +1,19 @@
 package com.todaii.english.server.toeic_question;
 
-import com.todaii.english.core.entity.ToeicQuestion;
-import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import java.util.List;
+
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.todaii.english.core.entity.ToeicQuestion;
+import com.todaii.english.shared.dto.ToeicQuestionDTO;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,39 +21,36 @@ import java.util.List;
 @RequestMapping("/api/v1/toeic/question")
 public class QuestionApiController {
 
-    private final QuestionService questionService;
+  private final QuestionService questionService;
 
-    @GetMapping
-    public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
-            @RequestParam(required = false) Long testId,
-            @RequestParam(required = false) Long groupId,
-            @RequestParam List<Long> tagIds,
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, tagIds, pageable));
-    }
+  @GetMapping
+  public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
+      @RequestParam(required = false) Long testId,
+      @RequestParam(required = false) Long groupId,
+      @RequestParam List<Long> tagIds,
+      Pageable pageable) {
+    return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, tagIds, pageable));
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ToeicQuestionDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(questionService.getById(id));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ToeicQuestionDTO> getById(@PathVariable Long id) {
+    return ResponseEntity.ok(questionService.getById(id));
+  }
 
-    @PostMapping
-    public ResponseEntity<ToeicQuestion> createQuestion(@Valid @RequestBody ToeicQuestionDTO dto) {
-        return ResponseEntity.status(201).body(questionService.create(dto));
-    }
+  @PostMapping
+  public ResponseEntity<ToeicQuestion> createQuestion(@Valid @RequestBody ToeicQuestionDTO dto) {
+    return ResponseEntity.status(201).body(questionService.create(dto));
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ToeicQuestion> updateQuestion(
-            @PathVariable Long id,
-            @Valid @RequestBody ToeicQuestionDTO dto
-    ) {
-        return ResponseEntity.ok(questionService.update(id, dto));
-    }
+  @PutMapping("/{id}")
+  public ResponseEntity<ToeicQuestion> updateQuestion(
+      @PathVariable Long id, @Valid @RequestBody ToeicQuestionDTO dto) {
+    return ResponseEntity.ok(questionService.update(id, dto));
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
-        questionService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
+    questionService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }

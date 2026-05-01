@@ -1,8 +1,9 @@
 package com.todaii.english.core.entity;
 
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -13,30 +14,30 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class VideoLyricLine {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "line_order", nullable = false)
-	private Integer lineOrder; // thứ tự dòng
+  @Column(name = "line_order", nullable = false)
+  private Integer lineOrder; // thứ tự dòng
 
-	@Column(name = "start_ms", nullable = false)
-	private Integer startMs; // thời gian bắt đầu (ms)
+  @Column(name = "start_ms", nullable = false)
+  private Integer startMs; // thời gian bắt đầu (ms)
 
-	@Column(name = "end_ms", nullable = false)
-	private Integer endMs; // thời gian kết thúc (ms)
+  @Column(name = "end_ms", nullable = false)
+  private Integer endMs; // thời gian kết thúc (ms)
 
-	@Lob
-	@Column(name = "text_en", columnDefinition = "MEDIUMTEXT", nullable = false)
-	private String textEn; // câu lyric tiếng Anh
+  @Lob
+  @Column(name = "text_en", columnDefinition = "MEDIUMTEXT", nullable = false)
+  private String textEn; // câu lyric tiếng Anh
 
-	@Lob
-	@Column(name = "text_vi", columnDefinition = "MEDIUMTEXT", nullable = false)
-	private String textVi; // dịch tiếng Việt
+  @Lob
+  @Column(name = "text_vi", columnDefinition = "MEDIUMTEXT", nullable = false)
+  private String textVi; // dịch tiếng Việt
 
-	// Liên kết với bảng videos (1 chiều)
-	@ManyToOne
-	@JoinColumn(name = "video_id", nullable = false)
-	@JsonIgnore
-	private Video video;
+  // Liên kết với bảng videos (1 chiều)
+  @ManyToOne
+  @JoinColumn(name = "video_id", nullable = false)
+  @JsonIgnore
+  private Video video;
 }

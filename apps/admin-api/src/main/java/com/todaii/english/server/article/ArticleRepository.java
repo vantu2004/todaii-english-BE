@@ -12,9 +12,10 @@ import com.todaii.english.core.entity.Article;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-	// nếu topicId != null nghĩa là tìm các article dựa theo topicId, dùng chung cho
-	// 2 hàm getArticles
-	@Query("""
+  // nếu topicId != null nghĩa là tìm các article dựa theo topicId, dùng chung cho
+  // 2 hàm getArticles
+  @Query(
+      """
 			SELECT DISTINCT a FROM Article a
 			LEFT JOIN a.topics t
 			WHERE
@@ -30,7 +31,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 				    OR LOWER(a.cefrLevel) LIKE LOWER(CONCAT('%', ?2, '%'))
 				)
 			""")
-	public Page<Article> search(Long topicId, String keyword, Pageable pageable);
+  public Page<Article> search(Long topicId, String keyword, Pageable pageable);
 
-	public List<Article> findAllByWords_Id(Long entryId);
+  public List<Article> findAllByWords_Id(Long entryId);
 }

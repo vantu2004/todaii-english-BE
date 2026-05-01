@@ -1,6 +1,6 @@
-package com.todaii.english.server.toeic_question_group;
+package com.todaii.english.server.toeic_passage;
 
-import com.todaii.english.core.entity.ToeicQuestionGroup;
+import com.todaii.english.core.entity.ToeicPassage;
 import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -13,20 +13,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionGroupService {
+public class PassageService {
 
-    private final QuestionGroupRepository questionGroupRepository;
+    private final PassageRepository passageRepository;
     private final TestRepository testRepository;
     private final ModelMapper modelMapper;
 
     public Page<ToeicQuestionGroupDTO> getAllPaged(Long testId, Pageable pageable) {
 
-        Page<ToeicQuestionGroup> page;
+        Page<ToeicPassage> page;
 
         if (testId != null) {
-            page = questionGroupRepository.findByTestId(testId, pageable);
+            page = passageRepository.findByTestId(testId, pageable);
         } else {
-            page = questionGroupRepository.findAll(pageable);
+            page = passageRepository.findAll(pageable);
         }
 
         return page.map(this::toDTO);
@@ -36,31 +36,31 @@ public class QuestionGroupService {
         return toDTO(findById(id));
     }
 
-    public ToeicQuestionGroup findById(Long id){
-        return questionGroupRepository.findById(id)
+    public ToeicPassage findById(Long id){
+        return passageRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(404, "Question group not found"));
     }
 
-    public ToeicQuestionGroup create(ToeicQuestionGroupDTO dto){
-        ToeicQuestionGroup group = modelMapper.map(dto, ToeicQuestionGroup.class);
+    public ToeicPassage create(ToeicQuestionGroupDTO dto){
+        ToeicPassage group = modelMapper.map(dto, ToeicPassage.class);
         setTest(group, dto.getTestId());
-        return questionGroupRepository.save(group);
+        return passageRepository.save(group);
     }
 
-    public ToeicQuestionGroup update(Long id, ToeicQuestionGroupDTO dto) {
+    public ToeicPassage update(Long id, ToeicQuestionGroupDTO dto) {
         dto.setId(id);
-        ToeicQuestionGroup group = findById(id);
+        ToeicPassage group = findById(id);
         modelMapper.map(dto, group);
         setTest(group, dto.getTestId());
-        return questionGroupRepository.save(group);
+        return passageRepository.save(group);
     }
 
     public void delete(Long id) {
-        ToeicQuestionGroup group = findById(id);
-        questionGroupRepository.delete(group);
+        ToeicPassage group = findById(id);
+        passageRepository.delete(group);
     }
 
-    private void setTest(ToeicQuestionGroup group, Long testId) {
+    private void setTest(ToeicPassage group, Long testId) {
         if (testId != null) {
             ToeicTest test = testRepository.findById(testId)
                     .orElseThrow(() -> new BusinessException(404, "Test not found"));
@@ -68,7 +68,7 @@ public class QuestionGroupService {
         }
     }
 
-    private ToeicQuestionGroupDTO toDTO(ToeicQuestionGroup entity) {
+    private ToeicQuestionGroupDTO toDTO(ToeicPassage entity) {
         ToeicQuestionGroupDTO dto = modelMapper.map(entity, ToeicQuestionGroupDTO.class);
 
         if (entity.getTest() != null) {

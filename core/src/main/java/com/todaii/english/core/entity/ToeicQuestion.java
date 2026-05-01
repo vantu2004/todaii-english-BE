@@ -16,34 +16,23 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class ToeicQuestion {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "test_id")
-    @JsonIgnore
-    private ToeicTest test;
-
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    @JsonIgnore
-    private ToeicQuestionGroup group;
-
-    @Column(nullable = false)
+    @Column(name = "part_number", nullable = false)
     private Integer partNumber;
 
-    @Column(nullable = false)
+    @Column(name = "question_no", nullable = false)
     private Integer questionNo;
 
     @Column(columnDefinition = "MEDIUMTEXT")
     private String question;
 
-    @Column(length = 1024)
+    @Column(name = "image_url", length = 1024)
     private String imageUrl;
 
-    @Column(length = 1024)
+    @Column(name = "audio_url", length = 1024)
     private String audioUrl;
 
     @Column(name = "option_a", columnDefinition = "MEDIUMTEXT")
@@ -59,16 +48,26 @@ public class ToeicQuestion {
     private String optionD;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "corect_ans", nullable = false)
     private Answer correctAns;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String transcript;
 
     @Column(columnDefinition = "LONGTEXT")
     private String explanation;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String translation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "test_id")
+    @JsonIgnore
+    private ToeicTest test;
 
-    @ManyToMany
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "passage_id")
+    private ToeicPassage passage;
+
+    // quan hệ 1 chiều
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "toeic_question_tags", joinColumns = @JoinColumn(name = "question_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     @Builder.Default
     private Set<ToeicTag> tags = new HashSet<>();

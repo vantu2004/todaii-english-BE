@@ -1,10 +1,10 @@
 package com.todaii.english.server.toeic_question;
 
 import com.todaii.english.core.entity.ToeicQuestion;
-import com.todaii.english.core.entity.ToeicQuestionGroup;
+import com.todaii.english.core.entity.ToeicPassage;
 import com.todaii.english.core.entity.ToeicTag;
 import com.todaii.english.core.entity.ToeicTest;
-import com.todaii.english.server.toeic_question_group.QuestionGroupRepository;
+import com.todaii.english.server.toeic_passage.PassageRepository;
 import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
@@ -28,7 +28,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final TagRepository tagRepository;
     private final TestRepository testRepository;
-    private final QuestionGroupRepository groupRepository;
+    private final PassageRepository groupRepository;
     private final ModelMapper modelMapper;
 
     public Page<ToeicQuestionDTO> getAllPaged(Long testId, Long groupId, List<Long> tagIds, Pageable pageable) {
@@ -94,9 +94,9 @@ public class QuestionService {
         }
 
         if (dto.getGroupId() != null) {
-            ToeicQuestionGroup group = groupRepository.findById(dto.getGroupId())
+            ToeicPassage passage = groupRepository.findById(dto.getGroupId())
                     .orElseThrow(() -> new BusinessException(404, "Group not found"));
-            question.setGroup(group);
+            question.setPassage(passage);
         }
 
         if (dto.getTagIds() != null) {
@@ -118,8 +118,8 @@ public class QuestionService {
             dto.setTestId(entity.getTest().getId());
         }
 
-        if (entity.getGroup() != null) {
-            dto.setGroupId(entity.getGroup().getId());
+        if (entity.getPassage() != null) {
+            dto.setGroupId(entity.getPassage().getId());
         }
 
         if (entity.getTags() != null) {

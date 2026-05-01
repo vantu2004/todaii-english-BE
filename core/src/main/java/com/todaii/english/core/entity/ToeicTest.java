@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,29 +20,24 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ToeicTest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "collection_id")
-    @JsonIgnore
-    private ToeicCollection collection;
 
     @Column(nullable = false, length = 512)
     private String title;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "test_type")
     private TestType testType = TestType.TOEIC_LR;
 
+    // 120 minutes
     @Builder.Default
     @Column(nullable = false)
     private Integer duration = 120;
 
-    @Column(length = 1024)
+    @Column(name = "audio_url", length = 1024)
     private String audioUrl;
 
     @Column(length = 1024)
@@ -54,20 +50,38 @@ public class ToeicTest {
     @Enumerated(EnumType.STRING)
     private TestStatus status = TestStatus.DRAFT;
 
-    private Long creatorId;
-
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(nullable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // RELATION
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
-    private List<ToeicQuestionGroup> groups;
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ToeicPassage> passages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL)
-    private List<ToeicQuestion> questions;
+    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ToeicQuestion> questions = new ArrayList<>();
+
+    // quan hệ 1 chiều
+    @ManyToOne
+    @JoinColumn(name = "collection_id")
+    private ToeicCollection collection;
+
+    // ignore luôn để giấu thông tin admin
+    // quan hệ 1 chiều, hạn chế việc khi query admin thì nó query quá nhiều thông tin liên quan
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
+    @JsonIgnore
+    private Admin creator;
+
+    // quan hệ 1 chiều
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    @JsonIgnore
+    private Admin updatedBy;
+
 }

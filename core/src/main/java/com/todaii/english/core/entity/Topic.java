@@ -39,7 +39,7 @@ public class Topic {
 	private Boolean isDeleted = false;
 
 	@UpdateTimestamp
-	@Column(name = "updated_at", nullable = false)
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
 }

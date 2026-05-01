@@ -1,9 +1,12 @@
 package com.todaii.english.server.toeic_test;
 
+import com.todaii.english.core.entity.Admin;
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.core.entity.ToeicTest;
+import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
+import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,6 +20,7 @@ public class TestService {
     private final ModelMapper modelMapper;
     private final TestRepository testRepository;
     private final CollectionRepository collectionRepository;
+    private final AdminRepository adminRepository;
 
     public Page<ToeicTestDTO> getAllPaged(Long collectionId, Pageable pageable) {
 
@@ -36,7 +40,7 @@ public class TestService {
                 .orElseThrow(() -> new BusinessException(404, "Test not found"));
     }
 
-    public ToeicTest create(Long adminId, ToeicTestDTO dto){
+    public ToeicTest create(Long adminId, ToeicTestDTO dto) {
 
         if (dto.getCollectionId() == null) {
             throw new BusinessException(400, "collectionId is required");
@@ -48,7 +52,10 @@ public class TestService {
         ToeicTest test = modelMapper.map(dto, ToeicTest.class);
 
         test.setCollection(collection);
-        test.setCreatorId(adminId);
+
+        Admin creator = adminRepository.findById(adminId).orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
+        test.setCreator(creator);
+
         return testRepository.save(test);
     }
 

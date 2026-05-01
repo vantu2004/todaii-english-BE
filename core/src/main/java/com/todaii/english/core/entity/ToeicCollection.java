@@ -1,14 +1,10 @@
 package com.todaii.english.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "toeic_collections")
@@ -18,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ToeicCollection {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,14 +24,15 @@ public class ToeicCollection {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Builder.Default
+    private Boolean enabled = false;
+
+    @Builder.Default
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false, updatable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ToeicTest> tests = new ArrayList<>();
 }

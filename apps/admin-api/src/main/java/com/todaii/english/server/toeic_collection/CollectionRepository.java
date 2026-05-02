@@ -27,4 +27,5 @@ public interface CollectionRepository extends JpaRepository<ToeicCollection, Lon
   Page<ToeicCollection> search(@Param("keyword") String keyword, Pageable pageable);
 
   boolean existsByAlias(String alias);
+
 }

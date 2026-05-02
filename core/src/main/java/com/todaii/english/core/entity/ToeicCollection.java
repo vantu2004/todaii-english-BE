@@ -23,7 +23,7 @@ public class ToeicCollection {
   @Column(nullable = false, length = 191)
   private String name;
 
-  @Column(length = 191, nullable = false)
+  @Column(nullable = false, length = 191)
   private String alias;
 
   @Column(columnDefinition = "MEDIUMTEXT")

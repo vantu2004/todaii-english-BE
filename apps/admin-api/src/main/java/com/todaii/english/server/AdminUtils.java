@@ -9,4 +9,8 @@ public class AdminUtils {
     CustomAdminDetails customAdminDetails = (CustomAdminDetails) authentication.getPrincipal();
     return customAdminDetails.getAdmin().getId();
   }
+
+  public static String toAlias(String name) {
+    return name.trim().toLowerCase().replaceAll("\\s+", "-");
+  }
 }

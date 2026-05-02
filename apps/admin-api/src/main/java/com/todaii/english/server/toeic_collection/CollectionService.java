@@ -1,5 +1,6 @@
 package com.todaii.english.server.toeic_collection;
 
+import com.todaii.english.server.AdminUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +33,7 @@ public class CollectionService {
   }
 
   public ToeicCollection create(ToeicCollectionRequest request) {
-    String alias = toAlias(request.getName());
+    String alias = AdminUtils.toAlias(request.getName());
     if (collectionRepository.existsByAlias(alias)) {
       throw new BusinessException(409, "Alias already exists: " + alias);
     }
@@ -50,7 +51,7 @@ public class CollectionService {
   public ToeicCollection update(Long id, ToeicCollectionRequest request) {
     ToeicCollection collection = findById(id);
 
-    String alias = toAlias(request.getName());
+    String alias = AdminUtils.toAlias(request.getName());
 
     // chỉ check khi alias thực sự thay đổi
     if (!alias.equals(collection.getAlias())) {
@@ -66,10 +67,6 @@ public class CollectionService {
     collection.setDescription(request.getDescription());
 
     return collectionRepository.save(collection);
-  }
-
-  private String toAlias(String name) {
-    return name.trim().toLowerCase().replaceAll("\\s+", "-");
   }
 
   public void softDelete(Long id) {

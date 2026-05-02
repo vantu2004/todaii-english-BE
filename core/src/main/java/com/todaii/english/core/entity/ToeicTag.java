@@ -19,9 +19,7 @@ public class ToeicTag {
   @Column(nullable = false, length = 191)
   private String name;
 
-  @Column(name = "tag_type", nullable = false, length = 512)
-  private String tagType;
+  @Column(nullable = false, length = 191)
+  private String alias;
 
-  //    @ManyToMany(mappedBy = "tags")
-  //    private Set<ToeicQuestion> questions = new HashSet<>();
 }

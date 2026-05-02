@@ -64,12 +64,12 @@ public class ToeicQuestion {
   @JsonIgnore
   private ToeicTest test;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "passage_id")
   private ToeicPassage passage;
 
   // quan hệ 1 chiều
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "toeic_question_tags",
       joinColumns = @JoinColumn(name = "question_id"),

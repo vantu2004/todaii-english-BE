@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.Admin;
 import com.todaii.english.server.AdminUtils;
-import com.todaii.english.server.security.CustomAdminDetails;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.server.AdminRequest;
 import com.todaii.english.shared.response.PagedResponse;
@@ -53,8 +52,7 @@ public class AdminApiController {
       @RequestParam(defaultValue = "desc") String direction,
       @RequestParam(required = false) String keyword) {
 
-    CustomAdminDetails principal = (CustomAdminDetails) authentication.getPrincipal();
-    Long currentAdminId = principal.getAdmin().getId();
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
     Page<Admin> admins =
         this.adminService.findAllPaged(currentAdminId, page, size, sortBy, direction, keyword);

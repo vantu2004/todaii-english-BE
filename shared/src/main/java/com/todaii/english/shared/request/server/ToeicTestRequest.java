@@ -1,8 +1,11 @@
-package com.todaii.english.shared.dto;
+package com.todaii.english.shared.request.server;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import com.todaii.english.shared.enums.TestStatus;
@@ -10,24 +13,18 @@ import com.todaii.english.shared.enums.TestType;
 
 import lombok.Data;
 
-@Data
-public class ToeicTestDTO {
-
-  @NotNull(message = "collectionId is required")
-  private Long collectionId;
-
-  @NotBlank(message = "Collection name cannot be blank")
-  @Length(max = 512, message = "Title must not exceed 192 characters")
-  private String collectionName;
-
+@Getter
+@Setter
+public class ToeicTestRequest {
   @NotBlank(message = "Title cannot be blank")
   @Length(max = 512, message = "Title must not exceed 512 characters")
   private String title;
 
-  @NotBlank(message = "Test type cannot be blank")
+  @NotNull(message = "Test type cannot be null")
   private TestType testType;
 
-  @NotBlank(message = "Duration cannot be blank")
+  @NotNull(message = "Duration is required")
+  @Min(value = 1, message = "Duration must be greater than 0")
   private Integer duration;
 
   @NotBlank(message = "Audio url cannot be blank")
@@ -42,6 +39,9 @@ public class ToeicTestDTO {
   @Length(max = 1024, message = "Description must not exceed 1024 characters")
   private String description;
 
-  @NotBlank(message = "Status cannot be blank")
+  @NotNull(message = "Status cannot be null")
   private TestStatus status;
+
+  @NotNull(message = "Collection is required")
+  private Long collectionId;
 }

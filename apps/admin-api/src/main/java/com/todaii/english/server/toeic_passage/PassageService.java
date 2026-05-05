@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.core.entity.ToeicPassage;
 import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.toeic_test.TestRepository;
-import com.todaii.english.shared.dto.ToeicQuestionGroupDTO;
+import com.todaii.english.shared.dto.ToeicPassageDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class PassageService {
   private final TestRepository testRepository;
   private final ModelMapper modelMapper;
 
-  public Page<ToeicQuestionGroupDTO> getAllPaged(Long testId, Pageable pageable) {
+  public Page<ToeicPassageDTO> getAllPaged(Long testId, Pageable pageable) {
 
     Page<ToeicPassage> page;
 
@@ -34,7 +34,7 @@ public class PassageService {
     return page.map(this::toDTO);
   }
 
-  public ToeicQuestionGroupDTO getById(Long id) {
+  public ToeicPassageDTO getById(Long id) {
     return toDTO(findById(id));
   }
 
@@ -44,13 +44,13 @@ public class PassageService {
         .orElseThrow(() -> new BusinessException(404, "Question group not found"));
   }
 
-  public ToeicPassage create(ToeicQuestionGroupDTO dto) {
+  public ToeicPassage create(ToeicPassageDTO dto) {
     ToeicPassage group = modelMapper.map(dto, ToeicPassage.class);
     setTest(group, dto.getTestId());
     return passageRepository.save(group);
   }
 
-  public ToeicPassage update(Long id, ToeicQuestionGroupDTO dto) {
+  public ToeicPassage update(Long id, ToeicPassageDTO dto) {
     dto.setId(id);
     ToeicPassage group = findById(id);
     modelMapper.map(dto, group);
@@ -73,8 +73,8 @@ public class PassageService {
     }
   }
 
-  private ToeicQuestionGroupDTO toDTO(ToeicPassage entity) {
-    ToeicQuestionGroupDTO dto = modelMapper.map(entity, ToeicQuestionGroupDTO.class);
+  private ToeicPassageDTO toDTO(ToeicPassage entity) {
+    ToeicPassageDTO dto = modelMapper.map(entity, ToeicPassageDTO.class);
 
     if (entity.getTest() != null) {
       dto.setTestId(entity.getTest().getId());

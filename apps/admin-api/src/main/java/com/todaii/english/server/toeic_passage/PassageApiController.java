@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.ToeicPassage;
-import com.todaii.english.shared.dto.ToeicQuestionGroupDTO;
+import com.todaii.english.shared.dto.ToeicPassageDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,26 +21,26 @@ public class PassageApiController {
   private final PassageService passageService;
 
   @GetMapping
-  public ResponseEntity<Page<ToeicQuestionGroupDTO>> getAllPaged(
+  public ResponseEntity<Page<ToeicPassageDTO>> getAllPaged(
       @RequestParam(required = false) Long testId, Pageable pageable) {
     return ResponseEntity.ok(passageService.getAllPaged(testId, pageable));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ToeicQuestionGroupDTO> getById(@PathVariable Long id) {
-    ToeicQuestionGroupDTO entity = passageService.getById(id);
+  public ResponseEntity<ToeicPassageDTO> getById(@PathVariable Long id) {
+    ToeicPassageDTO entity = passageService.getById(id);
     return ResponseEntity.ok(entity);
   }
 
   @PostMapping
   public ResponseEntity<ToeicPassage> createQuestionGroup(
-      @Valid @RequestBody ToeicQuestionGroupDTO dto) {
+      @Valid @RequestBody ToeicPassageDTO dto) {
     return ResponseEntity.status(201).body(passageService.create(dto));
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<ToeicPassage> updateQuestionGroup(
-      @PathVariable Long id, @Valid @RequestBody ToeicQuestionGroupDTO dto) {
+      @PathVariable Long id, @Valid @RequestBody ToeicPassageDTO dto) {
     return ResponseEntity.ok(passageService.update(id, dto));
   }
 

@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ToeicQuestionGroupDTO {
+public class ToeicPassageDTO {
 
   private Long id;
 

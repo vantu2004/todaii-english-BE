@@ -1,6 +1,5 @@
 package com.todaii.english.server.toeic_test;
 
-import com.todaii.english.shared.response.ToeicTestResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +13,7 @@ public interface TestRepository extends JpaRepository<ToeicTest, Long> {
   Page<ToeicTest> findByCollectionId(Long collectionId, Pageable pageable);
 
   @Query(
-          """
+      """
                 SELECT DISTINCT t FROM ToeicTest t
                 WHERE
                         :keyword IS NULL
@@ -23,7 +22,7 @@ public interface TestRepository extends JpaRepository<ToeicTest, Long> {
                         OR LOWER(t.testType) LIKE LOWER(CONCAT('%', :keyword, '%'))
                         OR LOWER(t.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
                         OR LOWER(t.status) LIKE LOWER(CONCAT('%', :keyword, '%'))
-   
+
                 """)
-    Page<ToeicTest> getAllPaged(String keyword, Pageable pageable);
+  Page<ToeicTest> getAllPaged(String keyword, Pageable pageable);
 }

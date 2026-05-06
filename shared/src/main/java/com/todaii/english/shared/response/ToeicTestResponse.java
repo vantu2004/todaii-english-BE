@@ -1,11 +1,12 @@
 package com.todaii.english.shared.response;
 
+import java.time.LocalDateTime;
+
 import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,7 +27,7 @@ public class ToeicTestResponse {
 
   @Getter
   @Setter
-  public static class ToeicCollectionDTO{
+  public static class ToeicCollectionDTO {
     private Long id;
     private String name;
     private String alias;
@@ -34,7 +35,7 @@ public class ToeicTestResponse {
 
   @Getter
   @Setter
-  public static class AdminDTO{
+  public static class AdminDTO {
     private Long id;
     private String name;
   }

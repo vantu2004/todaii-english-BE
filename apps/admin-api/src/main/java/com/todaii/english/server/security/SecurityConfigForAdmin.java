@@ -272,7 +272,7 @@ public class SecurityConfigForAdmin {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/article/paragraph/*")
                     .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
-                     // CollectionApiController
+                    // CollectionApiController
                     .requestMatchers(HttpMethod.GET, "/api/v1/toeic/collection")
                     .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/toeic/collection/*")
@@ -288,7 +288,7 @@ public class SecurityConfigForAdmin {
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/toeic/collection/*")
                     .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
-                     // TagApiController
+                    // TagApiController
                     .requestMatchers(HttpMethod.GET, "/api/v1/toeic/tag")
                     .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
                     .requestMatchers(HttpMethod.GET, "/api/v1/toeic/tag/*")
@@ -300,6 +300,17 @@ public class SecurityConfigForAdmin {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/tag/*")
                     .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
 
+                    // TestApiController
+                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test")
+                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test/*")
+                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+                    .requestMatchers(HttpMethod.POST, "/api/v1/toeic/test")
+                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+                    .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/test/*")
+                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
+                    .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/test/*")
+                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
                     .anyRequest()
                     .authenticated());
 

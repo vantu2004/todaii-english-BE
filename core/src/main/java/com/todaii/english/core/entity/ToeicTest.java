@@ -6,16 +6,17 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.todaii.english.shared.enums.TestStatus;
-import com.todaii.english.shared.enums.TestType;
-
-import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.shared.enums.TestStatus;
+import com.todaii.english.shared.enums.TestType;
+
+import lombok.*;
 
 @Entity
 @Table(name = "toeic_tests")
@@ -91,5 +92,4 @@ public class ToeicTest {
   @JoinColumn(name = "updated_by", insertable = false)
   @JsonIgnore
   private Admin updatedBy;
-
 }

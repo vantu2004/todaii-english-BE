@@ -12,8 +12,8 @@ import com.todaii.english.core.entity.Article;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-/*   nếu topicId != null nghĩa là tìm các article dựa theo topicId, dùng chung cho
-   2 hàm getArticles*/
+  /*   nếu topicId != null nghĩa là tìm các article dựa theo topicId, dùng chung cho
+  2 hàm getArticles*/
   @Query(
       """
 			SELECT DISTINCT a FROM Article a

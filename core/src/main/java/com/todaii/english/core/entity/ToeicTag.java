@@ -21,5 +21,4 @@ public class ToeicTag {
 
   @Column(nullable = false, length = 191)
   private String alias;
-
 }

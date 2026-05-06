@@ -1,16 +1,16 @@
 package com.todaii.english.server.toeic_tag;
 
-import com.todaii.english.core.entity.ToeicQuestion;
-import com.todaii.english.server.AdminUtils;
-import com.todaii.english.server.toeic_question.QuestionRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.entity.ToeicQuestion;
 import com.todaii.english.core.entity.ToeicTag;
+import com.todaii.english.server.AdminUtils;
+import com.todaii.english.server.toeic_question.QuestionRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class TagService {
   private final TagRepository tagRepository;
   private final QuestionRepository questionRepository;
 
-  public List<ToeicTag> getAllTags(){
+  public List<ToeicTag> getAllTags() {
     return tagRepository.findAll();
   }
 
@@ -30,7 +30,7 @@ public class TagService {
 
   public ToeicTag create(String name) {
     String alias = AdminUtils.toAlias(name);
-    if (tagRepository.existsByAlias(alias)){
+    if (tagRepository.existsByAlias(alias)) {
       throw new BusinessException(409, "Alias already exists: " + alias);
     }
 
@@ -61,8 +61,7 @@ public class TagService {
   public void delete(Long id) {
     ToeicTag tag = findById(id);
 
-    List<ToeicQuestion> questions =
-            questionRepository.findAllByTags_Id(id);
+    List<ToeicQuestion> questions = questionRepository.findAllByTags_Id(id);
 
     for (ToeicQuestion question : questions) {
       question.getTags().remove(tag);

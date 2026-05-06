@@ -1,6 +1,5 @@
 package com.todaii.english.server.toeic_collection;
 
-import com.todaii.english.server.AdminUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.ToeicCollection;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ToeicCollectionRequest;
 

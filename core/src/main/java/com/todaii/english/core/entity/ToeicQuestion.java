@@ -11,7 +11,11 @@ import com.todaii.english.shared.enums.Answer;
 import lombok.*;
 
 @Entity
-@Table(name = "toeic_questions")
+@Table(name = "toeic_questions", uniqueConstraints = {
+        @UniqueConstraint(
+                columnNames = {"test_id", "question_no"}
+        )
+})
 @Getter
 @Setter
 @NoArgsConstructor

@@ -2,6 +2,7 @@ package com.todaii.english.server.toeic_question;
 
 import java.util.List;
 
+import com.todaii.english.shared.request.server.BulkQuestionRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -26,10 +27,10 @@ public class QuestionApiController {
   @GetMapping
   public ResponseEntity<Page<ToeicQuestionDTO>> getAllPaged(
       @RequestParam(required = false) Long testId,
-      @RequestParam(required = false) Long groupId,
-      @RequestParam List<Long> tagIds,
+      @RequestParam(required = false) Long passageId,
+      @RequestParam(required = false) List<Long> tagIds,
       Pageable pageable) {
-    return ResponseEntity.ok(questionService.getAllPaged(testId, groupId, tagIds, pageable));
+    return ResponseEntity.ok(questionService.getAllPaged(testId, passageId, tagIds, pageable));
   }
 
   @GetMapping("/{id}")
@@ -38,14 +39,27 @@ public class QuestionApiController {
   }
 
   @PostMapping
-  public ResponseEntity<ToeicQuestion> createQuestion(@Valid @RequestBody ToeicQuestionDTO dto) {
+  public ResponseEntity<ToeicQuestionDTO> createQuestion(@Valid @RequestBody ToeicQuestionDTO dto) {
     return ResponseEntity.status(201).body(questionService.create(dto));
+  }
+
+  @PostMapping("/bulk")
+  public ResponseEntity<List<ToeicQuestion>> createBulk(@Valid @RequestBody BulkQuestionRequest request){
+    return ResponseEntity.status(201).body(questionService.createBulk(request.getQuestions()));
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<ToeicQuestion> updateQuestion(
       @PathVariable Long id, @Valid @RequestBody ToeicQuestionDTO dto) {
     return ResponseEntity.ok(questionService.update(id, dto));
+  }
+
+  @PutMapping("/bulk")
+  public ResponseEntity<List<ToeicQuestion>> updateBulk(
+          @Valid @RequestBody BulkQuestionRequest request) {
+
+    return ResponseEntity.ok(
+            questionService.updateBulk(request.getQuestions()));
   }
 
   @DeleteMapping("/{id}")

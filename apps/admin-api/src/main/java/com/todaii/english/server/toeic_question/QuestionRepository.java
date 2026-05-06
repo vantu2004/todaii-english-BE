@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface QuestionRepository
     extends JpaRepository<ToeicQuestion, Long>, JpaSpecificationExecutor<ToeicQuestion> {
-    List<ToeicQuestion> findAllByTags_Id(Long id);
+    List<ToeicQuestion> findAllByTagsId(Long id);
+    boolean existsByTestIdAndQuestionNo(Long testId, Integer questionNumber);
 
 }

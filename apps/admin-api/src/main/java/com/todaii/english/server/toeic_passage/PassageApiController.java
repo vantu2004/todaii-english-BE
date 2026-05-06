@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/api/v1/toeic/question-group")
+@RequestMapping("/api/v1/toeic/passage")
 public class PassageApiController {
   private final PassageService passageService;
 
@@ -33,19 +33,19 @@ public class PassageApiController {
   }
 
   @PostMapping
-  public ResponseEntity<ToeicPassage> createQuestionGroup(
+  public ResponseEntity<ToeicPassage> createPassage(
       @Valid @RequestBody ToeicPassageDTO dto) {
     return ResponseEntity.status(201).body(passageService.create(dto));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<ToeicPassage> updateQuestionGroup(
+  public ResponseEntity<ToeicPassage> updatePassage(
       @PathVariable Long id, @Valid @RequestBody ToeicPassageDTO dto) {
     return ResponseEntity.ok(passageService.update(id, dto));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteQuestionGroup(@PathVariable Long id) {
+  public ResponseEntity<Void> deletePassage(@PathVariable Long id) {
     passageService.delete(id);
     return ResponseEntity.noContent().build();
   }

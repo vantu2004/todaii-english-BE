@@ -61,8 +61,7 @@ public class TagService {
   public void delete(Long id) {
     ToeicTag tag = findById(id);
 
-    List<ToeicQuestion> questions =
-            questionRepository.findAllByTags_Id(id);
+    List<ToeicQuestion> questions = questionRepository.findAllByTagsId(id);
 
     for (ToeicQuestion question : questions) {
       question.getTags().remove(tag);

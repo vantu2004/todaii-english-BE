@@ -36,7 +36,7 @@ public class DictionaryService {
   private final EventService eventService;
 
   public DictionaryApiResponse[] lookupWord(Long currentUserId, String word) {
-    DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupWord(word);
+    DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupFreeDictionaryApi(word);
 
     eventService.logUser(currentUserId, EventType.DICTIONARY_API, 1, null);
 

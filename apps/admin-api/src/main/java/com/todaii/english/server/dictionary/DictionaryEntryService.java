@@ -50,7 +50,7 @@ public class DictionaryEntryService {
   private final EventService eventService;
 
   public DictionaryApiResponse[] lookupWord(Long currentAdminId, String word) {
-    DictionaryApiResponse[] response = dictionaryPort.lookupWord(word);
+    DictionaryApiResponse[] response = dictionaryPort.lookupFreeDictionaryApi(word);
 
     // ko cần check response nữa vì nó đã tự ném lỗi
     eventService.logAdmin(currentAdminId, EventType.DICTIONARY_API, 1, Map.of("headword", word));

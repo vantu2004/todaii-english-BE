@@ -5,6 +5,8 @@ public class ApiUrl {
       "https://www.youtube.com/oembed?url=<URL>&format=<FORMAT>";
   public static final String DICTIONARY_BASE_URL =
       "https://api.dictionaryapi.dev/api/v2/entries/en";
+  public static final String TODAII_DICT_BASE_URL =
+          "https://api.dunno.ai/api/search/vi/envi/%s?type=envi&page=%d&limit=%d";
   public static final String VIDEO_BASE_URL = "https://www.youtube.com/watch?v=%s";
   public static final String PLAYLIST_BASE_URL = "https://www.youtube.com/playlist?list=%s";
   public static final String YOUTUBE_DATA_API_V3_VIDEO =

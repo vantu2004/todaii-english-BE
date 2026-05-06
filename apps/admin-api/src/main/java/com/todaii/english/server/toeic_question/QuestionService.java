@@ -1,5 +1,6 @@
 package com.todaii.english.server.toeic_question;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import com.todaii.english.shared.dto.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +35,24 @@ public class QuestionService {
   private final ModelMapper modelMapper;
 
   public Page<ToeicQuestionDTO> getAllPaged(
-      Long testId, Long groupId, List<Long> tagIds, Pageable pageable) {
+      Long testId, Long passageId, List<Long> tagIds, Pageable pageable) {
+
+    if (testId != null && !testRepository.existsById(testId)) {
+      throw new BusinessException(404, "Test not found");
+    }
+
+    if (passageId != null && !groupRepository.existsById(passageId)) {
+      throw new BusinessException(404, "Passage not found");
+    }
+
+    if (tagIds != null && !tagIds.isEmpty()) {
+
+      List<ToeicTag> tags = tagRepository.findAllById(tagIds);
+
+      if (tags.size() != tagIds.size()) {
+        throw new BusinessException(404, "Some tags not found");
+      }
+    }
 
     Specification<ToeicQuestion> spec = (root, query, cb) -> cb.conjunction();
 
@@ -41,8 +60,8 @@ public class QuestionService {
       spec = spec.and((root, query, cb) -> cb.equal(root.get("test").get("id"), testId));
     }
 
-    if (groupId != null) {
-      spec = spec.and((root, query, cb) -> cb.equal(root.get("group").get("id"), groupId));
+    if (passageId != null) {
+      spec = spec.and((root, query, cb) -> cb.equal(root.get("passage").get("id"), passageId));
     }
 
     if (tagIds != null && !tagIds.isEmpty()) {
@@ -65,23 +84,79 @@ public class QuestionService {
   }
 
   public ToeicQuestion findById(Long id) {
-    return questionRepository
-        .findById(id)
+    return questionRepository.findById(id)
         .orElseThrow(() -> new BusinessException(404, "Question not found"));
   }
 
-  public ToeicQuestion create(ToeicQuestionDTO dto) {
+  public ToeicQuestionDTO create(ToeicQuestionDTO dto) {
+    if (questionRepository.existsByTestIdAndQuestionNo(dto.getTestId(), dto.getQuestionNo())) {
+      throw new BusinessException(
+              400, String.format("Question number %d already exists in test %d", dto.getQuestionNo(), dto.getTestId())
+      );
+    }
     ToeicQuestion question = modelMapper.map(dto, ToeicQuestion.class);
     setRelations(question, dto);
-    return questionRepository.save(question);
+    ToeicQuestion savedQuestion = questionRepository.save(question);
+
+    return toDTO(savedQuestion);
   }
+
+  @Transactional
+  public List<ToeicQuestion> createBulk(List<ToeicQuestionDTO> dtos) {
+
+    List<ToeicQuestion> questions = new ArrayList<>();
+
+    for (ToeicQuestionDTO dto : dtos) {
+
+      if (questionRepository.existsByTestIdAndQuestionNo(dto.getTestId(), dto.getQuestionNo())) {
+        throw new BusinessException(
+                400, String.format("Question number %d already exists in test %d", dto.getQuestionNo(), dto.getTestId())
+        );
+      }
+
+      ToeicQuestion question = modelMapper.map(dto, ToeicQuestion.class);
+
+      ToeicTest test = testRepository.findById(dto.getTestId())
+              .orElseThrow(() -> new BusinessException(404, "Test not found"));
+
+      question.setTest(test);
+
+      questions.add(question);
+    }
+
+    return questionRepository.saveAll(questions);
+  }
+
 
   public ToeicQuestion update(Long id, ToeicQuestionDTO dto) {
     dto.setId(id);
     ToeicQuestion question = findById(id);
+
+    // Use old question number, prevent changing it
+    Integer oldQuestionNo = question.getQuestionNo();
     modelMapper.map(dto, question);
+    question.setQuestionNo(oldQuestionNo);
+
     setRelations(question, dto);
     return questionRepository.save(question);
+  }
+
+  @Transactional
+  public List<ToeicQuestion> updateBulk(List<ToeicQuestionDTO> dtos) {
+
+    List<ToeicQuestion> questions = new ArrayList<>();
+
+    for (ToeicQuestionDTO dto : dtos) {
+
+      ToeicQuestion question = questionRepository.findById(dto.getId())
+              .orElseThrow(() -> new BusinessException(404, String.format("Question %d not found", dto.getId())));
+
+      modelMapper.map(dto, question);
+
+      questions.add(question);
+    }
+
+    return questionRepository.saveAll(questions);
   }
 
   public void delete(Long id) {
@@ -91,18 +166,14 @@ public class QuestionService {
   private void setRelations(ToeicQuestion question, ToeicQuestionDTO dto) {
 
     if (dto.getTestId() != null) {
-      ToeicTest test =
-          testRepository
-              .findById(dto.getTestId())
+      ToeicTest test = testRepository.findById(dto.getTestId())
               .orElseThrow(() -> new BusinessException(404, "Test not found"));
       question.setTest(test);
     }
 
-    if (dto.getGroupId() != null) {
-      ToeicPassage passage =
-          groupRepository
-              .findById(dto.getGroupId())
-              .orElseThrow(() -> new BusinessException(404, "Group not found"));
+    if (dto.getPassageId() != null) {
+      ToeicPassage passage = groupRepository.findById(dto.getPassageId())
+              .orElseThrow(() -> new BusinessException(404, "Passage not found"));
       question.setPassage(passage);
     }
 
@@ -125,7 +196,7 @@ public class QuestionService {
     }
 
     if (entity.getPassage() != null) {
-      dto.setGroupId(entity.getPassage().getId());
+      dto.setPassageId(entity.getPassage().getId());
     }
 
     if (entity.getTags() != null) {

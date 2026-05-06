@@ -18,11 +18,11 @@ public class ToeicQuestionDTO {
   private Long id;
 
   private Long testId;
-  private Long groupId;
+  private Long passageId;
 
   @NotNull private Integer partNumber;
 
-  @NotNull private Integer questionNo;
+  private Integer questionNo;
 
   private String question;
   private String imageUrl;

@@ -1,10 +1,11 @@
-package com.todaii.english.shared.request.server;
+package com.todaii.english.shared.request.server.toeic;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
@@ -26,12 +27,14 @@ public class ToeicTestRequest {
   @Min(value = 1, message = "Duration must be greater than 0")
   private Integer duration;
 
-  @NotBlank(message = "Audio url cannot be blank")
+  // optional
   @Length(max = 1024, message = "Audio url must not exceed 1024 characters")
+  @URL(message = "Audio URL must be a valid URL")
   private String audioUrl;
 
-  @NotBlank(message = "Thumbnail cannot be blank")
+  // optional
   @Length(max = 1024, message = "Thumbnail must not exceed 1024 characters")
+  @URL(message = "thumbnail URL must be a valid URL")
   private String thumbnail;
 
   @NotBlank(message = "Description cannot be blank")

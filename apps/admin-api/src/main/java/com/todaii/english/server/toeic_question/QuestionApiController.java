@@ -2,7 +2,6 @@ package com.todaii.english.server.toeic_question;
 
 import java.util.List;
 
-import com.todaii.english.shared.request.server.BulkQuestionRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.ToeicQuestion;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import com.todaii.english.shared.request.server.toeic.BulkQuestionRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +44,8 @@ public class QuestionApiController {
   }
 
   @PostMapping("/bulk")
-  public ResponseEntity<List<ToeicQuestion>> createBulk(@Valid @RequestBody BulkQuestionRequest request){
+  public ResponseEntity<List<ToeicQuestion>> createBulk(
+      @Valid @RequestBody BulkQuestionRequest request) {
     return ResponseEntity.status(201).body(questionService.createBulk(request.getQuestions()));
   }
 
@@ -56,10 +57,9 @@ public class QuestionApiController {
 
   @PutMapping("/bulk")
   public ResponseEntity<List<ToeicQuestion>> updateBulk(
-          @Valid @RequestBody BulkQuestionRequest request) {
+      @Valid @RequestBody BulkQuestionRequest request) {
 
-    return ResponseEntity.ok(
-            questionService.updateBulk(request.getQuestions()));
+    return ResponseEntity.ok(questionService.updateBulk(request.getQuestions()));
   }
 
   @DeleteMapping("/{id}")

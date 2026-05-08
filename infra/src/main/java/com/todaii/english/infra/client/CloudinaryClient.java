@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -32,26 +33,38 @@ public class CloudinaryClient implements CloudinaryPort {
 
   @Override
   public String uploadImage(String base64Image, String folderName) {
+    return upload(base64Image, folderName, "image");
+  }
+
+  @Override
+  public String uploadFile(MultipartFile multipartFile, String folderName) {
     try {
-      Map uploadResult =
+      return upload(multipartFile.getBytes(), folderName, "auto");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private String upload(Object file, String folderName, String resourceType) {
+    try {
+      Map<?, ?> uploadResult =
           cloudinary
               .uploader()
               .upload(
-                  base64Image,
+                  file,
                   ObjectUtils.asMap(
                       "folder",
                       "todaii/" + folderName,
                       "resource_type",
-                      "image",
+                      resourceType,
                       "use_filename",
                       false,
                       "unique_filename",
                       true));
 
       return uploadResult.get("secure_url").toString();
-
     } catch (IOException e) {
-      throw new RuntimeException("Failed to upload image to Cloudinary");
+      throw new RuntimeException("Failed to upload file to Cloudinary", e);
     }
   }
 }

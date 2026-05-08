@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.todaii.english.core.entity.ToeicPassage;
 import com.todaii.english.core.entity.ToeicQuestion;
@@ -22,7 +23,6 @@ import com.todaii.english.shared.dto.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -84,16 +84,12 @@ public class QuestionService {
   }
 
   public ToeicQuestion findById(Long id) {
-    return questionRepository.findById(id)
+    return questionRepository
+        .findById(id)
         .orElseThrow(() -> new BusinessException(404, "Question not found"));
   }
 
   public ToeicQuestionDTO create(ToeicQuestionDTO dto) {
-    if (questionRepository.existsByTestIdAndQuestionNo(dto.getTestId(), dto.getQuestionNo())) {
-      throw new BusinessException(
-              400, String.format("Question number %d already exists in test %d", dto.getQuestionNo(), dto.getTestId())
-      );
-    }
     ToeicQuestion question = modelMapper.map(dto, ToeicQuestion.class);
     setRelations(question, dto);
     ToeicQuestion savedQuestion = questionRepository.save(question);
@@ -107,16 +103,11 @@ public class QuestionService {
     List<ToeicQuestion> questions = new ArrayList<>();
 
     for (ToeicQuestionDTO dto : dtos) {
-
-      if (questionRepository.existsByTestIdAndQuestionNo(dto.getTestId(), dto.getQuestionNo())) {
-        throw new BusinessException(
-                400, String.format("Question number %d already exists in test %d", dto.getQuestionNo(), dto.getTestId())
-        );
-      }
-
       ToeicQuestion question = modelMapper.map(dto, ToeicQuestion.class);
 
-      ToeicTest test = testRepository.findById(dto.getTestId())
+      ToeicTest test =
+          testRepository
+              .findById(dto.getTestId())
               .orElseThrow(() -> new BusinessException(404, "Test not found"));
 
       question.setTest(test);
@@ -127,15 +118,11 @@ public class QuestionService {
     return questionRepository.saveAll(questions);
   }
 
-
   public ToeicQuestion update(Long id, ToeicQuestionDTO dto) {
     dto.setId(id);
     ToeicQuestion question = findById(id);
 
-    // Use old question number, prevent changing it
-    Integer oldQuestionNo = question.getQuestionNo();
     modelMapper.map(dto, question);
-    question.setQuestionNo(oldQuestionNo);
 
     setRelations(question, dto);
     return questionRepository.save(question);
@@ -148,8 +135,13 @@ public class QuestionService {
 
     for (ToeicQuestionDTO dto : dtos) {
 
-      ToeicQuestion question = questionRepository.findById(dto.getId())
-              .orElseThrow(() -> new BusinessException(404, String.format("Question %d not found", dto.getId())));
+      ToeicQuestion question =
+          questionRepository
+              .findById(dto.getId())
+              .orElseThrow(
+                  () ->
+                      new BusinessException(
+                          404, String.format("Question %d not found", dto.getId())));
 
       modelMapper.map(dto, question);
 
@@ -166,13 +158,17 @@ public class QuestionService {
   private void setRelations(ToeicQuestion question, ToeicQuestionDTO dto) {
 
     if (dto.getTestId() != null) {
-      ToeicTest test = testRepository.findById(dto.getTestId())
+      ToeicTest test =
+          testRepository
+              .findById(dto.getTestId())
               .orElseThrow(() -> new BusinessException(404, "Test not found"));
       question.setTest(test);
     }
 
     if (dto.getPassageId() != null) {
-      ToeicPassage passage = groupRepository.findById(dto.getPassageId())
+      ToeicPassage passage =
+          groupRepository
+              .findById(dto.getPassageId())
               .orElseThrow(() -> new BusinessException(404, "Passage not found"));
       question.setPassage(passage);
     }

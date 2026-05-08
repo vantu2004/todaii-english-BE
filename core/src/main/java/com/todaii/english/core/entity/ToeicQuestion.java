@@ -1,9 +1,12 @@
 package com.todaii.english.core.entity;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.shared.enums.Answer;
@@ -11,11 +14,7 @@ import com.todaii.english.shared.enums.Answer;
 import lombok.*;
 
 @Entity
-@Table(name = "toeic_questions", uniqueConstraints = {
-        @UniqueConstraint(
-                columnNames = {"test_id", "question_no"}
-        )
-})
+@Table(name = "toeic_questions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,14 +25,9 @@ public class ToeicQuestion {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  // auto fill by API
   @Column(name = "part_number", nullable = false)
   private Integer partNumber;
-
-  @Column(name = "question_no", nullable = false)
-  private Integer questionNo;
-
-  @Column(columnDefinition = "MEDIUMTEXT")
-  private String question;
 
   @Column(name = "image_url", length = 1024)
   private String imageUrl;
@@ -41,20 +35,27 @@ public class ToeicQuestion {
   @Column(name = "audio_url", length = 1024)
   private String audioUrl;
 
+  @Column(columnDefinition = "MEDIUMTEXT")
+  private String question;
+
   @Column(name = "option_a", columnDefinition = "MEDIUMTEXT")
-  private String optionA;
+  @Builder.Default
+  private String optionA = "A. ";
 
   @Column(name = "option_b", columnDefinition = "MEDIUMTEXT")
-  private String optionB;
+  @Builder.Default
+  private String optionB = "B. ";
 
   @Column(name = "option_c", columnDefinition = "MEDIUMTEXT")
-  private String optionC;
+  @Builder.Default
+  private String optionC = "C. ";
 
   @Column(name = "option_d", columnDefinition = "MEDIUMTEXT")
-  private String optionD;
+  @Builder.Default
+  private String optionD = "D. ";
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "corect_ans", nullable = false)
+  @Column(name = "correct_ans", nullable = false)
   private Answer correctAns;
 
   @Column(columnDefinition = "LONGTEXT")
@@ -62,6 +63,10 @@ public class ToeicQuestion {
 
   @Column(columnDefinition = "LONGTEXT")
   private String explanation;
+
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "test_id")

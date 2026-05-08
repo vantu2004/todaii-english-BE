@@ -1,4 +1,4 @@
-package com.todaii.english.shared.request.server;
+package com.todaii.english.shared.request.server.toeic;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
-import com.todaii.english.shared.request.server.ToeicCollectionRequest;
+import com.todaii.english.shared.request.server.toeic.ToeicCollectionRequest;
 
 import lombok.RequiredArgsConstructor;
 

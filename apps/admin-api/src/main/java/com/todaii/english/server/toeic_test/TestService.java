@@ -12,7 +12,7 @@ import com.todaii.english.core.entity.ToeicTest;
 import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
-import com.todaii.english.shared.request.server.ToeicTestRequest;
+import com.todaii.english.shared.request.server.toeic.ToeicTestRequest;
 import com.todaii.english.shared.response.ToeicTestResponse;
 
 import lombok.RequiredArgsConstructor;

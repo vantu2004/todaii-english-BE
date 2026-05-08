@@ -5,5 +5,6 @@ import com.todaii.english.shared.response.TodaiiEnglishResponse;
 
 public interface DictionaryPort {
   DictionaryApiResponse[] lookupFreeDictionaryApi(String word);
+
   TodaiiEnglishResponse lookupTodaiiDictionaryApi(String word, int page, int size);
 }

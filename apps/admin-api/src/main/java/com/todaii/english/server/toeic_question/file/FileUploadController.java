@@ -1,4 +1,4 @@
-package com.todaii.english.server.toeic_question;
+package com.todaii.english.server.toeic_question.file;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,5 +17,12 @@ public class FileUploadController {
   public ResponseEntity<String> upload(
       @PathVariable Long testId, @RequestParam MultipartFile file) {
     return ResponseEntity.ok(fileStorageService.upload(testId, file));
+  }
+
+  @DeleteMapping
+  public ResponseEntity<Void> delete(@RequestParam String fileUrl) {
+    fileStorageService.delete(fileUrl);
+
+    return ResponseEntity.noContent().build();
   }
 }

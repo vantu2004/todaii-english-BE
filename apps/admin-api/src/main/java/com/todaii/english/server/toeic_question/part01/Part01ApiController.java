@@ -19,13 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class Part01ApiController {
   private final Part01Service part01Service;
 
-  @GetMapping("/{questionId}")
-  public ResponseEntity<ToeicQuestionDTO> getQuestionById(@PathVariable Long questionId) {
-    ToeicQuestionDTO toeicQuestionDTO = part01Service.getQuestionById(questionId);
-
-    return ResponseEntity.ok(toeicQuestionDTO);
-  }
-
   @GetMapping
   public ResponseEntity<List<ToeicQuestionDTO>> getQuestionsByPartNumber(
       @PathVariable Long testId, @PathVariable Integer partNumber) {
@@ -42,17 +35,11 @@ public class Part01ApiController {
     return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
-  //  @PutMapping("/{id}")
-  //  public ResponseEntity<ToeicQuestionDTO> updatePart01Question(
-  //      @PathVariable Long id, @Valid @RequestBody Part01Request request) {
-  //    ToeicQuestionDTO updated = part01Service.updateQuestion(id, request);
-  //
-  //    return ResponseEntity.ok(updated);
-  //  }
-  //
-  //  @DeleteMapping("/{id}")
-  //  public ResponseEntity<Void> deletePart01Question(@PathVariable Long id) {
-  //    part01Service.deleteQuestion(id);
-  //    return ResponseEntity.noContent().build();
-  //  }
+  @PutMapping("/{questionId}")
+  public ResponseEntity<ToeicQuestionDTO> updatePart01Question(
+      @PathVariable Long questionId, @Valid @RequestBody Part01Request request) {
+    ToeicQuestionDTO updated = part01Service.updateQuestion(questionId, request);
+
+    return ResponseEntity.ok(updated);
+  }
 }

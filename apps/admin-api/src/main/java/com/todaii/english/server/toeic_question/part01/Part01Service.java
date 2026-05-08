@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -11,6 +13,8 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.core.entity.ToeicQuestion;
 import com.todaii.english.core.entity.ToeicTag;
 import com.todaii.english.core.entity.ToeicTest;
+import com.todaii.english.core.port.CloudinaryPort;
+import com.todaii.english.server.toeic_question.QuestionRepository;
 import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
@@ -22,22 +26,20 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class Part01Service {
-  private final Part01Repository part01Repository;
+  private final QuestionRepository questionRepository;
   private final TestRepository testRepository;
   private final TagRepository tagRepository;
+  private final CloudinaryPort cloudinaryPort;
   private final ModelMapper modelMapper;
 
-  public ToeicQuestionDTO getQuestionById(Long id) {
-    ToeicQuestion question =
-        part01Repository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(404, "Question not found"));
-
-    return modelMapper.map(question, ToeicQuestionDTO.class);
+  private ToeicQuestion findById(Long questionId) {
+    return questionRepository
+        .findById(questionId)
+        .orElseThrow(() -> new BusinessException(404, "Question not found"));
   }
 
   public List<ToeicQuestionDTO> getAllQuestionsByPartNumber(Long testId, Integer partNumber) {
-    return part01Repository.findByTestIdAndPartNumber(testId, partNumber).stream()
+    return questionRepository.findByTestIdAndPartNumber(testId, partNumber).stream()
         .map(toeicQuestion -> modelMapper.map(toeicQuestion, ToeicQuestionDTO.class))
         .toList();
   }
@@ -48,12 +50,34 @@ public class Part01Service {
             .findById(testId)
             .orElseThrow(() -> new BusinessException(404, "Test not found"));
 
-    // SELECT * FROM toeic_tags WHERE id IN (1,2,3)
-    Set<ToeicTag> toeicTags = new HashSet<>(tagRepository.findAllById(request.getTagIds()));
+    ToeicQuestion toeicQuestion = new ToeicQuestion();
 
-    ToeicQuestion toeicQuestion = modelMapper.map(request, ToeicQuestion.class);
+    mapValue(request, toeicQuestion);
+
     toeicQuestion.setPartNumber(partNumber);
     toeicQuestion.setTest(toeicTest);
+
+    ToeicQuestion savedQuestion = questionRepository.save(toeicQuestion);
+
+    return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
+  }
+
+  public ToeicQuestionDTO updateQuestion(Long questionId, @Valid Part01Request request) {
+    ToeicQuestion toeicQuestion = findById(questionId);
+
+    // SELECT * FROM toeic_tags WHERE id IN (1,2,3)
+    mapValue(request, toeicQuestion);
+
+    ToeicQuestion savedQuestion = questionRepository.save(toeicQuestion);
+
+    return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
+  }
+
+  private void mapValue(Part01Request request, ToeicQuestion toeicQuestion) {
+    modelMapper.map(request, toeicQuestion);
+
+    Set<ToeicTag> toeicTags = new HashSet<>(tagRepository.findAllById(request.getTagIds()));
+
     toeicQuestion.setTags(toeicTags);
 
     // ưu tiên dùng url ảnh đã upload
@@ -63,11 +87,7 @@ public class Part01Service {
 
     // ưu tiên dùng url audio đã upload
     if (StringUtils.hasText(request.getUploadedAudio())) {
-      toeicQuestion.setAudioUrl(request.getAudioUrl());
+      toeicQuestion.setAudioUrl(request.getUploadedAudio());
     }
-
-    ToeicQuestion savedQuestion = part01Repository.save(toeicQuestion);
-
-    return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
   }
 }

@@ -4,14 +4,12 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.todaii.english.shared.enums.Answer;
+import com.todaii.english.shared.response.ToeicTestResponse;
 
 import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ToeicQuestionDTO {
   private Long id;
 
@@ -32,8 +30,17 @@ public class ToeicQuestionDTO {
 
   private LocalDateTime createdAt;
 
-  private Long testId;
-  private Long passageId;
+  private ToeicTestResponse test;
+  private ToeicPassageDTO passage;
 
-  private Set<Long> tagIds;
+  private Set<ToeicTagDTO> tags;
+
+  // vì shared ko truy cập vào core nên phải tự tạo nested class
+  @Getter
+  @Setter
+  public static class ToeicTagDTO {
+    private Long id;
+    private String name;
+    private String alias;
+  }
 }

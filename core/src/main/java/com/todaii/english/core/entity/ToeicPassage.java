@@ -41,8 +41,7 @@ public class ToeicPassage {
   @JsonIgnore
   private ToeicTest test;
 
-  // đặt ignore chỗ này vì xuất đề thi theo thứ tự question, nếu xuất theo part thì ko rõ thứ tự, từ
-  // question truy ra passage
+  /*   đặt ignore chỗ này vì xuất đề thi theo thứ tự question, nếu xuất theo part thì ko rõ thứ tự, từ question truy ra passage*/
   @OneToMany(
       mappedBy = "passage",
       cascade = CascadeType.ALL,

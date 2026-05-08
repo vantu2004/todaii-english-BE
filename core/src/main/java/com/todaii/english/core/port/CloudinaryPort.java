@@ -8,4 +8,6 @@ public interface CloudinaryPort {
   String uploadImage(String base64Image, String folderName);
 
   String uploadFile(MultipartFile multipartFile, String foldername) throws IOException;
+
+  void deleteFile(String fileUrl);
 }

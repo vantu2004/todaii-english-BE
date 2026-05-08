@@ -37,6 +37,6 @@ public class ToeicTestResponse {
   @Setter
   public static class AdminDTO {
     private Long id;
-    private String name;
+    private String displayName;
   }
 }

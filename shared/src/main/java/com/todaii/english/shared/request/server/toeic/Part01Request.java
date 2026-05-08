@@ -47,9 +47,6 @@ public class Part01Request {
   @NotBlank(message = "Explanation must not be blank")
   private String explanation;
 
-  @NotNull(message = "Test ID is required")
-  private Long testId;
-
   @NotEmpty(message = "At least one tag must be selected")
   @Size(max = 5, message = "A maximum of 5 tags is allowed")
   private Set<Long> tagIds;

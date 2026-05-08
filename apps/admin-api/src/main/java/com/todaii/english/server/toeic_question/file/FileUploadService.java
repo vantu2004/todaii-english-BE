@@ -1,4 +1,4 @@
-package com.todaii.english.server.toeic_question;
+package com.todaii.english.server.toeic_question.file;
 
 import java.io.IOException;
 
@@ -29,5 +29,9 @@ public class FileUploadService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public void delete(String fileUrl) {
+    cloudinaryPort.deleteFile(fileUrl);
   }
 }

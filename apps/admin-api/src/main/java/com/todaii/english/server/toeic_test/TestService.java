@@ -6,9 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.core.entity.ToeicTest;
+import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -22,6 +24,13 @@ public class TestService {
   private final ModelMapper modelMapper;
   private final TestRepository testRepository;
   private final CollectionRepository collectionRepository;
+  private final CloudinaryPort cloudinaryPort;
+
+  private ToeicTest findById(Long testId) {
+    return testRepository
+        .findById(testId)
+        .orElseThrow(() -> new BusinessException(404, "Test not found"));
+  }
 
   public Page<ToeicTestDTO> getAllPaged(
       int page, int size, String sortBy, String direction, String keyword) {
@@ -33,50 +42,67 @@ public class TestService {
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
 
-  public ToeicTestDTO getById(Long id) {
-    ToeicTest toeicTest =
-        testRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Test not found"));
-
-    return modelMapper.map(toeicTest, ToeicTestDTO.class);
+  public ToeicTestDTO getTestDTOById(Long id) {
+    return modelMapper.map(findById(id), ToeicTestDTO.class);
   }
 
-  public ToeicTestDTO create(ToeicTestRequest dto) {
+  public ToeicTestDTO create(ToeicTestRequest toeicTestRequest) {
     ToeicCollection collection =
         collectionRepository
-            .findById(dto.getCollectionId())
+            .findById(toeicTestRequest.getCollectionId())
             .orElseThrow(() -> new BusinessException(404, "Collection not found"));
 
-    ToeicTest test = modelMapper.map(dto, ToeicTest.class);
-    test.setCollection(collection);
+    ToeicTest toeicTest = new ToeicTest();
 
-    ToeicTest savedTest = testRepository.save(test);
+    mapRequestToEntity(toeicTestRequest, toeicTest);
+
+    toeicTest.setCollection(collection);
+
+    ToeicTest savedTest = testRepository.save(toeicTest);
 
     return modelMapper.map(savedTest, ToeicTestDTO.class);
   }
 
-  public ToeicTestDTO update(Long id, ToeicTestRequest dto) {
-    ToeicTest test =
-        testRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Test not found"));
+  public ToeicTestDTO update(Long id, ToeicTestRequest toeicTestRequest) {
+    ToeicTest toeicTest = findById(id);
 
-    modelMapper.map(dto, test);
+    mapRequestToEntity(toeicTestRequest, toeicTest);
 
-    if (dto.getCollectionId() != null) {
+    if (toeicTestRequest.getCollectionId() != null) {
       ToeicCollection collection =
           collectionRepository
-              .findById(dto.getCollectionId())
+              .findById(toeicTestRequest.getCollectionId())
               .orElseThrow(() -> new BusinessException(404, "Collection not found"));
-      test.setCollection(collection);
+      toeicTest.setCollection(collection);
     }
 
-    ToeicTest updatedToeicTest = testRepository.save(test);
+    ToeicTest updatedToeicTest = testRepository.save(toeicTest);
 
     return modelMapper.map(updatedToeicTest, ToeicTestDTO.class);
   }
 
+  private void mapRequestToEntity(ToeicTestRequest toeicTestRequest, ToeicTest toeicTest) {
+    modelMapper.map(toeicTestRequest, toeicTest);
+
+    // ưu tiên dùng url image đã upload
+    if (StringUtils.hasText(toeicTestRequest.getUploadedImage())) {
+      toeicTest.setImageUrl(toeicTestRequest.getUploadedImage());
+    }
+
+    // ưu tiên dùng url audio đã upload
+    if (StringUtils.hasText(toeicTestRequest.getUploadedAudio())) {
+      toeicTest.setAudioUrl(toeicTestRequest.getUploadedAudio());
+    }
+  }
+
   public void delete(Long id) {
-    boolean isExisted = testRepository.existsById(id);
-    if (!isExisted) {
-      throw new BusinessException(404, "Test not found");
+    ToeicTest toeicTest = findById(id);
+
+    if (StringUtils.hasText(toeicTest.getImageUrl())) {
+      cloudinaryPort.deleteFile(toeicTest.getImageUrl());
+    }
+    if (StringUtils.hasText(toeicTest.getAudioUrl())) {
+      cloudinaryPort.deleteFile(toeicTest.getAudioUrl());
     }
 
     testRepository.deleteById(id);

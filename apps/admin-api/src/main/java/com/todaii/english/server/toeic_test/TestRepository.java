@@ -10,8 +10,6 @@ import com.todaii.english.core.entity.ToeicTest;
 
 @Repository
 public interface TestRepository extends JpaRepository<ToeicTest, Long> {
-  Page<ToeicTest> findByCollectionId(Long collectionId, Pageable pageable);
-
   @Query(
       """
                 SELECT DISTINCT t FROM ToeicTest t

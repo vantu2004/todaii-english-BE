@@ -15,8 +15,8 @@ public class ToeicTestDTO {
   private String title;
   private TestType testType;
   private Integer duration;
+  private String imageUrl;
   private String audioUrl;
-  private String thumbnail;
   private String description;
   private TestStatus status;
   private LocalDateTime createdAt;

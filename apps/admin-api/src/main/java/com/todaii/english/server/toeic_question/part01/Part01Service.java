@@ -60,7 +60,7 @@ public class Part01Service {
 
     ToeicQuestion toeicQuestion = new ToeicQuestion();
 
-    mapValue(request, toeicQuestion);
+    mapRequestToEntity(request, toeicQuestion);
 
     toeicQuestion.setPartNumber(partNumber);
     toeicQuestion.setTest(toeicTest);
@@ -98,14 +98,14 @@ public class Part01Service {
     }
 
     // SELECT * FROM toeic_tags WHERE id IN (1,2,3)
-    mapValue(request, toeicQuestion);
+    mapRequestToEntity(request, toeicQuestion);
 
     ToeicQuestion savedQuestion = questionRepository.save(toeicQuestion);
 
     return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
   }
 
-  private void mapValue(Part01Request request, ToeicQuestion toeicQuestion) {
+  private void mapRequestToEntity(Part01Request request, ToeicQuestion toeicQuestion) {
     modelMapper.map(request, toeicQuestion);
 
     Set<ToeicTag> toeicTags = new HashSet<>(tagRepository.findAllById(request.getTagIds()));

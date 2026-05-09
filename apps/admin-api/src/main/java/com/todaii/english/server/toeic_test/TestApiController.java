@@ -51,7 +51,7 @@ public class TestApiController {
 
   @GetMapping("/{id}")
   public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
-    return ResponseEntity.ok(testService.getById(id));
+    return ResponseEntity.ok(testService.getTestDTOById(id));
   }
 
   @PostMapping

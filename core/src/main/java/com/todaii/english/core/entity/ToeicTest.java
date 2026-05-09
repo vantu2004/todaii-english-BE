@@ -44,11 +44,11 @@ public class ToeicTest {
   @Column(nullable = false)
   private Integer duration = 120;
 
+  @Column(name = "image_url", length = 1024)
+  private String imageUrl;
+
   @Column(name = "audio_url", length = 1024)
   private String audioUrl;
-
-  @Column(length = 1024)
-  private String thumbnail;
 
   @Column(columnDefinition = "MEDIUMTEXT")
   private String description;

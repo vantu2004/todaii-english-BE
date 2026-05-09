@@ -1,80 +1,122 @@
 package com.todaii.english.server.toeic_passage;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.todaii.english.core.entity.ToeicPassage;
+import com.todaii.english.core.entity.ToeicTest;
+import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.toeic_test.TestRepository;
+import com.todaii.english.shared.dto.ToeicPassageDTO;
+import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.server.toeic.ToeicPassageRequest;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class PassageService {
-
   private final PassageRepository passageRepository;
   private final TestRepository testRepository;
+  private final CloudinaryPort cloudinaryPort;
   private final ModelMapper modelMapper;
 
-  //  public Page<ToeicPassageDTO> getAllPaged(Long testId, Pageable pageable) {
-  //
-  //    Page<ToeicPassage> page;
-  //
-  //    if (testId != null) {
-  //      page = passageRepository.findByTestId(testId, pageable);
-  //    } else {
-  //      page = passageRepository.findAll(pageable);
-  //    }
-  //
-  //    return page.map(this::toDTO);
-  //  }
-  //
-  //  public ToeicPassageDTO getById(Long id) {
-  //    return toDTO(findById(id));
-  //  }
-  //
-  //  public ToeicPassage findById(Long id) {
-  //    return passageRepository
-  //        .findById(id)
-  //        .orElseThrow(() -> new BusinessException(404, "Question group not found"));
-  //  }
-  //
-  //  public ToeicPassage create(ToeicPassageDTO dto) {
-  //    ToeicPassage group = modelMapper.map(dto, ToeicPassage.class);
-  //    setTest(group, dto.getTestId());
-  //    return passageRepository.save(group);
-  //  }
-  //
-  //  public ToeicPassage update(Long id, ToeicPassageDTO dto) {
-  //    dto.setId(id);
-  //    ToeicPassage group = findById(id);
-  //    modelMapper.map(dto, group);
-  //    setTest(group, dto.getTestId());
-  //    return passageRepository.save(group);
-  //  }
-  //
-  //  public void delete(Long id) {
-  //    ToeicPassage group = findById(id);
-  //    passageRepository.delete(group);
-  //  }
-  //
-  //  private void setTest(ToeicPassage group, Long testId) {
-  //    if (testId != null) {
-  //      ToeicTest test =
-  //          testRepository
-  //              .findById(testId)
-  //              .orElseThrow(() -> new BusinessException(404, "Test not found"));
-  //      group.setTest(test);
-  //    }
-  //  }
-  //
-  //  private ToeicPassageDTO toDTO(ToeicPassage entity) {
-  //    ToeicPassageDTO dto = modelMapper.map(entity, ToeicPassageDTO.class);
-  //
-  //    if (entity.getTest() != null) {
-  //      dto.setTestId(entity.getTest().getId());
-  //      dto.setTestTitle(entity.getTest().getTitle());
-  //    }
-  //
-  //    return dto;
-  //  }
+  public ToeicPassage findById(Long passageId) {
+    return passageRepository
+        .findById(passageId)
+        .orElseThrow(() -> new BusinessException(404, "Toeic passage not found"));
+  }
+
+  public List<ToeicPassageDTO> getPassagesByPartNumber(Long testId, Integer partNumber) {
+    return passageRepository.findByTestIdAndPartNumber(testId, partNumber).stream()
+        .map(toeicPassage -> modelMapper.map(toeicPassage, ToeicPassageDTO.class))
+        .toList();
+  }
+
+  public ToeicPassageDTO getPassageDTOById(Long passageId) {
+    ToeicPassage toeicPassage = findById(passageId);
+
+    return modelMapper.map(toeicPassage, ToeicPassageDTO.class);
+  }
+
+  public ToeicPassageDTO createPassage(
+      Long testId, Integer partNumber, ToeicPassageRequest request) {
+    validatePassagePart(partNumber);
+    validateAudio(partNumber, request);
+
+    ToeicTest toeicTest =
+        testRepository
+            .findById(testId)
+            .orElseThrow(() -> new BusinessException(404, "Test not found"));
+
+    ToeicPassage toeicPassage = new ToeicPassage();
+
+    mapRequestToEntity(request, toeicPassage);
+
+    toeicPassage.setPartNumber(partNumber);
+    toeicPassage.setTest(toeicTest);
+
+    ToeicPassage savedPassage = passageRepository.save(toeicPassage);
+
+    return modelMapper.map(savedPassage, ToeicPassageDTO.class);
+  }
+
+  public ToeicPassageDTO updatePassage(Long passageId, ToeicPassageRequest request) {
+    ToeicPassage toeicPassage = findById(passageId);
+
+    validateAudio(toeicPassage.getPartNumber(), request);
+
+    mapRequestToEntity(request, toeicPassage);
+
+    ToeicPassage savedPassage = passageRepository.save(toeicPassage);
+
+    return modelMapper.map(savedPassage, ToeicPassageDTO.class);
+  }
+
+  private void mapRequestToEntity(ToeicPassageRequest request, ToeicPassage passage) {
+    modelMapper.map(request, passage);
+
+    // ưu tiên uploaded image
+    if (StringUtils.hasText(request.getUploadedImage())) {
+      passage.setImageUrl(request.getUploadedImage());
+    }
+
+    // ưu tiên uploaded audio
+    if (StringUtils.hasText(request.getUploadedAudio())) {
+      passage.setAudioUrl(request.getUploadedAudio());
+    }
+  }
+
+  private void validateAudio(Integer partNumber, ToeicPassageRequest request) {
+    boolean hasAudio =
+        StringUtils.hasText(request.getUploadedAudio())
+            || StringUtils.hasText(request.getAudioUrl());
+
+    if ((partNumber == 3 || partNumber == 4) && !hasAudio) {
+      throw new BusinessException(400, "Audio is required");
+    }
+  }
+
+  private void validatePassagePart(Integer partNumber) {
+    if (partNumber != 3 && partNumber != 4 && partNumber != 6 && partNumber != 7) {
+
+      throw new BusinessException(400, "Passage is only supported for TOEIC parts 3, 4, 6, and 7");
+    }
+  }
+
+  public void deletePassage(Long passageId) {
+    ToeicPassage toeicPassage = findById(passageId);
+
+    if (StringUtils.hasText(toeicPassage.getImageUrl())) {
+      cloudinaryPort.deleteFile(toeicPassage.getImageUrl());
+    }
+    if (StringUtils.hasText(toeicPassage.getAudioUrl())) {
+      cloudinaryPort.deleteFile(toeicPassage.getAudioUrl());
+    }
+
+    passageRepository.deleteById(passageId);
+  }
 }

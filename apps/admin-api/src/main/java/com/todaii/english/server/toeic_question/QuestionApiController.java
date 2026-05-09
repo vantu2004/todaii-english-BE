@@ -17,7 +17,7 @@ public class QuestionApiController {
 
   @GetMapping("/{questionId}")
   public ResponseEntity<ToeicQuestionDTO> getQuestionById(@PathVariable Long questionId) {
-    ToeicQuestionDTO toeicQuestionDTO = questionService.getQuestionById(questionId);
+    ToeicQuestionDTO toeicQuestionDTO = questionService.getQuestionDTOById(questionId);
 
     return ResponseEntity.ok(toeicQuestionDTO);
   }

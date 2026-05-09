@@ -85,13 +85,13 @@ public class TestService {
     modelMapper.map(toeicTestRequest, toeicTest);
 
     // ưu tiên dùng url image đã upload
-    if (StringUtils.hasText(toeicTestRequest.getUploadedImage())) {
-      toeicTest.setImageUrl(toeicTestRequest.getUploadedImage());
+    if (StringUtils.hasText(toeicTestRequest.getImageRequest().getUploadedImage())) {
+      toeicTest.setImageUrl(toeicTestRequest.getImageRequest().getUploadedImage());
     }
 
     // ưu tiên dùng url audio đã upload
-    if (StringUtils.hasText(toeicTestRequest.getUploadedAudio())) {
-      toeicTest.setAudioUrl(toeicTestRequest.getUploadedAudio());
+    if (StringUtils.hasText(toeicTestRequest.getAudioRequest().getUploadedAudio())) {
+      toeicTest.setAudioUrl(toeicTestRequest.getAudioRequest().getUploadedAudio());
     }
   }
 

@@ -2,6 +2,7 @@ package com.todaii.english.shared.request.server.toeic;
 
 import java.util.Set;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Part01Request extends BaseToeicRequest {
+public class Part01Request {
   @NotNull(message = "Correct answer is required")
   private Answer correctAns;
 
@@ -27,4 +28,10 @@ public class Part01Request extends BaseToeicRequest {
   @NotEmpty(message = "At least one tag must be selected")
   @Size(max = 5, message = "A maximum of 5 tags is allowed")
   private Set<Long> tagIds;
+
+  @Valid
+  private ImageRequest imageRequest;
+
+  @Valid
+  private AudioRequest audioRequest;
 }

@@ -80,20 +80,20 @@ public class PassageService {
     modelMapper.map(request, passage);
 
     // ưu tiên uploaded image
-    if (StringUtils.hasText(request.getUploadedImage())) {
-      passage.setImageUrl(request.getUploadedImage());
+    if (StringUtils.hasText(request.getImageRequest().getUploadedImage())) {
+      passage.setImageUrl(request.getImageRequest().getUploadedImage());
     }
 
     // ưu tiên uploaded audio
-    if (StringUtils.hasText(request.getUploadedAudio())) {
-      passage.setAudioUrl(request.getUploadedAudio());
+    if (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())) {
+      passage.setAudioUrl(request.getAudioRequest().getUploadedAudio());
     }
   }
 
   private void validateAudio(Integer partNumber, ToeicPassageRequest request) {
     boolean hasAudio =
-        StringUtils.hasText(request.getUploadedAudio())
-            || StringUtils.hasText(request.getAudioUrl());
+        StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+            || StringUtils.hasText(request.getAudioRequest().getAudioUrl());
 
     if ((partNumber == 3 || partNumber == 4) && !hasAudio) {
       throw new BusinessException(400, "Audio is required");

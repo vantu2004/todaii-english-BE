@@ -71,15 +71,15 @@ public class Part01Service {
   }
 
   private void validateImage(Part01Request request) {
-    if (!StringUtils.hasText(request.getUploadedImage())
-        && !StringUtils.hasText(request.getImageUrl())) {
+    if (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+        && !StringUtils.hasText(request.getImageRequest().getImageUrl())) {
       throw new BusinessException(400, "Image is required");
     }
   }
 
   private void validateAudio(Part01Request request) {
-    if (!StringUtils.hasText(request.getUploadedAudio())
-        && !StringUtils.hasText(request.getAudioUrl())) {
+    if (!StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+        && !StringUtils.hasText(request.getAudioRequest().getAudioUrl())) {
       throw new BusinessException(400, "Audio is required");
     }
   }
@@ -113,13 +113,13 @@ public class Part01Service {
     toeicQuestion.setTags(toeicTags);
 
     // ưu tiên dùng url ảnh đã upload
-    if (StringUtils.hasText(request.getUploadedImage())) {
-      toeicQuestion.setImageUrl(request.getUploadedImage());
+    if (StringUtils.hasText(request.getImageRequest().getUploadedImage())) {
+      toeicQuestion.setImageUrl(request.getImageRequest().getUploadedImage());
     }
 
     // ưu tiên dùng url audio đã upload
-    if (StringUtils.hasText(request.getUploadedAudio())) {
-      toeicQuestion.setAudioUrl(request.getUploadedAudio());
+    if (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())) {
+      toeicQuestion.setAudioUrl(request.getAudioRequest().getUploadedAudio());
     }
   }
 }

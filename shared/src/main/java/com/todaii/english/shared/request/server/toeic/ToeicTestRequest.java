@@ -1,5 +1,6 @@
 package com.todaii.english.shared.request.server.toeic;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ToeicTestRequest extends BaseToeicRequest {
+public class ToeicTestRequest {
   @NotBlank(message = "Title cannot be blank")
   @Length(max = 512, message = "Title must not exceed 512 characters")
   private String title;
@@ -35,4 +36,10 @@ public class ToeicTestRequest extends BaseToeicRequest {
 
   @NotNull(message = "Collection is required")
   private Long collectionId;
+
+  @Valid
+  private ImageRequest imageRequest;
+
+  @Valid
+  private AudioRequest audioRequest;
 }

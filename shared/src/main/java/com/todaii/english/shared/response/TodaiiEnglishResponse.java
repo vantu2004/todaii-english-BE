@@ -10,7 +10,7 @@ import lombok.*;
 
 @Getter
 @Setter
-// trường hợp TodaiiEnglishResponse thiếu field so với response thì ignore luôn
+// trường hợp TodaiiEnglishResponse thiếu field so với response so với todaii API thì ignore luôn
 @JsonIgnoreProperties(ignoreUnknown = true)
 // ko xuất các field bị null
 @JsonInclude(JsonInclude.Include.NON_NULL)

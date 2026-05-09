@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.todaii.english.shared.enums.Answer;
-import com.todaii.english.shared.response.ToeicTestResponse;
 
 import lombok.*;
 
@@ -30,7 +29,7 @@ public class ToeicQuestionDTO {
 
   private LocalDateTime createdAt;
 
-  private ToeicTestResponse test;
+  private ToeicTestDTO test;
   private ToeicPassageDTO passage;
 
   private Set<ToeicTagDTO> tags;

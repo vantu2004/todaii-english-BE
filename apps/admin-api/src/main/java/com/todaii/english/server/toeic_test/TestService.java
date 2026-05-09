@@ -9,11 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.ToeicCollection;
 import com.todaii.english.core.entity.ToeicTest;
-import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
+import com.todaii.english.shared.dto.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.ToeicTestRequest;
-import com.todaii.english.shared.response.ToeicTestResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,26 +22,25 @@ public class TestService {
   private final ModelMapper modelMapper;
   private final TestRepository testRepository;
   private final CollectionRepository collectionRepository;
-  private final AdminRepository adminRepository;
 
-  public Page<ToeicTestResponse> getAllPaged(
+  public Page<ToeicTestDTO> getAllPaged(
       int page, int size, String sortBy, String direction, String keyword) {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
     Page<ToeicTest> toeicTestPage = testRepository.getAllPaged(keyword, pageable);
 
-    return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestResponse.class));
+    return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
 
-  public ToeicTestResponse getById(Long id) {
+  public ToeicTestDTO getById(Long id) {
     ToeicTest toeicTest =
         testRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Test not found"));
 
-    return modelMapper.map(toeicTest, ToeicTestResponse.class);
+    return modelMapper.map(toeicTest, ToeicTestDTO.class);
   }
 
-  public ToeicTestResponse create(ToeicTestRequest dto) {
+  public ToeicTestDTO create(ToeicTestRequest dto) {
     ToeicCollection collection =
         collectionRepository
             .findById(dto.getCollectionId())
@@ -53,10 +51,10 @@ public class TestService {
 
     ToeicTest savedTest = testRepository.save(test);
 
-    return modelMapper.map(savedTest, ToeicTestResponse.class);
+    return modelMapper.map(savedTest, ToeicTestDTO.class);
   }
 
-  public ToeicTestResponse update(Long id, ToeicTestRequest dto) {
+  public ToeicTestDTO update(Long id, ToeicTestRequest dto) {
     ToeicTest test =
         testRepository.findById(id).orElseThrow(() -> new BusinessException(404, "Test not found"));
 
@@ -72,7 +70,7 @@ public class TestService {
 
     ToeicTest updatedToeicTest = testRepository.save(test);
 
-    return modelMapper.map(updatedToeicTest, ToeicTestResponse.class);
+    return modelMapper.map(updatedToeicTest, ToeicTestDTO.class);
   }
 
   public void delete(Long id) {

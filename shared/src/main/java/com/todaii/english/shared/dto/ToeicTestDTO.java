@@ -1,4 +1,4 @@
-package com.todaii.english.shared.response;
+package com.todaii.english.shared.dto;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ToeicTestResponse {
+public class ToeicTestDTO {
   private Long id;
   private String title;
   private TestType testType;

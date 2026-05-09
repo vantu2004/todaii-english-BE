@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.core.entity.ToeicQuestion;
 import com.todaii.english.core.entity.ToeicTag;
 import com.todaii.english.core.entity.ToeicTest;
-import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.toeic_question.QuestionRepository;
 import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
@@ -29,7 +28,6 @@ public class Part01Service {
   private final QuestionRepository questionRepository;
   private final TestRepository testRepository;
   private final TagRepository tagRepository;
-  private final CloudinaryPort cloudinaryPort;
   private final ModelMapper modelMapper;
 
   private ToeicQuestion findById(Long questionId) {
@@ -45,6 +43,16 @@ public class Part01Service {
   }
 
   public ToeicQuestionDTO createQuestion(Long testId, Integer partNumber, Part01Request request) {
+
+    switch (partNumber) {
+      case 1 -> {
+        validateImage(request);
+        validateAudio(request);
+      }
+
+      case 2 -> validateAudio(request);
+    }
+
     ToeicTest toeicTest =
         testRepository
             .findById(testId)
@@ -62,8 +70,32 @@ public class Part01Service {
     return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
   }
 
-  public ToeicQuestionDTO updateQuestion(Long questionId, @Valid Part01Request request) {
+  private void validateImage(Part01Request request) {
+    if (!StringUtils.hasText(request.getUploadedImage())
+        && !StringUtils.hasText(request.getImageUrl())) {
+      throw new BusinessException(400, "Image is required");
+    }
+  }
+
+  private void validateAudio(Part01Request request) {
+    if (!StringUtils.hasText(request.getUploadedAudio())
+        && !StringUtils.hasText(request.getAudioUrl())) {
+      throw new BusinessException(400, "Audio is required");
+    }
+  }
+
+  public ToeicQuestionDTO updateQuestion(
+      Integer partNumber, Long questionId, @Valid Part01Request request) {
     ToeicQuestion toeicQuestion = findById(questionId);
+
+    switch (partNumber) {
+      case 1 -> {
+        validateImage(request);
+        validateAudio(request);
+      }
+
+      case 2 -> validateAudio(request);
+    }
 
     // SELECT * FROM toeic_tags WHERE id IN (1,2,3)
     mapValue(request, toeicQuestion);

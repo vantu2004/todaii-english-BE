@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.todaii.english.shared.dto.ToeicTestDTO;
 import com.todaii.english.shared.request.server.toeic.ToeicTestRequest;
 import com.todaii.english.shared.response.PagedResponse;
-import com.todaii.english.shared.response.ToeicTestResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ public class TestApiController {
   private final TestService testService;
 
   @GetMapping
-  public ResponseEntity<PagedResponse<ToeicTestResponse>> getAllPaged(
+  public ResponseEntity<PagedResponse<ToeicTestDTO>> getAllPaged(
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
           int page,
       @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
@@ -31,10 +31,10 @@ public class TestApiController {
       @RequestParam(defaultValue = "desc") String direction,
       @RequestParam(required = false) String keyword) {
 
-    Page<ToeicTestResponse> testResponses =
+    Page<ToeicTestDTO> testResponses =
         testService.getAllPaged(page, size, sortBy, direction, keyword);
 
-    PagedResponse<ToeicTestResponse> response =
+    PagedResponse<ToeicTestDTO> response =
         new PagedResponse<>(
             testResponses.getContent(),
             page,
@@ -50,17 +50,17 @@ public class TestApiController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ToeicTestResponse> getById(@PathVariable Long id) {
+  public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
     return ResponseEntity.ok(testService.getById(id));
   }
 
   @PostMapping
-  public ResponseEntity<ToeicTestResponse> createTest(@Valid @RequestBody ToeicTestRequest dto) {
+  public ResponseEntity<ToeicTestDTO> createTest(@Valid @RequestBody ToeicTestRequest dto) {
     return ResponseEntity.status(201).body(testService.create(dto));
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<ToeicTestResponse> updateTest(
+  public ResponseEntity<ToeicTestDTO> updateTest(
       @PathVariable Long id, @RequestBody ToeicTestRequest dto) {
     return ResponseEntity.ok(testService.update(id, dto));
   }

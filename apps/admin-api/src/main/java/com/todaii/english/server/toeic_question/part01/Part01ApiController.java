@@ -37,8 +37,10 @@ public class Part01ApiController {
 
   @PutMapping("/{questionId}")
   public ResponseEntity<ToeicQuestionDTO> updatePart01Question(
-      @PathVariable Long questionId, @Valid @RequestBody Part01Request request) {
-    ToeicQuestionDTO updated = part01Service.updateQuestion(questionId, request);
+      @PathVariable Integer partNumber,
+      @PathVariable Long questionId,
+      @Valid @RequestBody Part01Request request) {
+    ToeicQuestionDTO updated = part01Service.updateQuestion(partNumber, questionId, request);
 
     return ResponseEntity.ok(updated);
   }

@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.toeic;
 
 import java.time.LocalDateTime;
 

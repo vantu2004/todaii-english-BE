@@ -10,9 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.todaii.english.core.entity.ToeicQuestion;
-import com.todaii.english.core.entity.ToeicTag;
-import com.todaii.english.core.entity.ToeicTest;
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
+import com.todaii.english.core.entity.toeic.ToeicTag;
+import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.server.toeic_question.QuestionRepository;
 import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;

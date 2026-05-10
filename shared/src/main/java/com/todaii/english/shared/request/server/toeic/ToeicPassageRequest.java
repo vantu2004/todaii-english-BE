@@ -14,9 +14,7 @@ public class ToeicPassageRequest {
   @NotBlank(message = "Passage translation cannot be blank")
   private String passageTrans;
 
-  @Valid
-  private ImageRequest imageRequest;
+  @Valid private ImageRequest imageRequest;
 
-  @Valid
-  private AudioRequest audioRequest;
+  @Valid private AudioRequest audioRequest;
 }

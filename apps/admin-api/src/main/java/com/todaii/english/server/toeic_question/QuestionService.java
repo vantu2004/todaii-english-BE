@@ -4,7 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.todaii.english.core.entity.ToeicQuestion;
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;

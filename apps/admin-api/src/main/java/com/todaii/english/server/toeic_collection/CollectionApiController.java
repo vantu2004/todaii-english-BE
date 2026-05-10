@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.core.entity.ToeicCollection;
+import com.todaii.english.core.entity.toeic.ToeicCollection;
 import com.todaii.english.shared.request.server.toeic.ToeicCollectionRequest;
 import com.todaii.english.shared.response.PagedResponse;
 

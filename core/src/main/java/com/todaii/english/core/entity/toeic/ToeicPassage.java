@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.toeic;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -6,10 +6,11 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "toeic_passages")
@@ -18,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ToeicPassage {
+public class ToeicPassage extends MediaUrl {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -31,12 +32,6 @@ public class ToeicPassage {
 
   @Column(name = "passage_trans", columnDefinition = "LONGTEXT")
   private String passageTrans;
-
-  @Column(name = "image_url", length = 1024)
-  private String imageUrl;
-
-  @Column(name = "audio_url", length = 1024)
-  private String audioUrl;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)

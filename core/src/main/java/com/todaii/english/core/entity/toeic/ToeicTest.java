@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.toeic;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.core.entity.Admin;
 import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
 
@@ -26,7 +27,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class ToeicTest {
+public class ToeicTest extends MediaUrl {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -43,12 +44,6 @@ public class ToeicTest {
   @Builder.Default
   @Column(nullable = false)
   private Integer duration = 120;
-
-  @Column(name = "image_url", length = 1024)
-  private String imageUrl;
-
-  @Column(name = "audio_url", length = 1024)
-  private String audioUrl;
 
   @Column(columnDefinition = "MEDIUMTEXT")
   private String description;

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.ToeicQuestion;
-import com.todaii.english.core.entity.ToeicTag;
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
+import com.todaii.english.core.entity.toeic.ToeicTag;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.toeic_question.QuestionRepository;
 import com.todaii.english.shared.exceptions.BusinessException;

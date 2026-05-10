@@ -29,9 +29,7 @@ public class Part01Request {
   @Size(max = 5, message = "A maximum of 5 tags is allowed")
   private Set<Long> tagIds;
 
-  @Valid
-  private ImageRequest imageRequest;
+  @Valid private ImageRequest imageRequest;
 
-  @Valid
-  private AudioRequest audioRequest;
+  @Valid private AudioRequest audioRequest;
 }

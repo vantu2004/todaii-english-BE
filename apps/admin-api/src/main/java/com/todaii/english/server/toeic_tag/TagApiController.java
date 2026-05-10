@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.core.entity.ToeicTag;
+import com.todaii.english.core.entity.toeic.ToeicTag;
 
 import lombok.RequiredArgsConstructor;
 

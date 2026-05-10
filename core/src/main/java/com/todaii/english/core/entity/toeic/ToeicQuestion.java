@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.toeic;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -20,7 +20,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ToeicQuestion {
+public class ToeicQuestion extends MediaUrl {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -28,12 +28,6 @@ public class ToeicQuestion {
   // auto fill by API
   @Column(name = "part_number", nullable = false)
   private Integer partNumber;
-
-  @Column(name = "image_url", length = 1024)
-  private String imageUrl;
-
-  @Column(name = "audio_url", length = 1024)
-  private String audioUrl;
 
   @Column(columnDefinition = "MEDIUMTEXT")
   private String question;

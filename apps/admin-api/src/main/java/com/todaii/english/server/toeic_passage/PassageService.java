@@ -80,13 +80,15 @@ public class PassageService {
     modelMapper.map(request, passage);
 
     // ưu tiên uploaded image
-    if (StringUtils.hasText(request.getImageRequest().getUploadedImage())) {
-      passage.setImageUrl(request.getImageRequest().getUploadedImage());
+    String imageUrl = request.getImageRequest().getUploadedImage();
+    if (StringUtils.hasText(imageUrl)) {
+      passage.setImageUrl(imageUrl);
     }
 
     // ưu tiên uploaded audio
-    if (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())) {
-      passage.setAudioUrl(request.getAudioRequest().getUploadedAudio());
+    String audioUrl = request.getAudioRequest().getUploadedAudio();
+    if (StringUtils.hasText(audioUrl)) {
+      passage.setAudioUrl(audioUrl);
     }
   }
 
@@ -102,7 +104,6 @@ public class PassageService {
 
   private void validatePassagePart(Integer partNumber) {
     if (partNumber != 3 && partNumber != 4 && partNumber != 6 && partNumber != 7) {
-
       throw new BusinessException(400, "Passage is only supported for TOEIC parts 3, 4, 6, and 7");
     }
   }

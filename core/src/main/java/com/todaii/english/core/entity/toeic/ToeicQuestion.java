@@ -30,7 +30,8 @@ public class ToeicQuestion extends MediaUrl {
   private Integer partNumber;
 
   @Column(columnDefinition = "MEDIUMTEXT")
-  private String question;
+  @Builder.Default
+  private String question ="Choose the best answer.";
 
   @Column(name = "option_a", columnDefinition = "MEDIUMTEXT")
   @Builder.Default

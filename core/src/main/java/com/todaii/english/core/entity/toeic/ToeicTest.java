@@ -13,7 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.todaii.english.core.entity.Admin;
+import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
 

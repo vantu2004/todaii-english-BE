@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.entity.VocabDeck;
+import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.request.server.DeckRequest;
 import com.todaii.english.shared.response.PagedResponse;

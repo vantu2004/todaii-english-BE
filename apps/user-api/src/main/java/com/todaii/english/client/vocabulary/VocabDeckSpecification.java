@@ -5,9 +5,9 @@ import jakarta.persistence.criteria.JoinType;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.todaii.english.core.entity.VocabDeck;
+import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.core.entity.VocabDeck_;
-import com.todaii.english.core.entity.VocabGroup;
+import com.todaii.english.core.entity.vocabulary.VocabGroup;
 import com.todaii.english.core.entity.VocabGroup_;
 import com.todaii.english.shared.enums.CefrLevel;
 

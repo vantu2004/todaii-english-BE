@@ -12,7 +12,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.core.entity.Admin;
+import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 import com.todaii.english.shared.request.server.AdminRequest;

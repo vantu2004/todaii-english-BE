@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.admin;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.Article;
-import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.event.EventService;

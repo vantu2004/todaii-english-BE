@@ -8,8 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.auth.RefreshTokenRepository;
-import com.todaii.english.core.entity.User;
-import com.todaii.english.core.entity.UserRefreshToken;
+import com.todaii.english.core.entity.user.User;
+import com.todaii.english.core.entity.user.UserRefreshToken;
 import com.todaii.english.infra.security.jwt.JwtUtility;
 import com.todaii.english.shared.constants.SecurityConstants;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;

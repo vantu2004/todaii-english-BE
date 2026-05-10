@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.VocabGroup;
+import com.todaii.english.core.entity.vocabulary.VocabGroup;
 
 import lombok.RequiredArgsConstructor;
 

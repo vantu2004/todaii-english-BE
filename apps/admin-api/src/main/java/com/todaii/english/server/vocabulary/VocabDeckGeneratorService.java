@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todaii.english.core.entity.DictionaryEntry;
-import com.todaii.english.core.entity.VocabDeck;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.dictionary.DictionaryEntryService;

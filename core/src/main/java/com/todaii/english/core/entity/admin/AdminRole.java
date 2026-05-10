@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.admin;
 
 import jakarta.persistence.*;
 

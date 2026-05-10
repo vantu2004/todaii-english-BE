@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.Admin;
+import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;

@@ -11,8 +11,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.Article;
-import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.shared.enums.CefrLevel;
 
 @Repository

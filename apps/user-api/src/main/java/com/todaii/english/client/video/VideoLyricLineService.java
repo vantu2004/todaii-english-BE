@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.VideoLyricLine;
+import com.todaii.english.core.entity.video.VideoLyricLine;
 
 import lombok.RequiredArgsConstructor;
 

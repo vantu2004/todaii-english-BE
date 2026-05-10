@@ -3,7 +3,7 @@ package com.todaii.english.client.security;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.infra.security.jwt.JwtUserDetailsFactory;
 
 import io.jsonwebtoken.Claims;

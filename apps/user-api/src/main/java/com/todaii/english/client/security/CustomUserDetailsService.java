@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.user.UserRepository;
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
 

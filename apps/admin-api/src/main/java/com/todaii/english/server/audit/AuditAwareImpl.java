@@ -7,7 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.core.entity.Admin;
+import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.admin.AdminRepository;
 

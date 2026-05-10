@@ -7,8 +7,8 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.Admin;
-import com.todaii.english.core.entity.AdminRefreshToken;
+import com.todaii.english.core.entity.admin.Admin;
+import com.todaii.english.core.entity.admin.AdminRefreshToken;
 import com.todaii.english.infra.security.jwt.JwtUtility;
 import com.todaii.english.server.auth.RefreshTokenRepository;
 import com.todaii.english.shared.constants.SecurityConstants;

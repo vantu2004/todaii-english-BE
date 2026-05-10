@@ -8,8 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.todaii.english.core.entity.Admin;
-import com.todaii.english.core.entity.AdminRole;
+import com.todaii.english.core.entity.admin.Admin;
+import com.todaii.english.core.entity.admin.AdminRole;
 
 public class CustomAdminDetails implements UserDetails {
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.NotebookItem;
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.client.NotebookRequest;
 import com.todaii.english.shared.response.NotebookNode;

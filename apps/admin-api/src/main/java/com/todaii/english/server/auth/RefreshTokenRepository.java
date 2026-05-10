@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.AdminRefreshToken;
+import com.todaii.english.core.entity.admin.AdminRefreshToken;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<AdminRefreshToken, Long> {

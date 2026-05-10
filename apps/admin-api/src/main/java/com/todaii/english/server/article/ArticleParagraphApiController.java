@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.core.entity.ArticleParagraph;
+import com.todaii.english.core.entity.article.ArticleParagraph;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleParagraphRequest;

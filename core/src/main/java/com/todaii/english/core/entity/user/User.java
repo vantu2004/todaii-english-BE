@@ -1,9 +1,12 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.user;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.NotebookItem;
+import com.todaii.english.core.entity.video.Video;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;

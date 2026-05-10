@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.entity.Video;
+import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.response.PagedResponse;

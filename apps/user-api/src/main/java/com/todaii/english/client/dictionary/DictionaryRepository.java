@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 
 @Repository
 public interface DictionaryRepository extends JpaRepository<DictionaryEntry, Long> {

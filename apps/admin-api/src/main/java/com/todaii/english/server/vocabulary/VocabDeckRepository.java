@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.VocabDeck;
+import com.todaii.english.core.entity.vocabulary.VocabDeck;
 
 @Repository
 public interface VocabDeckRepository extends JpaRepository<VocabDeck, Long> {

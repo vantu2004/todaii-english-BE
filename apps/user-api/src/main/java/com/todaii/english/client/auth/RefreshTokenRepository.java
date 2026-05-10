@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.todaii.english.core.entity.UserRefreshToken;
+import com.todaii.english.core.entity.user.UserRefreshToken;
 
 public interface RefreshTokenRepository extends JpaRepository<UserRefreshToken, Long> {
   @Query("SELECT u FROM UserRefreshToken u WHERE u.user.email = ?1")

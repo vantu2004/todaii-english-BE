@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.user.User;
 
 public class CustomUserDetails implements UserDetails {
 

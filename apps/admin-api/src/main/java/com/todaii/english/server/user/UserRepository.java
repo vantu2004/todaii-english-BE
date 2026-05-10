@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.user.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

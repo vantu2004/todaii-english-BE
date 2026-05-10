@@ -10,9 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.DictionaryEntry;
-import com.todaii.english.core.entity.VocabDeck;
-import com.todaii.english.core.entity.VocabGroup;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.vocabulary.VocabDeck;
+import com.todaii.english.core.entity.vocabulary.VocabGroup;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.DeckRequest;

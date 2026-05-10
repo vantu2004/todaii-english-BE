@@ -1,7 +1,8 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.user;
 
 import java.time.LocalDateTime;
 
+import com.todaii.english.core.entity.BaseEvent;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,19 +12,19 @@ import com.todaii.english.shared.enums.EventType;
 import lombok.*;
 
 @Entity
-@Table(name = "admin_events")
+@Table(name = "user_events")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminEvent implements BaseEvent {
+public class UserEvent implements BaseEvent {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "admin_id", nullable = false)
-  private Long adminId;
+  @Column(name = "user_id")
+  private Long userId;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "event_type", length = 32, nullable = false)

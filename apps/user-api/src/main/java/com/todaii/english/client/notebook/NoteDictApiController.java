@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 
 import lombok.RequiredArgsConstructor;
 

@@ -12,8 +12,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.todaii.english.core.entity.Admin;
-import com.todaii.english.core.entity.AdminRole;
+import com.todaii.english.core.entity.admin.Admin;
+import com.todaii.english.core.entity.admin.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.smtp.SmtpService;

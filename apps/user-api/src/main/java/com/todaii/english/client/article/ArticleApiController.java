@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.client.security.CustomUserDetails;
-import com.todaii.english.core.entity.Article;
-import com.todaii.english.core.entity.DictionaryEntry;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.DictionaryEntry_;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.response.PagedResponse;

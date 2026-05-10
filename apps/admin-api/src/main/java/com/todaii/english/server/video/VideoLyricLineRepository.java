@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.VideoLyricLine;
+import com.todaii.english.core.entity.video.VideoLyricLine;
 
 @Repository
 public interface VideoLyricLineRepository extends JpaRepository<VideoLyricLine, Long> {

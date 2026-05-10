@@ -16,9 +16,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.user.UserRepository;
-import com.todaii.english.core.entity.Article;
-import com.todaii.english.core.entity.DictionaryEntry;
-import com.todaii.english.core.entity.User;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
 

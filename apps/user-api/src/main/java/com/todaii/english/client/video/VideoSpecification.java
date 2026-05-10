@@ -6,7 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Topic_;
-import com.todaii.english.core.entity.Video;
+import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.entity.Video_;
 import com.todaii.english.shared.enums.CefrLevel;
 

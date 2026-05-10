@@ -6,8 +6,8 @@ import java.util.Set;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.core.entity.Admin;
-import com.todaii.english.core.entity.AdminRole;
+import com.todaii.english.core.entity.admin.Admin;
+import com.todaii.english.core.entity.admin.AdminRole;
 import com.todaii.english.infra.security.jwt.JwtUserDetailsFactory;
 import com.todaii.english.server.admin.AdminRoleRepository;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;

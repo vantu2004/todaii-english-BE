@@ -1,5 +1,6 @@
-package com.todaii.english.core.entity;
+package com.todaii.english.core.entity.admin;
 
+import com.todaii.english.core.entity.BaseRefreshToken;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

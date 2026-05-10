@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.todaii.english.core.entity.VideoLyricLine;
+import com.todaii.english.core.entity.video.VideoLyricLine;
 import com.todaii.english.shared.dto.VideoLyricLineDTO;
 
 import lombok.RequiredArgsConstructor;

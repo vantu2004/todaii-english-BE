@@ -6,8 +6,8 @@ import java.util.Map;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.Article;
-import com.todaii.english.core.entity.ArticleParagraph;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.article.ArticleParagraph;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.constants.Gemini;

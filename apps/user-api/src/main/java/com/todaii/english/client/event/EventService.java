@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todaii.english.core.entity.UserEvent;
+import com.todaii.english.core.entity.user.UserEvent;
 import com.todaii.english.shared.dto.EventDTO;
 import com.todaii.english.shared.enums.EventType;
 

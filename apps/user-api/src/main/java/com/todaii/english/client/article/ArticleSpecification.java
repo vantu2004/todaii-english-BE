@@ -4,10 +4,10 @@ import jakarta.persistence.criteria.*;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.todaii.english.core.entity.article.Article;
-import com.todaii.english.core.entity.Article_;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.Topic_;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.article.Article_;
 import com.todaii.english.shared.enums.CefrLevel;
 
 public class ArticleSpecification {

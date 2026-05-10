@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.dictionary.DictionaryRepository;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.NotebookItem;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;

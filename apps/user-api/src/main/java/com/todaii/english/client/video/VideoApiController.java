@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.dictionary.DictionaryEntry;
-import com.todaii.english.core.entity.DictionaryEntry_;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry_;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.response.PagedResponse;

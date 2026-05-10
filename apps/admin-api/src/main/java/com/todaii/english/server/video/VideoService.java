@@ -18,8 +18,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;

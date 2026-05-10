@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.todaii.english.core.entity.article.Article;
-import com.todaii.english.core.entity.NotebookItem;
-import com.todaii.english.core.entity.video.Video;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.core.entity.NotebookItem;
+import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.UserStatus;
 

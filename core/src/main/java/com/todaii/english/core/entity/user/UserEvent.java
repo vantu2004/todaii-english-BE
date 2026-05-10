@@ -2,11 +2,11 @@ package com.todaii.english.core.entity.user;
 
 import java.time.LocalDateTime;
 
-import com.todaii.english.core.entity.BaseEvent;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.todaii.english.core.entity.BaseEvent;
 import com.todaii.english.shared.enums.EventType;
 
 import lombok.*;

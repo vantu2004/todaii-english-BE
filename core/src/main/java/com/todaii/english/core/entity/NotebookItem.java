@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
-import com.todaii.english.core.entity.user.User;
 import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.NotebookType;
 
 import lombok.AllArgsConstructor;

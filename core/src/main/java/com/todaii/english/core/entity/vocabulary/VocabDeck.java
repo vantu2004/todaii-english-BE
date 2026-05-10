@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,6 +20,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import lombok.AllArgsConstructor;

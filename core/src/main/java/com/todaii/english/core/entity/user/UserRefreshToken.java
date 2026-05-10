@@ -1,10 +1,11 @@
 package com.todaii.english.core.entity.user;
 
-import com.todaii.english.core.entity.BaseRefreshToken;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
+import com.todaii.english.core.entity.BaseRefreshToken;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

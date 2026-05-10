@@ -49,6 +49,5 @@ public class ToeicPassage extends MediaUrl {
       orphanRemoval = true,
       fetch = FetchType.LAZY)
   @Builder.Default
-  @JsonIgnore
   private List<ToeicQuestion> questions = new ArrayList<>();
 }

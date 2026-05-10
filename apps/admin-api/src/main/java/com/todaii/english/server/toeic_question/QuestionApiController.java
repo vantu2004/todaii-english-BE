@@ -10,7 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
-import com.todaii.english.shared.request.server.toeic.Part01Request;
+import com.todaii.english.shared.request.server.toeic.Part12Request;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class QuestionApiController {
   private final QuestionService questionService;
 
-  // A. DÙNG CHUNG
+  // ----- DÙNG CHUNG -----
+
   @GetMapping("/question/{questionId}")
   public ResponseEntity<ToeicQuestionDTO> getQuestionById(@PathVariable Long questionId) {
     ToeicQuestionDTO toeicQuestionDTO = questionService.getQuestionDTOById(questionId);
@@ -42,21 +43,22 @@ public class QuestionApiController {
     return ResponseEntity.noContent().build();
   }
 
-  // B. PART 01 + 02
+  // ----- PART 01 + 02 -----
+
   @PostMapping("/test/{testId}/part/{partNumber}/question")
-  public ResponseEntity<ToeicQuestionDTO> createPart01Question(
+  public ResponseEntity<ToeicQuestionDTO> createPart12Question(
       @PathVariable Long testId,
       @PathVariable Integer partNumber,
-      @Valid @RequestBody Part01Request request) {
-    ToeicQuestionDTO created = questionService.createQuestion(testId, partNumber, request);
+      @Valid @RequestBody Part12Request request) {
+    ToeicQuestionDTO created = questionService.createPart12Question(testId, partNumber, request);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(created);
   }
 
   @PutMapping("/question/{questionId}")
-  public ResponseEntity<ToeicQuestionDTO> updatePart01Question(
-      @PathVariable Long questionId, @Valid @RequestBody Part01Request request) {
-    ToeicQuestionDTO updated = questionService.updateQuestion(questionId, request);
+  public ResponseEntity<ToeicQuestionDTO> updatePart12Question(
+      @PathVariable Long questionId, @Valid @RequestBody Part12Request request) {
+    ToeicQuestionDTO updated = questionService.updatePart12Question(questionId, request);
 
     return ResponseEntity.ok(updated);
   }

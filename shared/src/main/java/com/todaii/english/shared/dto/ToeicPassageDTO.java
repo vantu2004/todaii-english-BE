@@ -1,5 +1,8 @@
 package com.todaii.english.shared.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.*;
 
 @Getter
@@ -12,6 +15,6 @@ public class ToeicPassageDTO {
   private String passageTrans;
   private String imageUrl;
   private String audioUrl;
-
-  private ToeicTestDTO test;
+  private LocalDateTime createdAt;
+  private List<ToeicQuestionDTO> questions;
 }

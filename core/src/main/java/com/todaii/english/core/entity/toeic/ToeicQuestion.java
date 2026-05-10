@@ -69,6 +69,7 @@ public class ToeicQuestion extends MediaUrl {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "passage_id")
+  @JsonIgnore
   private ToeicPassage passage;
 
   // quan hệ 1 chiều

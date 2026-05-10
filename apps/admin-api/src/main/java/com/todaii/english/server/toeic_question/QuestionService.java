@@ -16,7 +16,7 @@ import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.shared.dto.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
-import com.todaii.english.shared.request.server.toeic.Part01Request;
+import com.todaii.english.shared.request.server.toeic.Part12Request;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +28,8 @@ public class QuestionService {
   private final ModelMapper modelMapper;
   private final TestRepository testRepository;
   private final TagRepository tagRepository;
+
+  // ----- DÙNG CHUNG -----
 
   private ToeicQuestion findById(Long questionId) {
     return questionRepository
@@ -45,16 +47,24 @@ public class QuestionService {
         .toList();
   }
 
-  public ToeicQuestionDTO createQuestion(Long testId, Integer partNumber, Part01Request request) {
+  public void deleteQuestion(Long questionId) {
+    ToeicQuestion question = findById(questionId);
 
-    switch (partNumber) {
-      case 1 -> {
-        validateImage(request);
-        validateAudio(request);
-      }
-
-      case 2 -> validateAudio(request);
+    if (StringUtils.hasText(question.getImageUrl())) {
+      cloudinaryPort.deleteFile(question.getImageUrl());
     }
+    if (StringUtils.hasText(question.getAudioUrl())) {
+      cloudinaryPort.deleteFile(question.getAudioUrl());
+    }
+
+    questionRepository.deleteById(questionId);
+  }
+
+  // ----- PART 01 + 02 -----
+
+  public ToeicQuestionDTO createPart12Question(
+      Long testId, Integer partNumber, Part12Request request) {
+    validateMedia(request, partNumber);
 
     ToeicTest toeicTest =
         testRepository
@@ -73,31 +83,10 @@ public class QuestionService {
     return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
   }
 
-  private void validateImage(Part01Request request) {
-    if (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
-        && !StringUtils.hasText(request.getImageRequest().getImageUrl())) {
-      throw new BusinessException(400, "Image is required");
-    }
-  }
-
-  private void validateAudio(Part01Request request) {
-    if (!StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
-        && !StringUtils.hasText(request.getAudioRequest().getAudioUrl())) {
-      throw new BusinessException(400, "Audio is required");
-    }
-  }
-
-  public ToeicQuestionDTO updateQuestion(Long questionId, Part01Request request) {
+  public ToeicQuestionDTO updatePart12Question(Long questionId, Part12Request request) {
     ToeicQuestion toeicQuestion = findById(questionId);
 
-    switch (toeicQuestion.getPartNumber()) {
-      case 1 -> {
-        validateImage(request);
-        validateAudio(request);
-      }
-
-      case 2 -> validateAudio(request);
-    }
+    validateMedia(request, toeicQuestion.getPartNumber());
 
     // SELECT * FROM toeic_tags WHERE id IN (1,2,3)
     mapRequestToEntity(request, toeicQuestion);
@@ -107,7 +96,32 @@ public class QuestionService {
     return modelMapper.map(savedQuestion, ToeicQuestionDTO.class);
   }
 
-  private void mapRequestToEntity(Part01Request request, ToeicQuestion toeicQuestion) {
+  private void validateMedia(Part12Request request, Integer partNumber) {
+    switch (partNumber) {
+      case 1 -> {
+        validateImage(request);
+        validateAudio(request);
+      }
+
+      case 2 -> validateAudio(request);
+    }
+  }
+
+  private void validateImage(Part12Request request) {
+    if (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+        && !StringUtils.hasText(request.getImageRequest().getImageUrl())) {
+      throw new BusinessException(400, "Image is required");
+    }
+  }
+
+  private void validateAudio(Part12Request request) {
+    if (!StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+        && !StringUtils.hasText(request.getAudioRequest().getAudioUrl())) {
+      throw new BusinessException(400, "Audio is required");
+    }
+  }
+
+  private void mapRequestToEntity(Part12Request request, ToeicQuestion toeicQuestion) {
     modelMapper.map(request, toeicQuestion);
 
     Set<ToeicTag> toeicTags = new HashSet<>(tagRepository.findAllById(request.getTagIds()));
@@ -125,18 +139,5 @@ public class QuestionService {
     if (StringUtils.hasText(audioUrl)) {
       toeicQuestion.setAudioUrl(audioUrl);
     }
-  }
-
-  public void deleteQuestion(Long questionId) {
-    ToeicQuestion question = findById(questionId);
-
-    if (StringUtils.hasText(question.getImageUrl())) {
-      cloudinaryPort.deleteFile(question.getImageUrl());
-    }
-    if (StringUtils.hasText(question.getAudioUrl())) {
-      cloudinaryPort.deleteFile(question.getAudioUrl());
-    }
-
-    questionRepository.deleteById(questionId);
   }
 }

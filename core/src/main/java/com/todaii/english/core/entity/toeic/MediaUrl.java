@@ -1,8 +1,8 @@
 package com.todaii.english.core.entity.toeic;
 
 import jakarta.persistence.Column;
-
 import jakarta.persistence.MappedSuperclass;
+
 import lombok.Getter;
 import lombok.Setter;
 

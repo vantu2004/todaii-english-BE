@@ -58,7 +58,7 @@ public class SecurityConfigForUser {
    */
   @Bean
   AuthenticationManager authenticationManager(
-          AuthenticationConfiguration authenticationConfiguration) throws Exception {
+      AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -80,17 +80,14 @@ public class SecurityConfigForUser {
   @Bean
   SecurityFilterChain UserSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
-            .csrf(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable)
+        .cors(this::configureCors)
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .cors(this::configureCors)
-
-            .sessionManagement(
-                    session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            // Cấu hình EntryPoint cho lỗi xác thực
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
-
-            .authorizeHttpRequests(this::configureAuthorizations);
+        // Cấu hình EntryPoint cho lỗi xác thực
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
+        .authorizeHttpRequests(this::configureAuthorizations);
 
     /*
      * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy
@@ -107,47 +104,62 @@ public class SecurityConfigForUser {
     return httpSecurity.build();
   }
 
-  private void configureCors(org.springframework.security.config.annotation.web.configurers.CorsConfigurer<HttpSecurity> cors) {
+  private void configureCors(
+      org.springframework.security.config.annotation.web.configurers.CorsConfigurer<HttpSecurity>
+          cors) {
     cors.configurationSource(
-            request -> {
-              var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-              corsConfig.setAllowedOrigins(
-                      List.of(StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin));
-              corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-              corsConfig.setAllowedHeaders(List.of("*"));
-              corsConfig.setAllowCredentials(true);
-              return corsConfig;
-            });
+        request -> {
+          var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+          corsConfig.setAllowedOrigins(
+              List.of(
+                  StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin));
+          corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+          corsConfig.setAllowedHeaders(List.of("*"));
+          corsConfig.setAllowCredentials(true);
+          return corsConfig;
+        });
   }
 
-  private void configureAuthorizations(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+  private void configureAuthorizations(
+      AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry
+          auth) {
     // Lưu ý: Thứ tự ưu tiên từ trên xuống dưới
     auth
-            // 1. Công khai hoàn toàn
-            .requestMatchers("/api/v1/auth/**").permitAll()
-            .requestMatchers("/api/v1/dictionary/**").permitAll()
-            .requestMatchers("/api/v1/topic/**").permitAll()
-            .requestMatchers("/api/v1/vocab-group/**").permitAll()
-            .requestMatchers("/api/v1/vocab-deck/**").permitAll()
+        // 1. Công khai hoàn toàn
+        .requestMatchers("/api/v1/auth/**")
+        .permitAll()
+        .requestMatchers("/api/v1/dictionary/**")
+        .permitAll()
+        .requestMatchers("/api/v1/topic/**")
+        .permitAll()
+        .requestMatchers("/api/v1/vocab-group/**")
+        .permitAll()
+        .requestMatchers("/api/v1/vocab-deck/**")
+        .permitAll()
 
-            // 2. Các Endpoint cần quyền USER (Phải đặt TRƯỚC các rule permitAll chung)
-            .requestMatchers(
-                    "/api/v1/article/saved",
-                    "/api/v1/article/*/is-saved",
-                    "/api/v1/video/saved",
-                    "/api/v1/video/*/is-saved",
-                    "/api/v1/notebook/**"
-            ).hasAuthority("USER")
+        // 2. Các Endpoint cần quyền USER (Phải đặt TRƯỚC các rule permitAll chung)
+        .requestMatchers(
+            "/api/v1/article/saved",
+            "/api/v1/article/*/is-saved",
+            "/api/v1/video/saved",
+            "/api/v1/video/*/is-saved",
+            "/api/v1/notebook/**")
+        .hasAuthority("USER")
 
-            // 3. User Profile & Actions
-            .requestMatchers(HttpMethod.GET, "/api/v1/user/me").hasAuthority("USER")
-            .requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER")
-            .requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*").hasAuthority("USER")
+        // 3. User Profile & Actions
+        .requestMatchers(HttpMethod.GET, "/api/v1/user/me")
+        .hasAuthority("USER")
+        .requestMatchers(HttpMethod.PUT, "/api/v1/user/me")
+        .hasAuthority("USER")
+        .requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*")
+        .hasAuthority("USER")
 
-            // 4. Cho phép xem nội dung còn lại (Article, Video) mà không cần login
-            .requestMatchers("/api/v1/article/**").permitAll()
-            .requestMatchers("/api/v1/video/**").permitAll()
-
-            .anyRequest().authenticated();
+        // 4. Cho phép xem nội dung còn lại (Article, Video) mà không cần login
+        .requestMatchers("/api/v1/article/**")
+        .permitAll()
+        .requestMatchers("/api/v1/video/**")
+        .permitAll()
+        .anyRequest()
+        .authenticated();
   }
 }

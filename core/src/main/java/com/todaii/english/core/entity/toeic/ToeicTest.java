@@ -57,7 +57,7 @@ public class ToeicTest extends MediaUrl {
   private LocalDateTime createdAt;
 
   @LastModifiedDate
-  @Column(name = "updated_at")
+  @Column(name = "updated_at", insertable = false)
   private LocalDateTime updatedAt;
 
   @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,4 +1,4 @@
-package com.todaii.english.server.dictionary;
+package com.todaii.english.client.dictionary;
 
 import jakarta.validation.constraints.Min;
 
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.shared.response.TodaiiEnglishResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/todaii-dictionary")
 public class TodaiiDictionaryApiController {
-  private final DictionaryPort dictionaryPort;
+  private final TodaiiDictionaryService todaiiDictionaryService;
 
   @GetMapping
   public ResponseEntity<TodaiiEnglishResponse> search(
@@ -28,6 +27,6 @@ public class TodaiiDictionaryApiController {
           int page,
       @RequestParam(defaultValue = "50") @Min(value = 1, message = "Size must be at least 1")
           int size) {
-    return ResponseEntity.ok().body(dictionaryPort.lookupTodaiiDictionaryApi(word, page, size));
+    return ResponseEntity.ok().body(todaiiDictionaryService.search(word, page, size));
   }
 }

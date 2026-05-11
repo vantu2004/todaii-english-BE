@@ -51,7 +51,7 @@ public class DictionaryApiClient implements DictionaryPort {
               res ->
                   res.bodyToMono(String.class)
                       .doOnNext(body -> log.warn("❌ 4xx error: url={} body={}", url, body))
-                      .flatMap(body -> Mono.error(new BusinessException(404, "Not found"))))
+                      .flatMap(body -> Mono.error(new BusinessException(404, "Word not found"))))
 
           // 5xx
           .onStatus(

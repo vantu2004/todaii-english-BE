@@ -13,6 +13,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,7 +58,7 @@ public class SecurityConfigForUser {
    */
   @Bean
   AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+          AuthenticationConfiguration authenticationConfiguration) throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -78,78 +80,17 @@ public class SecurityConfigForUser {
   @Bean
   SecurityFilterChain UserSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
-        .csrf(csrf -> csrf.disable())
-        .cors(
-            cors ->
-                cors.configurationSource(
-                    request -> {
-                      var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                      corsConfig.setAllowedOrigins(
-                          List.of(
-                              StringUtils.isBlank(allowedOrigin)
-                                  ? "http://localhost:5173"
-                                  : allowedOrigin));
-                      corsConfig.setAllowedMethods(
-                          List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-                      corsConfig.setAllowedHeaders(List.of("*"));
-                      corsConfig.setAllowCredentials(true);
-                      return corsConfig;
-                    }))
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
-        .authorizeHttpRequests(
-            auth ->
-                auth
-                    // AuthApiController
-                    .requestMatchers("/api/v1/auth/**")
-                    .permitAll()
+            .csrf(AbstractHttpConfigurer::disable)
 
-                    // ArticleApiController
-                    .requestMatchers("/api/v1/article/saved")
-                    .hasAuthority("USER")
-                    .requestMatchers("/api/v1/article/*/is-saved")
-                    .hasAuthority("USER")
-                    .requestMatchers("/api/v1/article/**")
-                    .permitAll()
+            .cors(this::configureCors)
 
-                    // UserApiController
-                    .requestMatchers(HttpMethod.GET, "/api/v1/user/me")
-                    .hasAuthority("USER")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/user/me")
-                    .hasAuthority("USER")
-                    .requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*")
-                    .hasAuthority("USER")
+            .sessionManagement(
+                    session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                    // TopicApiController
-                    .requestMatchers(HttpMethod.GET, "/api/v1/topic/**")
-                    .permitAll()
+            // Cấu hình EntryPoint cho lỗi xác thực
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
 
-                    // VideoApiController
-                    .requestMatchers("/api/v1/video/saved")
-                    .hasAuthority("USER")
-                    .requestMatchers("/api/v1/video/*/is-saved")
-                    .hasAuthority("USER")
-                    .requestMatchers("/api/v1/video/**")
-                    .permitAll()
-
-                    // AuthApiController
-                    .requestMatchers("/api/v1/dictionary/**")
-                    .permitAll()
-
-                    // NotebookApiController + NoteDictApiController
-                    .requestMatchers("/api/v1/notebook/**")
-                    .hasAuthority("USER")
-
-                    // VocabGroupApiController
-                    .requestMatchers("/api/v1/vocab-group/**")
-                    .permitAll()
-
-                    // VocabDeckApiController
-                    .requestMatchers("/api/v1/vocab-deck/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated());
+            .authorizeHttpRequests(this::configureAuthorizations);
 
     /*
      * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy
@@ -161,9 +102,52 @@ public class SecurityConfigForUser {
      * hiện decode token phía dưới
      */
     httpSecurity.addFilterBefore(userCookieAuthFilter, AuthorizationFilter.class);
-
     httpSecurity.addFilterBefore(this.jwtTokenFilter, AuthorizationFilter.class);
 
     return httpSecurity.build();
+  }
+
+  private void configureCors(org.springframework.security.config.annotation.web.configurers.CorsConfigurer<HttpSecurity> cors) {
+    cors.configurationSource(
+            request -> {
+              var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+              corsConfig.setAllowedOrigins(
+                      List.of(StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin));
+              corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+              corsConfig.setAllowedHeaders(List.of("*"));
+              corsConfig.setAllowCredentials(true);
+              return corsConfig;
+            });
+  }
+
+  private void configureAuthorizations(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
+    // Lưu ý: Thứ tự ưu tiên từ trên xuống dưới
+    auth
+            // 1. Công khai hoàn toàn
+            .requestMatchers("/api/v1/auth/**").permitAll()
+            .requestMatchers("/api/v1/dictionary/**").permitAll()
+            .requestMatchers("/api/v1/topic/**").permitAll()
+            .requestMatchers("/api/v1/vocab-group/**").permitAll()
+            .requestMatchers("/api/v1/vocab-deck/**").permitAll()
+
+            // 2. Các Endpoint cần quyền USER (Phải đặt TRƯỚC các rule permitAll chung)
+            .requestMatchers(
+                    "/api/v1/article/saved",
+                    "/api/v1/article/*/is-saved",
+                    "/api/v1/video/saved",
+                    "/api/v1/video/*/is-saved",
+                    "/api/v1/notebook/**"
+            ).hasAuthority("USER")
+
+            // 3. User Profile & Actions
+            .requestMatchers(HttpMethod.GET, "/api/v1/user/me").hasAuthority("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/user/me").hasAuthority("USER")
+            .requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*").hasAuthority("USER")
+
+            // 4. Cho phép xem nội dung còn lại (Article, Video) mà không cần login
+            .requestMatchers("/api/v1/article/**").permitAll()
+            .requestMatchers("/api/v1/video/**").permitAll()
+
+            .anyRequest().authenticated();
   }
 }

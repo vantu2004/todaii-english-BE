@@ -1,4 +1,4 @@
-package com.todaii.english.server.toeic_question.file;
+package com.todaii.english.server.file;
 
 import java.io.IOException;
 

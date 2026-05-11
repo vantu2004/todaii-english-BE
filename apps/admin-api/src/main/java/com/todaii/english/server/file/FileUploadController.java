@@ -1,4 +1,4 @@
-package com.todaii.english.server.toeic_question.file;
+package com.todaii.english.server.file;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/files")
+@RequestMapping("/api/v1/cloudinary/file")
 public class FileUploadController {
   private final FileUploadService fileStorageService;
 

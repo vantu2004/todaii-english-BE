@@ -97,8 +97,14 @@
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-http5</artifactId>
 		</dependency>
+
+		<!-- Google Cloud Translate -->
+		<dependency>
+			<groupId>com.google.cloud</groupId>
+			<artifactId>google-cloud-translate</artifactId>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>todaii_infra</finalName>
 	</build>

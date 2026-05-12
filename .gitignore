@@ -23,3 +23,5 @@ Thumbs.db
 /bin/
 
 COMPREHENSIVE_DOCUMENTATION.md
+
+infra/src/main/resources/google-credentials.json

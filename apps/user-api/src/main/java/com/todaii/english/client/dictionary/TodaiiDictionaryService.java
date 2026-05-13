@@ -17,7 +17,8 @@ public class TodaiiDictionaryService {
     TodaiiEnglishResponse todaiiEnglishResponse =
         dictionaryPort.lookupTodaiiDictionaryApi(word, page, size);
 
-    if (todaiiEnglishResponse.getTotal() == 0 && todaiiEnglishResponse.getFound() == false) {
+    if (todaiiEnglishResponse.getTotal().equals(0L)
+        && Boolean.FALSE.equals(todaiiEnglishResponse.getFound())) {
       throw new BusinessException(404, "Word not found");
     }
 

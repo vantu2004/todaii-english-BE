@@ -22,7 +22,8 @@ public class GgTranslateClient implements GgTranslatePort {
   private String projectId;
 
   @Override
-  public List<String> translateText(String targetLanguage, List<String> texts) {
+  public List<String> translateText(
+      String sourceLanguage, String targetLanguage, List<String> texts) {
     /* Initialize client that will be used to send requests. This client only needs to be created
     once, and can be reused for multiple requests. After completing all of your requests, call
     the "close" method on the client to safely clean up any remaining background resources.*/
@@ -37,6 +38,7 @@ public class GgTranslateClient implements GgTranslatePort {
           TranslateTextRequest.newBuilder()
               .setParent(parent.toString())
               .setMimeType("text/plain")
+              .setSourceLanguageCode(sourceLanguage)
               .setTargetLanguageCode(targetLanguage)
               .addAllContents(texts)
               .build();

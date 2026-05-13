@@ -130,6 +130,8 @@ public class SecurityConfigForUser {
         .permitAll()
         .requestMatchers("/api/v1/dictionary/**")
         .permitAll()
+        .requestMatchers("/api/v1/gg-translate/**")
+        .permitAll()
         .requestMatchers("/api/v1/topic/**")
         .permitAll()
         .requestMatchers("/api/v1/vocab-group/**")

@@ -43,8 +43,6 @@ public class UserService {
   private final CloudinaryPort cloudinaryPort;
   private final EventService eventService;
 
-  private String CLIENT_URL = "http://localhost:5173";
-
   public UserDTO createUser(RegisterRequest request) {
     if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
       throw new BusinessException(UserErrorCode.USER_ALREADY_EXISTS);
@@ -147,6 +145,7 @@ public class UserService {
     user.setResetPasswordExpiredAt(LocalDateTime.now().plusMinutes(15));
     this.userRepository.save(user);
 
+    String CLIENT_URL = "http://localhost:5173";
     String resetURL = CLIENT_URL + "/client/reset-password/" + token;
 
     this.smtpService.sendForgotPasswordEmail(email, resetURL);
@@ -215,9 +214,8 @@ public class UserService {
     user.setDisplayName(request.getDisplayName());
 
     User savedUser = this.userRepository.save(user);
-    UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
 
-    return userDTO;
+    return modelMapper.map(savedUser, UserDTO.class);
   }
 
   public void toggleSavedArticle(Long currentUserId, Long articleId) {

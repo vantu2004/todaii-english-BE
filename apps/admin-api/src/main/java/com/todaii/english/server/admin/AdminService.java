@@ -16,7 +16,7 @@ import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.core.entity.admin.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
-import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.EventType;
@@ -156,15 +156,13 @@ public class AdminService {
   }
 
   private Set<AdminRole> getAdminRoles(Set<String> roleCodes) {
-    Set<AdminRole> roles =
-        roleCodes.stream()
-            .map(
-                code ->
-                    this.adminRoleRepository
-                        .findById(code)
-                        .orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)))
-            .collect(Collectors.toSet());
-    return roles;
+    return roleCodes.stream()
+        .map(
+            code ->
+                this.adminRoleRepository
+                    .findById(code)
+                    .orElseThrow(() -> new BusinessException(AdminErrorCode.ROLE_NOT_FOUND)))
+        .collect(Collectors.toSet());
   }
 
   public void delete(Long currentAdminId, Long id) {

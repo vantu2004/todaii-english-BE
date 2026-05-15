@@ -1,8 +1,8 @@
-package com.todaii.english.core.smtp;
+package com.todaii.english.core.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.port.SettingQueryPort;
 import com.todaii.english.core.port.SmtpSenderPort;
 import com.todaii.english.shared.constants.MailTemplate;
 
@@ -12,7 +12,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SmtpService {
   private final SmtpSenderPort smtpSenderPort;
-  private final SettingQueryPort settingQueryPort;
+
+  @Value("${spring.mail.username}")
+  private String mailUsername;
 
   public void sendVerifyEmail(String to, String otp) {
     String subject = "Verify your email";
@@ -27,13 +29,11 @@ public class SmtpService {
   }
 
   public void accountBannedNotice(String to, String name) {
-    String contactMail = settingQueryPort.getSettingByKey("mail_username").getValue();
-
     String subject = "Your account has been banned";
     String content =
         MailTemplate.ACCOUNT_BANNED_TEMPLATE
             .replace("{name}", name)
-            .replace("{contactMail}", contactMail);
+            .replace("{contactMail}", mailUsername);
     this.smtpSenderPort.send(to, subject, content);
   }
 

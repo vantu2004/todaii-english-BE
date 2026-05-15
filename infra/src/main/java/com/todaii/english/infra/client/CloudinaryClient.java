@@ -4,36 +4,36 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.todaii.english.core.port.CloudinaryPort;
-import com.todaii.english.core.port.SettingQueryPort;
-import com.todaii.english.shared.constants.SettingKey;
 
 @Component
 public class CloudinaryClient implements CloudinaryPort {
   private final Cloudinary cloudinary;
-  private final SettingQueryPort settingQueryPort;
 
   // Regex kiểm tra URL Cloudinary cơ bản
   private static final String CLOUDINARY_URL_PATTERN =
       "^https?://res\\.cloudinary\\.com/[\\w-]+/(image|video|raw)/upload/.*$";
 
-  public CloudinaryClient(SettingQueryPort settingQueryPort) {
-    this.settingQueryPort = settingQueryPort;
-
-    String cloudName =
-        settingQueryPort.getSettingByKey(SettingKey.CLOUDINARY_CLOUD_NAME).getValue();
-    String apiKey = settingQueryPort.getSettingByKey(SettingKey.CLOUDINARY_API_KEY).getValue();
-    String apiSecret =
-        settingQueryPort.getSettingByKey(SettingKey.CLOUDINARY_API_SECRET).getValue();
+  public CloudinaryClient(
+      @Value("${cloudinary.cloud-name}") String cloudinaryCloudName,
+      @Value("${cloudinary.api-key}") String cloudinaryApiKey,
+      @Value("${cloudinary.api-secret}") String cloudinaryApiSecret) {
 
     this.cloudinary =
         new Cloudinary(
-            ObjectUtils.asMap("cloud_name", cloudName, "api_key", apiKey, "api_secret", apiSecret));
+            ObjectUtils.asMap(
+                "cloud_name",
+                cloudinaryCloudName,
+                "api_key",
+                cloudinaryApiKey,
+                "api_secret",
+                cloudinaryApiSecret));
   }
 
   @Override

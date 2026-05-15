@@ -3,23 +3,26 @@ package com.todaii.english.infra.client;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.google.cloud.translate.v3.*;
 import com.todaii.english.core.port.GgTranslatePort;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
-@RequiredArgsConstructor
+@Component
 public class GgTranslateClient implements GgTranslatePort {
   // inject client đã config bên GgTranslateConfig
   private final TranslationServiceClient translationServiceClient;
+  private final String projectId;
 
-  @Value("${google.cloud.project-id}")
-  private String projectId;
+  public GgTranslateClient(
+      TranslationServiceClient translationServiceClient,
+      @Value("${google.cloud.project-id}") String projectId) {
+    this.translationServiceClient = translationServiceClient;
+    this.projectId = projectId;
+  }
 
   @Override
   public List<String> translateText(

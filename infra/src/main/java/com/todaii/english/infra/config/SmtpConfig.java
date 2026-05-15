@@ -1,46 +1,49 @@
 package com.todaii.english.infra.config;
 
-import java.util.List;
 import java.util.Properties;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import com.todaii.english.core.entity.Setting;
-import com.todaii.english.core.port.SettingQueryPort;
-import com.todaii.english.shared.constants.SettingKey;
-import com.todaii.english.shared.enums.SettingCategory;
-
-import lombok.RequiredArgsConstructor;
-
 @Configuration
-@RequiredArgsConstructor
 public class SmtpConfig {
-  private final SettingQueryPort settingQueryPort;
+  @Value("${spring.mail.host}")
+  private String mailHost;
+
+  @Value("${spring.mail.port}")
+  private int mailPort;
+
+  @Value("${spring.mail.username}")
+  private String mailUsername;
+
+  @Value("${spring.mail.password}")
+  private String mailPassword;
+
+  @Value("${spring.mail.protocol}")
+  private String mailProtocol;
+
+  @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+  private boolean mailStartTlsEnable;
 
   @Bean
   public JavaMailSender createMailSender() {
-    List<Setting> settings =
-        this.settingQueryPort.getSettingsByCategory(SettingCategory.MAIL_SERVER);
 
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+    mailSender.setHost(mailHost);
+    mailSender.setPort(mailPort);
+    mailSender.setUsername(mailUsername);
+    mailSender.setPassword(mailPassword);
+    mailSender.setProtocol(mailProtocol);
+
     Properties props = mailSender.getJavaMailProperties();
 
-    for (Setting s : settings) {
-      switch (s.getKey()) {
-        case SettingKey.MAIL_HOST -> mailSender.setHost(s.getValue());
-        case SettingKey.MAIL_PORT -> mailSender.setPort(Integer.parseInt(s.getValue()));
-        case SettingKey.MAIL_USERNAME -> mailSender.setUsername(s.getValue());
-        case SettingKey.MAIL_PASSWORD -> mailSender.setPassword(s.getValue());
-        case SettingKey.MAIL_PROTOCOL -> props.put("mail.transport.protocol", s.getValue());
-        case SettingKey.MAIL_STARTTLS -> {
-          props.put("mail.smtp.starttls.enable", s.getValue());
-          props.put("mail.smtp.auth", "true");
-        }
-      }
-    }
+    props.put("mail.transport.protocol", mailProtocol);
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.enable", String.valueOf(mailStartTlsEnable));
 
     return mailSender;
   }

@@ -132,8 +132,6 @@ public class SecurityConfigForAdmin {
         .hasAnyAuthority(AdminAuthorities.ALL_ADMINS)
         .requestMatchers(HttpMethod.PUT, "/api/v1/admin/me")
         .hasAnyAuthority(AdminAuthorities.ALL_ADMINS)
-        .requestMatchers("/api/v1/admin/**", "/api/v1/setting/**")
-        .hasAuthority(AdminAuthorities.SUPER)
 
         // 4. Quản lý User
         .requestMatchers("/api/v1/user/**")

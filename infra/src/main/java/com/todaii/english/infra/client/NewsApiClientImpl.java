@@ -6,14 +6,14 @@ import java.util.concurrent.CompletableFuture;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.kwabenaberko.newsapilib.NewsApiClient;
 import com.kwabenaberko.newsapilib.models.request.EverythingRequest;
 import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
 import com.todaii.english.core.port.NewsApiPort;
-import com.todaii.english.core.port.SettingQueryPort;
-import com.todaii.english.shared.constants.SettingKey;
 import com.todaii.english.shared.response.NewsApiResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 // phải đổi tên để tránh trùng tên class trong thư viện
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "newsapi.api.key")
 public class NewsApiClientImpl implements NewsApiPort {
   private final NewsApiClient client;
   private final ModelMapper modelMapper;
-  private final SettingQueryPort settingQueryPort;
 
-  public NewsApiClientImpl(ModelMapper modelMapper, SettingQueryPort settingQueryPort) {
+  public NewsApiClientImpl(
+      ModelMapper modelMapper, @Value("${newsapi.api.key}") String newsApiKey) {
     this.modelMapper = modelMapper;
-    this.settingQueryPort = settingQueryPort;
 
-    this.client =
-        new NewsApiClient(settingQueryPort.getSettingByKey(SettingKey.NEWSAPI_API_KEY).getValue());
+    this.client = new NewsApiClient(newsApiKey);
   }
 
   @Override
@@ -61,7 +60,7 @@ public class NewsApiClientImpl implements NewsApiPort {
             mapped.setArticles(mappedArticles);
             future.complete(mapped);
 
-            log.info(response.getArticles().get(0).getPublishedAt());
+            log.info(response.getArticles().getFirst().getPublishedAt());
           }
 
           @Override

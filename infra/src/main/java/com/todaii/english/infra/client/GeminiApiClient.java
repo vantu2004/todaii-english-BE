@@ -1,13 +1,12 @@
 package com.todaii.english.infra.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.genai.Client;
 import com.google.genai.types.CountTokensResponse;
 import com.google.genai.types.GenerateContentResponse;
 import com.todaii.english.core.port.GeminiPort;
-import com.todaii.english.core.port.SettingQueryPort;
-import com.todaii.english.shared.constants.SettingKey;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.AIResponse;
 
@@ -17,21 +16,21 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class GeminiApiClient implements GeminiPort {
   private final Client client;
-  private final SettingQueryPort settingQueryPort;
 
-  public GeminiApiClient(SettingQueryPort settingQueryPort) {
-    this.settingQueryPort = settingQueryPort;
+  private final String geminiModel;
 
-    String apiKey = settingQueryPort.getSettingByKey(SettingKey.GEMINI_API_KEY).getValue();
-    this.client = Client.builder().apiKey(apiKey).build();
+  public GeminiApiClient(
+      @Value("${gemini.model}") String geminiModel,
+      @Value("${gemini.api.key}") String geminiApiKey) {
+    this.geminiModel = geminiModel;
+
+    this.client = Client.builder().apiKey(geminiApiKey).build();
   }
 
   @Override
   public AIResponse generateText(String prompt) {
     try {
-      GenerateContentResponse response =
-          client.models.generateContent(
-              settingQueryPort.getSettingByKey(SettingKey.GEMINI_MODEL).getValue(), prompt, null);
+      GenerateContentResponse response = client.models.generateContent(geminiModel, prompt, null);
 
       if (response == null || response.text() == null) {
         log.warn("Gemini API trả về phản hồi rỗng hoặc không có text cho prompt: {}", prompt);
@@ -40,11 +39,7 @@ public class GeminiApiClient implements GeminiPort {
 
       String responseText = response.text().replaceAll("```json", "").replaceAll("```", "").trim();
 
-      int[] tokens =
-          countTokens(
-              settingQueryPort.getSettingByKey(SettingKey.GEMINI_MODEL).getValue(),
-              prompt,
-              responseText);
+      int[] tokens = countTokens(geminiModel, prompt, responseText);
 
       return new AIResponse(responseText, tokens[0], tokens[1]);
 

@@ -18,10 +18,10 @@ Thumbs.db
 **/logs/
 *.log
 
-**/application*.properties
-
 /bin/
 
 COMPREHENSIVE_DOCUMENTATION.md
 
 infra/src/main/resources/google-credentials.json
+
+.env

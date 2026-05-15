@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.security.PasswordHasher;
-import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.EventType;
@@ -39,10 +39,8 @@ public class UserService {
   @Deprecated
   public List<UserDTO> findAll() {
     List<User> users = userRepository.findAll();
-    List<UserDTO> userDTOs =
-        users.stream().map(user -> modelMapper.map(user, UserDTO.class)).toList();
 
-    return userDTOs;
+    return users.stream().map(user -> modelMapper.map(user, UserDTO.class)).toList();
   }
 
   public Page<UserDTO> findAllPaged(
@@ -66,9 +64,8 @@ public class UserService {
         userRepository
             .findById(id)
             .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
-    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
-    return userDTO;
+    return modelMapper.map(user, UserDTO.class);
   }
 
   public UserDTO update(Long currentAdminId, Long id, @Valid UpdateUserRequest request) {

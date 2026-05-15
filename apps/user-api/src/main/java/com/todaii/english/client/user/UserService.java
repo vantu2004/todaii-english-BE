@@ -16,7 +16,7 @@ import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
-import com.todaii.english.core.smtp.SmtpService;
+import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.UserStatus;

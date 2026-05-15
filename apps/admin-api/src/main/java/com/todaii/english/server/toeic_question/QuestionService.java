@@ -142,15 +142,15 @@ public class QuestionService {
     toeicQuestion.setTags(getToeicTags(request.getTagIds()));
 
     // ưu tiên dùng url ảnh đã upload
-    String imageUrl = request.getImageRequest().getUploadedImage();
-    if (StringUtils.hasText(imageUrl)) {
-      toeicQuestion.setImageUrl(imageUrl);
+    String uploadedImageUrl = request.getImageRequest().getUploadedImage();
+    if (StringUtils.hasText(uploadedImageUrl)) {
+      toeicQuestion.setImageUrl(uploadedImageUrl);
     }
 
     // ưu tiên dùng url audio đã upload
-    String audioUrl = request.getAudioRequest().getUploadedAudio();
-    if (StringUtils.hasText(audioUrl)) {
-      toeicQuestion.setAudioUrl(audioUrl);
+    String uploadedAudioUrl = request.getAudioRequest().getUploadedAudio();
+    if (StringUtils.hasText(uploadedAudioUrl)) {
+      toeicQuestion.setAudioUrl(uploadedAudioUrl);
     }
   }
 

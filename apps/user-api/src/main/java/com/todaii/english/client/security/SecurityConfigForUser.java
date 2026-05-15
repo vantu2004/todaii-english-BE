@@ -2,7 +2,6 @@ package com.todaii.english.client.security;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,8 +36,8 @@ public class SecurityConfigForUser {
   private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
   // tự tìm trên biến môi trường của cloud trước, ko có thì mới tới local
-  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173}")
-  private String allowedOrigin;
+  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}")
+  private String[] allowedOrigins;
 
   @Bean
   UserDetailsService userDetailsService() {
@@ -110,11 +109,10 @@ public class SecurityConfigForUser {
     cors.configurationSource(
         request -> {
           var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-          corsConfig.setAllowedOrigins(
-              List.of(
-                  StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin));
+          corsConfig.setAllowedOriginPatterns(List.of(allowedOrigins));
           corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
           corsConfig.setAllowedHeaders(List.of("*"));
+          corsConfig.setExposedHeaders(List.of("*"));
           corsConfig.setAllowCredentials(true);
           return corsConfig;
         });
@@ -129,6 +127,8 @@ public class SecurityConfigForUser {
         .requestMatchers("/api/v1/auth/**")
         .permitAll()
         .requestMatchers("/api/v1/dictionary/**")
+        .permitAll()
+        .requestMatchers("/api/v1/todaii-dictionary/**")
         .permitAll()
         .requestMatchers("/api/v1/gg-translate/**")
         .permitAll()

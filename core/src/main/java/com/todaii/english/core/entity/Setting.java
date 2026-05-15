@@ -9,7 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.todaii.english.shared.enums.SettingCategory;
@@ -42,10 +41,6 @@ public class Setting {
   @Enumerated(EnumType.STRING)
   @Column(name = "setting_category", length = 32)
   private SettingCategory settingCategory;
-
-  @CreationTimestamp
-  @Column(name = "created_at", nullable = false, updatable = false)
-  private LocalDateTime createdAt;
 
   @UpdateTimestamp
   @Column(name = "updated_at", nullable = false)

@@ -2,7 +2,6 @@ package com.todaii.english.server.security;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +37,8 @@ public class SecurityConfigForAdmin {
   private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
   // tự tìm trên biến môi trường của cloud trước, ko có thì mới tới local
-  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173}")
-  private String allowedOrigin;
+  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}")
+  private String[] allowedOrigins;
 
   @Bean
   UserDetailsService adminDetailsService() {
@@ -107,11 +106,10 @@ public class SecurityConfigForAdmin {
     cors.configurationSource(
         request -> {
           var config = new org.springframework.web.cors.CorsConfiguration();
-          String origin =
-              StringUtils.isBlank(allowedOrigin) ? "http://localhost:5173" : allowedOrigin;
-          config.setAllowedOrigins(List.of(origin));
+          config.setAllowedOriginPatterns(List.of(allowedOrigins));
           config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
           config.setAllowedHeaders(List.of("*"));
+          config.setExposedHeaders(List.of("*"));
           config.setAllowCredentials(true);
           return config;
         });
@@ -145,7 +143,6 @@ public class SecurityConfigForAdmin {
         .requestMatchers(
             "/api/v1/topic/**",
             "/api/v1/dictionary/**",
-            "/api/v1/todaii-dictionary/**",
             "/api/v1/video/**",
             "/api/v1/vocab-group/**",
             "/api/v1/vocab-deck/**",
@@ -158,289 +155,4 @@ public class SecurityConfigForAdmin {
         .anyRequest()
         .authenticated();
   }
-
-  //  @Bean
-  //  SecurityFilterChain adminSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
-  //    httpSecurity
-  //        .csrf(AbstractHttpConfigurer::disable)
-  //        .cors(
-  //            cors ->
-  //                cors.configurationSource(
-  //                    request -> {
-  //                      var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-  //                      corsConfig.setAllowedOrigins(
-  //                          List.of(
-  //                              StringUtils.isBlank(allowedOrigin)
-  //                                  ? "http://localhost:5173"
-  //                                  : allowedOrigin));
-  //                      corsConfig.setAllowedMethods(
-  //                          List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-  //                      corsConfig.setAllowedHeaders(List.of("*"));
-  //                      corsConfig.setAllowCredentials(true);
-  //                      return corsConfig;
-  //                    }))
-  //        .sessionManagement(
-  //            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-  //
-  //        // Cấu hình EntryPoint cho lỗi xác thực
-  //        .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
-  //
-  //        // hasRole() tự thêm tiền tố ROLE_, vd read -> ROLE_read
-  //        .authorizeHttpRequests(
-  //            auth ->
-  //                auth
-  //                    // AuthApiController
-  //                    .requestMatchers("/api/v1/auth/**")
-  //                    .permitAll()
-  //
-  //                    // DashboardApiController
-  //                    .requestMatchers("/api/v1/dashboard/**")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER", "CONTENT_MANAGER")
-  //
-  //                    // AdminApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/admin")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/admin/me")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/admin/*")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/admin")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/admin/me")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER", "USER_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/admin/*")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/admin/*/enabled")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/*")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //
-  //                    // SettingApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/setting")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/setting")
-  //                    .hasAuthority("SUPER_ADMIN")
-  //
-  //                    // UserApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/user")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/user/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/user/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/user/*/enabled")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/user/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "USER_MANAGER")
-  //
-  //                    // TopicApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/topic")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/topic/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/topic")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/topic/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/topic/*/enabled")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/topic/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // DictionaryApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/dictionary/gemini")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/dictionary")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/dictionary/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/dictionary")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/dictionary/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/dictionary/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // VideoApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/video/fetch")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/video")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/video/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/video")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/video/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/video/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/video/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // VideoLyricLineApiController
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/video/lyric/import")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/video/*/lyric")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/video/lyric/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/video/*/lyric/batch")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/video/lyric/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/video/lyric/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/video/*/lyric")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // VocabGroupApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/vocab-group")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/vocab-group/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/vocab-group*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/vocab-group/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-group/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/vocab-group/*/enabled")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // VocabDeckApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/vocab-deck")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/vocab-deck/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck/*/word/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/vocab-deck/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-deck/*/word/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/vocab-deck/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/vocab-deck/*/enabled")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/vocab-deck/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // ArticleApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/article")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/article/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/article/news-api")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/article")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/article/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/article/*/enabled")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/article/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // ArticleParagraphApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/article/*/paragraph")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/article/*/paragraph")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/article/paragraph/translate")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/article/paragraph/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/article/paragraph/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // CollectionApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/collection")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/collection/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/collection/all")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/toeic/collection")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/collection/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/collection/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PATCH, "/api/v1/toeic/collection/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // TagApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/tag")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/tag/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/toeic/tag")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/tag/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/tag/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // TestApiController
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.POST, "/api/v1/toeic/test")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/test/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                    .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/test/*")
-  //                    .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    // PassageApiController
-  //                        .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test/*/part/*/passage")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.GET, "/api/v1/toeic/passage/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.POST, "/api/v1/toeic/test/*/part/*/passage")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/passage/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/passage/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                        // QuestionApiController
-  //                        .requestMatchers(HttpMethod.GET, "/api/v1/toeic/question/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.GET, "/api/v1/toeic/test/*/part/*/question")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.DELETE, "/api/v1/toeic/question/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.POST,
-  // "/api/v1/toeic/test/*/part-12/*/question")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/part-12/question/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.POST,
-  // "/api/v1/toeic/test/*/part-34567/*/question")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //                        .requestMatchers(HttpMethod.PUT, "/api/v1/toeic/part-34567/question/*")
-  //                        .hasAnyAuthority("SUPER_ADMIN", "CONTENT_MANAGER")
-  //
-  //                    .anyRequest()
-  //                    .authenticated());
-  //
-  //    /*
-  //     * nhờ chế độ debug của @EnableWebSecurity(debug = true), ta thấy
-  //     * AuthorizationFilter nằm cuối -> add jwtTokenFilter để check token trc khi xác
-  //     * thực bởi AuthorizationFilter
-  //     */
-  //    /*
-  //     * thêm filter xử lý token từ cookie lấy từ request trước khi thêm filter thực
-  //     * hiện decode token phía dưới
-  //     */
-  //    httpSecurity.addFilterBefore(adminCookieAuthFilter, AuthorizationFilter.class);
-  //
-  //    httpSecurity.addFilterBefore(this.jwtTokenFilter, AuthorizationFilter.class);
-  //
-  //    return httpSecurity.build();
-  //  }
 }

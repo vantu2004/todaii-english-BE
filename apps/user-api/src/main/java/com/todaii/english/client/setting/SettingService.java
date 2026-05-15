@@ -17,8 +17,8 @@ public class SettingService implements SettingQueryPort {
   private final SettingRepository settingRepository;
 
   @Override
-  public List<Setting> getSettingsByCategory(SettingCategory mailServer) {
-    return this.settingRepository.findBySettingCategory(mailServer);
+  public List<Setting> getSettingsByCategory(SettingCategory settingCategory) {
+    return this.settingRepository.findBySettingCategory(settingCategory);
   }
 
   @Override

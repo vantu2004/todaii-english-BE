@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.todaii.english.shared.enums.SettingCategory;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +25,9 @@ public class SettingRequest {
 
   @NotEmpty(message = "Settings map cannot be empty")
   private Map<
-          @NotBlank(message = "Setting key cannot be blank") String,
-          @NotBlank(message = "Setting value cannot be blank") String>
+          @NotBlank(message = "Key must not be blank")
+          @Length(max = 1014, message = "Key must be less than 128 characters") String,
+          @NotBlank(message = "Value must not be blank")
+          @Length(max = 1014, message = "Value must be less than 1024 characters") String>
       settings;
 }

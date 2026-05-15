@@ -29,7 +29,6 @@ public class SettingService implements SettingQueryPort {
         .orElseThrow(() -> new BusinessException(404, "Setting not found"));
   }
 
-  @Deprecated
   public List<Setting> updateSettings(SettingRequest request) {
     // Tạo list Setting từ request map
     List<Setting> toSave =
@@ -47,6 +46,7 @@ public class SettingService implements SettingQueryPort {
     return settingRepository.saveAll(toSave);
   }
 
+  @Deprecated
   public Setting updateSetting(String key, String value) {
     Setting setting = getSettingByKey(key);
     setting.setValue(value);

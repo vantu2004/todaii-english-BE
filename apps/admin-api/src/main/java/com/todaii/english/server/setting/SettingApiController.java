@@ -8,13 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.entity.Setting;
 import com.todaii.english.shared.enums.SettingCategory;
@@ -34,12 +28,12 @@ public class SettingApiController {
     return ResponseEntity.ok(settingService.getSettingsByCategory(category));
   }
 
-  @Deprecated
+  @PostMapping
   public ResponseEntity<List<Setting>> updateSettings(@Valid @RequestBody SettingRequest request) {
     return ResponseEntity.ok(settingService.updateSettings(request));
   }
 
-  @PutMapping("/{key}")
+  @Deprecated
   public ResponseEntity<Setting> updateSetting(
       @PathVariable String key,
       @RequestParam

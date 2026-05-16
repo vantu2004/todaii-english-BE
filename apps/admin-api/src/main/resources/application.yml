@@ -39,16 +39,27 @@ spring:
           starttls:
             enable: ${MAIL_STARTTLS_ENABLE}
 
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        model: ${OPENAI_MODEL}
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          model: ${GEMINI_MODEL}
+
 app:
   security:
     jwt:
       issuer: ${JWT_ISSUER}
       secret: ${JWT_SECRET}
 
-gemini:
-  model: ${GEMINI_MODEL}
-  api:
-    key: ${GEMINI_API_KEY}
+#gemini:
+#  model: ${GEMINI_MODEL}
+#  api:
+#    key: ${GEMINI_API_KEY}
 
 youtube:
   api:

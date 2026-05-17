@@ -55,6 +55,13 @@ spring:
             temperature: 1
     retry:
       max-attempts: 1
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            schema: classpath:/schema/chatbotSchema.sql
+
 app:
   security:
     jwt:

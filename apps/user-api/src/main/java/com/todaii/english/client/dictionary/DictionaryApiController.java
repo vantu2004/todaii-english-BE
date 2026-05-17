@@ -32,7 +32,7 @@ public class DictionaryApiController {
       Authentication authentication, @RequestParam String word) {
     Long currentUserId = null;
     if (authentication != null && authentication.isAuthenticated()) {
-      currentUserId = UserUtils.getCurrentAdminId(authentication);
+      currentUserId = UserUtils.getCurrentUserId(authentication);
     }
 
     DictionaryApiResponse[] dictionaryApiResponses =
@@ -64,7 +64,7 @@ public class DictionaryApiController {
       throws Exception {
     Long currentUserId = null;
     if (authentication != null && authentication.isAuthenticated()) {
-      currentUserId = UserUtils.getCurrentAdminId(authentication);
+      currentUserId = UserUtils.getCurrentUserId(authentication);
     }
 
     return ResponseEntity.ok(dictionaryService.getWordByGemini(currentUserId, word));
@@ -79,7 +79,7 @@ public class DictionaryApiController {
           String word) {
     Long currentUserId = null;
     if (authentication != null && authentication.isAuthenticated()) {
-      currentUserId = UserUtils.getCurrentAdminId(authentication);
+      currentUserId = UserUtils.getCurrentUserId(authentication);
     }
 
     return ResponseEntity.ok(dictionaryService.getRelatedWord(currentUserId, word));
@@ -94,7 +94,7 @@ public class DictionaryApiController {
           String question) {
     Long currentUserId = null;
     if (authentication != null && authentication.isAuthenticated()) {
-      currentUserId = UserUtils.getCurrentAdminId(authentication);
+      currentUserId = UserUtils.getCurrentUserId(authentication);
     }
 
     return ResponseEntity.ok(dictionaryService.askGemini(currentUserId, question));

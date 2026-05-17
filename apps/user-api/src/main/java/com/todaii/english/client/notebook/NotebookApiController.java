@@ -23,7 +23,7 @@ public class NotebookApiController {
 
   @GetMapping
   public ResponseEntity<List<NotebookNode>> getTree(Authentication authentication) {
-    return ResponseEntity.ok(notebookService.getTree(UserUtils.getCurrentAdminId(authentication)));
+    return ResponseEntity.ok(notebookService.getTree(UserUtils.getCurrentUserId(authentication)));
   }
 
   @PostMapping
@@ -32,19 +32,19 @@ public class NotebookApiController {
     return ResponseEntity.status(201)
         .body(
             notebookService.createItem(
-                UserUtils.getCurrentAdminId(authentication), notebookRequest));
+                UserUtils.getCurrentUserId(authentication), notebookRequest));
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<NotebookItem> rename(
       Authentication authentication, @PathVariable Long id, @RequestParam String name) {
     return ResponseEntity.ok(
-        notebookService.rename(UserUtils.getCurrentAdminId(authentication), id, name));
+        notebookService.rename(UserUtils.getCurrentUserId(authentication), id, name));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long id) {
-    notebookService.deleteItem(UserUtils.getCurrentAdminId(authentication), id);
+    notebookService.deleteItem(UserUtils.getCurrentUserId(authentication), id);
     return ResponseEntity.ok().build();
   }
 }

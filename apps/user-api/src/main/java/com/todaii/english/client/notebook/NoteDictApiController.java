@@ -26,20 +26,20 @@ public class NoteDictApiController {
   public ResponseEntity<List<DictionaryEntry>> getWords(
       Authentication authentication, @PathVariable Long noteId) {
     return ResponseEntity.ok(
-        noteDictService.getEntries(UserUtils.getCurrentAdminId(authentication), noteId));
+        noteDictService.getEntries(UserUtils.getCurrentUserId(authentication), noteId));
   }
 
   @PutMapping("/{noteId}/word/{entryId}")
   public ResponseEntity<Void> addWord(
       Authentication authentication, @PathVariable Long noteId, @PathVariable Long entryId) {
-    noteDictService.addEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
+    noteDictService.addEntry(UserUtils.getCurrentUserId(authentication), noteId, entryId);
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/{noteId}/word/{entryId}")
   public ResponseEntity<Void> removeWord(
       Authentication authentication, @PathVariable Long noteId, @PathVariable Long entryId) {
-    noteDictService.removeEntry(UserUtils.getCurrentAdminId(authentication), noteId, entryId);
+    noteDictService.removeEntry(UserUtils.getCurrentUserId(authentication), noteId, entryId);
     return ResponseEntity.ok().build();
   }
 }

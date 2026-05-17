@@ -28,13 +28,13 @@ public class TagService {
         .orElseThrow(() -> new BusinessException(404, "Tag not found"));
   }
 
-  public ToeicTag create(String name) {
+  public ToeicTag create(String name, Integer partNumber) {
     String alias = AdminUtils.toAlias(name);
     if (tagRepository.existsByAlias(alias)) {
       throw new BusinessException(409, "Alias already exists: " + alias);
     }
 
-    ToeicTag tag = ToeicTag.builder().name(name).alias(alias).build();
+    ToeicTag tag = ToeicTag.builder().partNumber(partNumber).name(name).alias(alias).build();
 
     return tagRepository.save(tag);
   }

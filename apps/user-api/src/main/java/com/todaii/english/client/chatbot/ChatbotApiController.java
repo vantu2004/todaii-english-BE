@@ -24,7 +24,8 @@ public class ChatbotApiController {
   @PostMapping
   public ResponseEntity<String> sendMessage(
       @RequestParam @NotBlank(message = "Message must not be blank") String message,
-      @RequestParam @NotNull(message = "AI Provider is required") AiProvider aiProvider) {
+      @RequestParam(defaultValue = "OPENAI") @NotNull(message = "AI Provider is required")
+          AiProvider aiProvider) {
     return ResponseEntity.ok().body(chatbotService.sendMessage(message, aiProvider));
   }
 }

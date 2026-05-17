@@ -20,7 +20,7 @@ public class ModelMapperConfig {
     // Matching STRICT để tránh map nhầm field tương tự (phân biệt cả hoa-thường)
     mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-    // Mapping field imageUrl và audioUrl cho các nested classes trong Part12Request
+    // Mapping field imageUrl và audioUrl cho các nested classes trong Part12Request, ToeicPassageRequest
     mapper
         .typeMap(Part12Request.class, ToeicQuestion.class)
         .addMappings(
@@ -36,6 +36,8 @@ public class ModelMapperConfig {
               m.map(src -> src.getImageRequest().getImageUrl(), ToeicPassage::setImageUrl);
               m.map(src -> src.getAudioRequest().getAudioUrl(), ToeicPassage::setAudioUrl);
             });
+
+    // Map từ passage trong ToeicQuestion cho passageId trong ToeicQuestionDTO
     mapper
         .typeMap(ToeicQuestion.class, ToeicQuestionDTO.class)
         .addMappings(m -> m.map(src -> src.getPassage().getId(), ToeicQuestionDTO::setPassageId));

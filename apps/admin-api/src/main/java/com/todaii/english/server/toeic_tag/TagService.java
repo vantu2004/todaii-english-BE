@@ -39,7 +39,7 @@ public class TagService {
     return tagRepository.save(tag);
   }
 
-  public ToeicTag update(Long id, String name) {
+  public ToeicTag update(Long id, String name, Integer partNumber) {
     ToeicTag tag = findById(id);
     String alias = AdminUtils.toAlias(name);
 
@@ -52,6 +52,7 @@ public class TagService {
       }
     }
 
+    tag.setPartNumber(partNumber);
     tag.setName(name);
     tag.setAlias(alias);
 

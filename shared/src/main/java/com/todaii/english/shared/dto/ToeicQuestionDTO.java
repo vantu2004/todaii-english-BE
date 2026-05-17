@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 public class ToeicQuestionDTO {
   private Long id;
+  private Long passageId;
 
   private Integer partNumber;
 

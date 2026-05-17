@@ -1,9 +1,6 @@
 package com.todaii.english.client.chatbot;
 
-import java.util.Objects;
-
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.shared.enums.AiProvider;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
 
 @Slf4j
 @Service
@@ -29,19 +27,14 @@ public class ChatbotService {
     this.geminiChatClient = geminiChatClient;
   }
 
-  public String sendMessage(String message, AiProvider provider) {
+  public Flux<String> sendMessage(String message, AiProvider provider) {
     ChatClient chatClient = provider == AiProvider.GEMINI ? geminiChatClient : openAiChatClient;
 
-    ChatResponse chatResponse =
-        chatClient
-            .prompt()
-            .system(spec -> spec.text(systemPromptChatbotTemplate))
-            .user(message)
-            .call()
-            .chatResponse();
-
-    log.info("{}", chatResponse);
-
-    return Objects.requireNonNull(chatResponse).getResult().getOutput().getText();
+    return chatClient
+        .prompt()
+        .system(spec -> spec.text(systemPromptChatbotTemplate))
+        .user(message)
+        .stream()
+        .content();
   }
 }

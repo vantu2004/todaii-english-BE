@@ -5,14 +5,12 @@ import jakarta.validation.constraints.NotNull;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.shared.enums.AiProvider;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +19,12 @@ import lombok.RequiredArgsConstructor;
 public class ChatbotApiController {
   private final ChatbotService chatbotService;
 
+  // test stream bằng trình duyệt, postman ko stream đc
   @PostMapping
-  public ResponseEntity<String> sendMessage(
+  public Flux<String> sendMessage(
       @RequestParam @NotBlank(message = "Message must not be blank") String message,
       @RequestParam(defaultValue = "OPENAI") @NotNull(message = "AI Provider is required")
           AiProvider aiProvider) {
-    return ResponseEntity.ok().body(chatbotService.sendMessage(message, aiProvider));
+    return ResponseEntity.ok().body(chatbotService.sendMessage(message, aiProvider)).getBody();
   }
 }

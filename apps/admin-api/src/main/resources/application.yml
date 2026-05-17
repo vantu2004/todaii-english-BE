@@ -43,12 +43,16 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY}
       chat:
-        model: ${OPENAI_MODEL}
+        options:
+          model: ${OPENAI_MODEL}
     google:
       genai:
         api-key: ${GEMINI_API_KEY}
         chat:
-          model: ${GEMINI_MODEL}
+          options:
+            model: ${GEMINI_MODEL}
+    retry:
+      max-attempts: 1
 
 app:
   security:

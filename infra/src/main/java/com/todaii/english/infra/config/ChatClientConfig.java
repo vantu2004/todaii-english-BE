@@ -13,7 +13,7 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.todaii.english.infra.advisors.TokenUsageAuditAdvisor;
+import com.todaii.english.infra.advisors.TokenUsageCallAdvisor;
 
 @Configuration
 public class ChatClientConfig {
@@ -41,7 +41,7 @@ public class ChatClientConfig {
 
     return ChatClient.builder(chatModel)
         .defaultSystem(defaultSystemMessage)
-        .defaultAdvisors(List.of(new SimpleLoggerAdvisor(), new TokenUsageAuditAdvisor()))
+        .defaultAdvisors(List.of(new SimpleLoggerAdvisor(), new TokenUsageCallAdvisor()))
         .defaultUser(defaultUserMessage)
         .build();
   }

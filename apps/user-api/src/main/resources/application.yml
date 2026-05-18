@@ -46,6 +46,7 @@ spring:
         options:
           model: ${OPENAI_MODEL}
           temperature: 1
+          stream-usage: true
     google:
       genai:
         api-key: ${GEMINI_API_KEY}

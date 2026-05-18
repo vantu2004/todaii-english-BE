@@ -11,8 +11,8 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TokenUsageAuditAdvisor implements CallAdvisor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TokenUsageAuditAdvisor.class);
+public class TokenUsageCallAdvisor implements CallAdvisor {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TokenUsageCallAdvisor.class);
 
   @Override
   public ChatClientResponse adviseCall(

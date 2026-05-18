@@ -1,6 +1,5 @@
 package com.todaii.english.server.dashboard;
 
-import com.todaii.english.shared.response.DashboardChartDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

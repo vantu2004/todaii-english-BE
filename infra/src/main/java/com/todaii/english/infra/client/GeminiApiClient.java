@@ -20,8 +20,8 @@ public class GeminiApiClient implements GeminiPort {
   private final String geminiModel;
 
   public GeminiApiClient(
-      @Value("${gemini.model}") String geminiModel,
-      @Value("${gemini.api.key}") String geminiApiKey) {
+      @Value("${spring.ai.google.genai.chat.options.model}") String geminiModel,
+      @Value("${spring.ai.google.genai.api-key}") String geminiApiKey) {
     this.geminiModel = geminiModel;
 
     this.client = Client.builder().apiKey(geminiApiKey).build();

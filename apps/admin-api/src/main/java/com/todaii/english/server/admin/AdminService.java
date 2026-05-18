@@ -17,9 +17,7 @@ import com.todaii.english.core.entity.admin.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
-import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.enums.AdminStatus;
-import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -36,7 +34,6 @@ public class AdminService {
   private final PasswordHasher passwordHasher;
   private final CloudinaryPort cloudinaryPort;
   private final SmtpService smtpService;
-  private final EventService eventService;
 
   @Deprecated
   public List<Admin> findAll() {
@@ -88,7 +85,6 @@ public class AdminService {
             .build();
 
     smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
-    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
     return this.adminRepository.save(admin);
   }
@@ -116,8 +112,6 @@ public class AdminService {
     if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
       String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
       admin.setAvatarUrl(uploadedUrl);
-
-      eventService.logAdmin(id, EventType.CLOUDINARY_UPLOAD, 1, null);
     } else {
       admin.setAvatarUrl(admin.getAvatarUrl());
     }
@@ -150,7 +144,6 @@ public class AdminService {
     }
 
     smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
-    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
     return this.adminRepository.save(admin);
   }
@@ -172,7 +165,6 @@ public class AdminService {
             .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
     smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
-    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
     admin.setIsDeleted(true);
     admin.setDeletedAt(LocalDateTime.now());
@@ -191,9 +183,6 @@ public class AdminService {
     admin.setLastLoginAt(LocalDateTime.now());
 
     this.adminRepository.save(admin);
-
-    // log login event
-    eventService.logAdmin(admin.getId(), EventType.ADMIN_LOGIN, 1, null);
   }
 
   public void toggleEnabled(Long currentAdminId, Long id) {
@@ -215,8 +204,6 @@ public class AdminService {
 
       smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
     }
-
-    eventService.logAdmin(currentAdminId, EventType.MAIL_SEND, 1, null);
 
     this.adminRepository.save(admin);
   }

@@ -23,12 +23,10 @@ import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
-import com.todaii.english.server.event.EventService;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
-import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
 
@@ -44,7 +42,6 @@ public class VideoService {
   private final TopicRepository topicRepository;
   private final YoutubeDataApiV3Port youtubeDataApiV3Port;
   private final DictionaryEntryRepository dictionaryEntryRepository;
-  private final EventService eventService;
 
   public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
     String requestUri =
@@ -97,12 +94,6 @@ public class VideoService {
       Long currentAdminId, String keyword, String type, int size) {
     YoutubeSearchResponse youtubeSearchResponse =
         youtubeDataApiV3Port.fetchFromYoutube(keyword, type, size);
-
-    /*
-     * mặc định youtube data api v3 tính 1 lần search videos hay playlists là
-     * 100units
-     */
-    eventService.logAdmin(currentAdminId, EventType.YOUTUBE_SEARCH, 100, null);
 
     return youtubeSearchResponse;
   }

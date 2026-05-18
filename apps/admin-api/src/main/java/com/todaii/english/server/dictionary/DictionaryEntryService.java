@@ -3,7 +3,6 @@ package com.todaii.english.server.dictionary;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import jakarta.validation.Valid;
@@ -24,12 +23,10 @@ import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.server.article.ArticleRepository;
-import com.todaii.english.server.event.EventService;
 import com.todaii.english.server.video.VideoRepository;
 import com.todaii.english.server.vocabulary.VocabDeckRepository;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
-import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.AIResponse;
 import com.todaii.english.shared.response.DictionaryApiResponse;
@@ -47,13 +44,9 @@ public class DictionaryEntryService {
   private final VocabDeckRepository vocabDeckRepository;
   private final ObjectMapper objectMapper;
   private final ModelMapper modelMapper;
-  private final EventService eventService;
 
   public DictionaryApiResponse[] lookupWord(Long currentAdminId, String word) {
     DictionaryApiResponse[] response = dictionaryPort.lookupFreeDictionaryApi(word);
-
-    // ko cần check response nữa vì nó đã tự ném lỗi
-    eventService.logAdmin(currentAdminId, EventType.DICTIONARY_API, 1, Map.of("headword", word));
 
     return response;
   }
@@ -72,15 +65,6 @@ public class DictionaryEntryService {
     String prompt = String.format(Gemini.DICTIONARY_PROMPT, rawJson, word);
 
     AIResponse aiResponse = geminiPort.generateText(prompt);
-    eventService.logAdmin(
-        currentAdminId,
-        EventType.AI_REQUEST,
-        1,
-        Map.of(
-            "input_token",
-            aiResponse.getInputToken(),
-            "output_token",
-            aiResponse.getOutputToken()));
 
     String rawResponseText = aiResponse.getText();
 

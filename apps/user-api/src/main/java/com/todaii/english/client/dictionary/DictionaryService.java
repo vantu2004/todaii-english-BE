@@ -3,7 +3,6 @@ package com.todaii.english.client.dictionary;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.modelmapper.ModelMapper;
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.todaii.english.client.event.EventService;
 import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.dictionary.DictionarySense;
 import com.todaii.english.core.port.DictionaryPort;
 import com.todaii.english.core.port.GeminiPort;
 import com.todaii.english.shared.constants.Gemini;
 import com.todaii.english.shared.dto.DictionaryEntryDTO;
-import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.AIResponse;
 import com.todaii.english.shared.response.DictionaryApiResponse;
@@ -33,12 +30,9 @@ public class DictionaryService {
   private final GeminiPort geminiPort;
   private final ObjectMapper objectMapper;
   private final ModelMapper modelMapper;
-  private final EventService eventService;
 
   public DictionaryApiResponse[] lookupWord(Long currentUserId, String word) {
     DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupFreeDictionaryApi(word);
-
-    eventService.logUser(currentUserId, EventType.DICTIONARY_API, 1, null);
 
     return dictionaryApiResponses;
   }
@@ -121,15 +115,6 @@ public class DictionaryService {
 
   public String askGemini(Long currentUserId, String prompt) {
     AIResponse aiResponse = geminiPort.generateText(prompt);
-    eventService.logUser(
-        currentUserId,
-        EventType.AI_REQUEST,
-        1,
-        Map.of(
-            "input_token",
-            aiResponse.getInputToken(),
-            "output_token",
-            aiResponse.getOutputToken()));
 
     return aiResponse.getText();
   }

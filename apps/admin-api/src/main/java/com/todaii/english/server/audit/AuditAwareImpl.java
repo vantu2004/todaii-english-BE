@@ -27,9 +27,9 @@ public class AuditAwareImpl implements AuditorAware<Admin> {
 
     Long adminId = AdminUtils.getCurrentAdminId(authentication);
 
-    // findById() tìm full admin trong khi hibernate chỉ cần id để set cho admin ToeicTest =>
-    // getReferenceById() chỉ tạo proxy object (object giả) chỉ chứa id, khi nào cần cái khác thì
-    // mới query
+    /* findById() tìm full admin trong khi hibernate chỉ cần id để set cho admin ToeicTest =>
+    getReferenceById() chỉ tạo proxy object (object giả) chỉ chứa id, khi nào cần cái khác thì
+    mới query*/
     return Optional.of(adminRepository.getReferenceById(adminId));
   }
 }

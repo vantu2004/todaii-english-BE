@@ -77,7 +77,7 @@ public class ToeicTest extends MediaUrl {
   // quan hệ 1 chiều, hạn chế việc khi query admin thì nó query quá nhiều thông tin liên quan
   @CreatedBy
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "creator_by", nullable = false, updatable = false)
+  @JoinColumn(name = "created_by", nullable = false, updatable = false)
   @JsonIgnore
   private Admin createdBy;
 

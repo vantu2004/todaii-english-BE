@@ -1,7 +1,6 @@
 package com.todaii.english.server.article;
 
 import java.util.List;
-import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -9,9 +8,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.article.ArticleParagraph;
 import com.todaii.english.core.port.GeminiPort;
-import com.todaii.english.server.event.EventService;
 import com.todaii.english.shared.constants.Gemini;
-import com.todaii.english.shared.enums.EventType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleParagraphRequest;
 import com.todaii.english.shared.response.AIResponse;
@@ -25,7 +22,6 @@ public class ArticleParagraphService {
   private final ArticleRepository articleRepository;
   private final ModelMapper modelMapper;
   private final GeminiPort geminiPort;
-  private final EventService eventService;
 
   public List<ArticleParagraph> getByArticleId(Long articleId) {
     Article article =
@@ -70,16 +66,6 @@ public class ArticleParagraphService {
   public String translateParagraph(Long currentAdminId, String textEn) {
     String prompt = String.format(Gemini.TRANSLATE_PROMPT, textEn);
     AIResponse aiResponse = geminiPort.generateText(prompt);
-
-    eventService.logAdmin(
-        currentAdminId,
-        EventType.AI_REQUEST,
-        1,
-        Map.of(
-            "input_token",
-            aiResponse.getInputToken(),
-            "output_token",
-            aiResponse.getOutputToken()));
 
     return aiResponse.getText();
   }

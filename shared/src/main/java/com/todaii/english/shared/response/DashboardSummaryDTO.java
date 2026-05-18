@@ -1,17 +1,16 @@
 package com.todaii.english.shared.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class DashboardSummaryDTO {
-  private Long adminCount;
-  private Long userCount;
-  private Long articleCount;
-  private Long videoCount;
-  private Long vocabDeckCount;
-  private Long dictionaryWordCount;
+  private Long totalAdmins;
+  private Long totalArticles;
+  private Long totalDictionaryEntries;
+  private Long totalToeicTest;
+  private Long totalUsers;
+  private Long totalVideos;
+  private Long totalVocabularyDecks;
 }

@@ -1,0 +1,21 @@
+package com.todaii.english.shared.enums;
+
+public enum UsageType {
+  USER_LOGIN,
+  ADMIN_LOGIN,
+
+  AI_REQUEST,
+
+  MAIL_SEND,
+
+  DICTIONARY_API_REQUEST,
+  TODAII_DICT_REQUEST,
+
+  NEWS_API_REQUEST,
+
+  YOUTUBE_SEARCH,
+
+  CLOUDINARY_UPLOAD,
+
+  GOOGLE_TRANSLATE_REQUEST
+}

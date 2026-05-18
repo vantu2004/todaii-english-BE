@@ -49,6 +49,35 @@ public class TestApiController {
     return ResponseEntity.ok(response);
   }
 
+  @GetMapping("/collection/{collectionId}")
+  public ResponseEntity<PagedResponse<ToeicTestDTO>> getTestsByCollectionId(
+      @PathVariable Long collectionId,
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "desc") String direction,
+      @RequestParam(required = false) String keyword) {
+
+    Page<ToeicTestDTO> testResponses =
+        testService.findByCollectionId(collectionId, page, size, sortBy, direction, keyword);
+
+    PagedResponse<ToeicTestDTO> response =
+        new PagedResponse<>(
+            testResponses.getContent(),
+            page,
+            size,
+            testResponses.getTotalElements(),
+            testResponses.getTotalPages(),
+            testResponses.isFirst(),
+            testResponses.isLast(),
+            sortBy,
+            direction);
+
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("/{id}")
   public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
     return ResponseEntity.ok(testService.getTestDTOById(id));

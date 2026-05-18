@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.validation.constraints.NotBlank;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,8 +37,10 @@ public class TagApiController {
       @NotBlank(message = "Toeic tag name cannot be blank")
           @Length(max = 191, message = "Toeic tag name must not exceed 191 characters")
           @RequestParam
-          String name) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(tagService.create(name));
+          String name,
+      @Range(min = 1, max = 7, message = "Part number must be between 1 and 7") @RequestParam
+          Integer partNumber) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(tagService.create(name, partNumber));
   }
 
   @PutMapping("/{id}")
@@ -46,8 +49,11 @@ public class TagApiController {
       @NotBlank(message = "Toeic tag name cannot be blank")
           @Length(max = 191, message = "Toeic tag name must not exceed 191 characters")
           @RequestParam
-          String name) {
-    return ResponseEntity.ok().body(tagService.update(id, name));
+          String name,
+      @Range(min = 1, max = 7, message = "Part number must be between 1 and 7")
+          @RequestParam(required = false)
+          Integer partNumber) {
+    return ResponseEntity.ok().body(tagService.update(id, name, partNumber));
   }
 
   @DeleteMapping("/{id}")

@@ -42,6 +42,19 @@ public class TestService {
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
 
+  public Page<ToeicTestDTO> findByCollectionId(
+      Long collectionId, int page, int size, String sortBy, String direction, String keyword) {
+
+    Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+
+    Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+    Page<ToeicTest> toeicTestPage =
+        testRepository.findByCollectionId(collectionId, keyword, pageable);
+
+    return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
+  }
+
   public ToeicTestDTO getTestDTOById(Long id) {
     return modelMapper.map(findById(id), ToeicTestDTO.class);
   }

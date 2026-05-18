@@ -1,6 +1,7 @@
 package com.todaii.english.shared.dto;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.todaii.english.shared.enums.Answer;
 
@@ -10,6 +11,7 @@ import lombok.*;
 @Setter
 public class ToeicQuestionDTO {
   private Long id;
+  private Long passageId;
 
   private Integer partNumber;
 
@@ -31,14 +33,14 @@ public class ToeicQuestionDTO {
   //  private ToeicTestDTO test;
   //  private ToeicPassageDTO passage;
   //
-  //  private Set<ToeicTagDTO> tags;
-  //
-  //  // vì shared ko truy cập vào core nên phải tự tạo nested class
-  //  @Getter
-  //  @Setter
-  //  public static class ToeicTagDTO {
-  //    private Long id;
-  //    private String name;
-  //    private String alias;
-  //  }
+  private Set<ToeicTagDTO> tags;
+
+  // vì shared ko truy cập vào core nên phải tự tạo nested class
+  @Getter
+  @Setter
+  public static class ToeicTagDTO {
+    private Long id;
+    private String name;
+    private String alias;
+  }
 }

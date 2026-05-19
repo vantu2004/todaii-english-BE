@@ -2,14 +2,14 @@ package com.todaii.english.server.file;
 
 import java.io.IOException;
 
-import com.todaii.english.core.port.UsageStatisticPort;
-import com.todaii.english.shared.enums.ActorType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.port.CloudinaryPort;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.server.toeic_test.TestRepository;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,8 @@ public class FileUploadService {
             .findById(testId)
             .orElseThrow(() -> new BusinessException(404, "Test not found"));
 
-    usageStatisticPort.createUsageStatistic(usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
+    usageStatisticPort.createUsageStatistic(
+        usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
 
     try {
       return cloudinaryPort.uploadFile(file, "toeic/" + toeicTest.getTitle());

@@ -1,11 +1,12 @@
 package com.todaii.english.server.file;
 
-import com.todaii.english.server.AdminUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.todaii.english.server.AdminUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,8 +17,8 @@ public class FileUploadController {
   private final FileUploadService fileStorageService;
 
   @PostMapping(value = "/toeic/test/{testId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<String> upload(Authentication authentication,
-                                       @PathVariable Long testId, @RequestParam MultipartFile file) {
+  public ResponseEntity<String> upload(
+      Authentication authentication, @PathVariable Long testId, @RequestParam MultipartFile file) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
     return ResponseEntity.ok(fileStorageService.upload(currentAdminId, testId, file));
   }

@@ -10,11 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.port.NewsApiPort;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -29,10 +32,15 @@ public class ArticleService {
   private final ModelMapper modelMapper;
   private final TopicRepository topicRepository;
   private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final UsageStatisticPort usageStatisticPort;
 
   public NewsApiResponse fetchFromNewsApi(
       Long currentAdminId, String query, int pageSize, int page, String sortBy) {
     NewsApiResponse newsApiResponse = newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
+
+    UsageStatistic newsApiStatistic =
+        usageStatisticPort.createNewsApiStatistic(currentAdminId, ActorType.ADMIN);
+    usageStatisticPort.createUsageStatistic(newsApiStatistic);
 
     return newsApiResponse;
   }

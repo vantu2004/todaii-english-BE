@@ -4,7 +4,9 @@ import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.shared.enums.ActorType;
 
 public interface UsageStatisticPort {
-    UsageStatistic createCloudinaryStatistic(Long actorId, ActorType actorType);
+  UsageStatistic createCloudinaryStatistic(Long actorId, ActorType actorType);
 
-    UsageStatistic createUsageStatistic(UsageStatistic newUsageStatistic);
+  UsageStatistic createNewsApiStatistic(Long actorId, ActorType actorType);
+
+  UsageStatistic createUsageStatistic(UsageStatistic newUsageStatistic);
 }

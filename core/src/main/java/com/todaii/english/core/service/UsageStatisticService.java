@@ -1,11 +1,11 @@
 package com.todaii.english.core.service;
 
-import com.todaii.english.core.repository.UsageStatisticRepository;
-import com.todaii.english.shared.enums.ActorType;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.core.repository.UsageStatisticRepository;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.UsageType;
 
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,25 @@ public class UsageStatisticService implements UsageStatisticPort {
 
   @Override
   public UsageStatistic createCloudinaryStatistic(Long actorId, ActorType actorType) {
-    return UsageStatistic.builder().actorId(actorId).actorType(actorType).usageType(UsageType.CLOUDINARY_UPLOAD).build();
+    return getUsageStatistic(actorId, actorType, UsageType.CLOUDINARY_UPLOAD);
   }
 
   @Override
-  public UsageStatistic createUsageStatistic(UsageStatistic newStatistic) {
+  public UsageStatistic createNewsApiStatistic(Long actorId, ActorType actorType) {
+    return getUsageStatistic(actorId, actorType, UsageType.NEWS_API_REQUEST);
+  }
+
+  private UsageStatistic getUsageStatistic(Long actorId, ActorType actorType, UsageType usageType) {
+    return UsageStatistic.builder()
+        .actorId(actorId)
+        .actorType(actorType)
+        .usageType(usageType)
+        .build();
+  }
+
+  // phòng trường hợp FE gửi 2 request cùng lúc do strictmode
+  @Override
+  public synchronized UsageStatistic createUsageStatistic(UsageStatistic newStatistic) {
     UsageStatistic currStatistic;
 
     if (useModelKey(newStatistic.getUsageType())) {

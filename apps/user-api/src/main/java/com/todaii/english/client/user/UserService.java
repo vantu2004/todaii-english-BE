@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import com.todaii.english.core.port.UsageStatisticPort;
-import com.todaii.english.shared.enums.ActorType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -16,9 +14,11 @@ import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.CloudinaryPort;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -200,7 +200,8 @@ public class UserService {
       String uploadedUrl = cloudinaryPort.uploadImage(avatar, "user_avatars");
       user.setAvatarUrl(uploadedUrl);
 
-      usageStatisticPort.createUsageStatistic(usageStatisticPort.createCloudinaryStatistic(currentUserId, ActorType.USER));
+      usageStatisticPort.createUsageStatistic(
+          usageStatisticPort.createCloudinaryStatistic(currentUserId, ActorType.USER));
     } else {
       user.setAvatarUrl(user.getAvatarUrl());
     }

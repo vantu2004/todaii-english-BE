@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.shared.enums.ActorType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -39,6 +41,7 @@ public class UserService {
   private final ArticleRepository articleRepository;
   private final VideoRepository videoRepository;
   private final CloudinaryPort cloudinaryPort;
+  private final UsageStatisticPort usageStatisticPort;
 
   public UserDTO createUser(RegisterRequest request) {
     if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -172,10 +175,10 @@ public class UserService {
     return modelMapper.map(user, UserDTO.class);
   }
 
-  public UserDTO updateProfile(Long id, UpdateProfileRequest request) {
+  public UserDTO updateProfile(Long currentUserId, UpdateProfileRequest request) {
     User user =
         this.userRepository
-            .findById(id)
+            .findById(currentUserId)
             .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
 
     // Xử lý đổi mật khẩu
@@ -197,6 +200,7 @@ public class UserService {
       String uploadedUrl = cloudinaryPort.uploadImage(avatar, "user_avatars");
       user.setAvatarUrl(uploadedUrl);
 
+      usageStatisticPort.createUsageStatistic(usageStatisticPort.createCloudinaryStatistic(currentUserId, ActorType.USER));
     } else {
       user.setAvatarUrl(user.getAvatarUrl());
     }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.shared.enums.ActorType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ public class AdminService {
   private final PasswordHasher passwordHasher;
   private final CloudinaryPort cloudinaryPort;
   private final SmtpService smtpService;
+  private final UsageStatisticPort usageStatisticPort;
 
   @Deprecated
   public List<Admin> findAll() {
@@ -89,10 +92,10 @@ public class AdminService {
     return this.adminRepository.save(admin);
   }
 
-  public Admin updateProfile(Long id, UpdateProfileRequest request) {
+  public Admin updateProfile(Long currentAdminId, UpdateProfileRequest request) {
     Admin admin =
         this.adminRepository
-            .findById(id)
+            .findById(currentAdminId)
             .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
     if (StringUtils.hasText(request.getNewPassword())) {
@@ -112,6 +115,8 @@ public class AdminService {
     if (StringUtils.hasText(avatar) && request.getAvatarUrl().startsWith("data:image")) {
       String uploadedUrl = cloudinaryPort.uploadImage(avatar, "admin_avatars");
       admin.setAvatarUrl(uploadedUrl);
+
+      usageStatisticPort.createUsageStatistic(usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
     } else {
       admin.setAvatarUrl(admin.getAvatarUrl());
     }

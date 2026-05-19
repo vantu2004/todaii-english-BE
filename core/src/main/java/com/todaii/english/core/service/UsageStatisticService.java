@@ -1,6 +1,7 @@
 package com.todaii.english.core.service;
 
 import com.todaii.english.core.repository.UsageStatisticRepository;
+import com.todaii.english.shared.enums.ActorType;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.UsageStatistic;
@@ -13,6 +14,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsageStatisticService implements UsageStatisticPort {
   private final UsageStatisticRepository usageStatisticRepository;
+
+  @Override
+  public UsageStatistic createCloudinaryStatistic(Long actorId, ActorType actorType) {
+    return UsageStatistic.builder().actorId(actorId).actorType(actorType).usageType(UsageType.CLOUDINARY_UPLOAD).build();
+  }
 
   @Override
   public UsageStatistic createUsageStatistic(UsageStatistic newStatistic) {

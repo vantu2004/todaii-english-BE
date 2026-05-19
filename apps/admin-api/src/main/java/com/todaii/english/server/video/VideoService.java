@@ -6,7 +6,6 @@ import java.util.Set;
 
 import jakarta.transaction.Transactional;
 
-import org.apache.coyote.BadRequestException;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,8 +18,10 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.video.Video;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
@@ -42,8 +43,9 @@ public class VideoService {
   private final TopicRepository topicRepository;
   private final YoutubeDataApiV3Port youtubeDataApiV3Port;
   private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final UsageStatisticPort usageStatisticPort;
 
-  public VideoDTO importFromYoutube(String youtubeUrl) throws BadRequestException {
+  public VideoDTO importFromYoutube(String youtubeUrl) {
     String requestUri =
         ApiUrl.YOUTUBEOEMBED_BASE_URL.replace("<URL>", youtubeUrl).replace("<FORMAT>", "json");
 
@@ -67,20 +69,17 @@ public class VideoService {
       // Thay height bất kỳ thành 100%
       embedHtml = embedHtml.replaceAll("height=\"\\d+\"", "height=\"100%\"");
 
-      VideoDTO videoDTO =
-          VideoDTO.builder()
-              .title(title)
-              .authorName(authorName)
-              .providerName(providerName)
-              .providerUrl(providerUrl)
-              .thumbnailUrl(thumbnailUrl)
-              .embedHtml(embedHtml)
-              .videoUrl(youtubeUrl)
-              .cefrLevel(CefrLevel.A1)
-              .topicIds(null)
-              .build();
-
-      return videoDTO;
+      return VideoDTO.builder()
+          .title(title)
+          .authorName(authorName)
+          .providerName(providerName)
+          .providerUrl(providerUrl)
+          .thumbnailUrl(thumbnailUrl)
+          .embedHtml(embedHtml)
+          .videoUrl(youtubeUrl)
+          .cefrLevel(CefrLevel.A1)
+          .topicIds(null)
+          .build();
 
     } catch (HttpClientErrorException e) {
       throw new BusinessException(e.getStatusCode().value(), e.getStatusText());
@@ -94,6 +93,9 @@ public class VideoService {
       Long currentAdminId, String keyword, String type, int size) {
     YoutubeSearchResponse youtubeSearchResponse =
         youtubeDataApiV3Port.fetchFromYoutube(keyword, type, size);
+
+    UsageStatistic youtubeStatistic = usageStatisticPort.createYoutubeStatistic(currentAdminId);
+    usageStatisticPort.createUsageStatistic(youtubeStatistic);
 
     return youtubeSearchResponse;
   }
@@ -113,9 +115,8 @@ public class VideoService {
       int page, int size, String sortBy, String direction, String keyword) {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
-    Page<Video> videos = videoRepository.search(null, keyword, pageable);
 
-    return videos;
+    return videoRepository.search(null, keyword, pageable);
   }
 
   public Page<Video> findByTopicId(
@@ -126,9 +127,8 @@ public class VideoService {
 
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
-    Page<Video> videos = videoRepository.search(topicId, keyword, pageable);
 
-    return videos;
+    return videoRepository.search(topicId, keyword, pageable);
   }
 
   public Video createVideo(VideoDTO videoDTO) {

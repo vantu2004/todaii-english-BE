@@ -21,8 +21,8 @@ public class UsageStatisticService implements UsageStatisticPort {
   }
 
   @Override
-  public UsageStatistic createNewsApiStatistic(Long actorId, ActorType actorType) {
-    return getUsageStatistic(actorId, actorType, UsageType.NEWS_API_REQUEST);
+  public UsageStatistic createNewsApiStatistic(Long actorId) {
+    return getUsageStatistic(actorId, ActorType.ADMIN, UsageType.NEWS_API_REQUEST);
   }
 
   @Override
@@ -33,6 +33,24 @@ public class UsageStatisticService implements UsageStatisticPort {
   @Override
   public UsageStatistic createMailSendStatistic(Long actorId, ActorType actorType) {
     return getUsageStatistic(actorId, actorType, UsageType.MAIL_SEND);
+  }
+
+  // TODO: còn dính tới dictionary nên ko tiến hành
+  @Override
+  public UsageStatistic createDictionaryStatistic(
+      Long actorId, ActorType actorType, UsageType usageType) {
+    return null;
+  }
+
+  @Override
+  public UsageStatistic createYoutubeStatistic(Long actorId) {
+    UsageStatistic usageStatistic =
+        getUsageStatistic(actorId, ActorType.ADMIN, UsageType.YOUTUBE_SEARCH);
+
+    // mặc định youtube data api v3 tính 1 lần search videos hay playlists là 100units
+    usageStatistic.setQuota(100L);
+
+    return usageStatistic;
   }
 
   private UsageStatistic getUsageStatistic(Long actorId, ActorType actorType, UsageType usageType) {

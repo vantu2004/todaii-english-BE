@@ -17,7 +17,6 @@ import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.topic.TopicRepository;
-import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -38,8 +37,7 @@ public class ArticleService {
       Long currentAdminId, String query, int pageSize, int page, String sortBy) {
     NewsApiResponse newsApiResponse = newsApiPort.fetchFromNewsApi(query, pageSize, page, sortBy);
 
-    UsageStatistic newsApiStatistic =
-        usageStatisticPort.createNewsApiStatistic(currentAdminId, ActorType.ADMIN);
+    UsageStatistic newsApiStatistic = usageStatisticPort.createNewsApiStatistic(currentAdminId);
     usageStatisticPort.createUsageStatistic(newsApiStatistic);
 
     return newsApiResponse;

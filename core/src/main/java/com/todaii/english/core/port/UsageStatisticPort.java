@@ -10,5 +10,7 @@ public interface UsageStatisticPort {
 
   UsageStatistic createActorLoginStat(Long actorId, ActorType actorType);
 
+  UsageStatistic createMailSendStatistic(Long actorId, ActorType actorType);
+
   void createUsageStatistic(UsageStatistic newUsageStatistic);
 }

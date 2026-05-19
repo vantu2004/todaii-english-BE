@@ -90,6 +90,8 @@ public class AdminService {
 
     smtpService.accountCreatedNotice(admin.getEmail(), admin.getDisplayName());
 
+    createUsageStatistic(currentAdminId);
+
     return this.adminRepository.save(admin);
   }
 
@@ -152,6 +154,8 @@ public class AdminService {
 
     smtpService.accountUpdatedNotice(admin.getEmail(), admin.getDisplayName());
 
+    createUsageStatistic(currentAdminId);
+
     return this.adminRepository.save(admin);
   }
 
@@ -172,6 +176,8 @@ public class AdminService {
             .orElseThrow(() -> new BusinessException(AdminErrorCode.ADMIN_NOT_FOUND));
 
     smtpService.accountDeletedNotice(admin.getEmail(), admin.getDisplayName());
+
+    createUsageStatistic(currentAdminId);
 
     admin.setIsDeleted(true);
     admin.setDeletedAt(LocalDateTime.now());
@@ -216,6 +222,14 @@ public class AdminService {
       smtpService.accountBannedNotice(admin.getEmail(), admin.getDisplayName());
     }
 
+    createUsageStatistic(currentAdminId);
+
     this.adminRepository.save(admin);
+  }
+
+  private void createUsageStatistic(Long currentAdminId) {
+    UsageStatistic mailSendStatistic =
+        usageStatisticPort.createMailSendStatistic(currentAdminId, ActorType.ADMIN);
+    usageStatisticPort.createUsageStatistic(mailSendStatistic);
   }
 }

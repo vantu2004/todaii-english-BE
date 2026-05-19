@@ -13,10 +13,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.user.User;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.UserStatus;
 import com.todaii.english.shared.enums.error_code.AuthErrorCode;
 import com.todaii.english.shared.enums.error_code.UserErrorCode;
@@ -32,6 +35,7 @@ public class UserService {
   private final PasswordHasher passwordHasher;
   private final ModelMapper modelMapper;
   private final SmtpService smtpService;
+  private final UsageStatisticPort usageStatisticPort;
 
   @Deprecated
   public List<UserDTO> findAll() {
@@ -83,6 +87,8 @@ public class UserService {
 
     smtpService.accountUpdatedNotice(updatedUser.getEmail(), updatedUser.getDisplayName());
 
+    createUsageStatistic(currentAdminId);
+
     return modelMapper.map(updatedUser, UserDTO.class);
   }
 
@@ -108,6 +114,8 @@ public class UserService {
       smtpService.accountBannedNotice(user.getEmail(), user.getDisplayName());
     }
 
+    createUsageStatistic(currentAdminId);
+
     userRepository.save(user);
   }
 
@@ -116,11 +124,19 @@ public class UserService {
 
     smtpService.accountDeletedNotice(user.getEmail(), user.getDisplayName());
 
+    createUsageStatistic(currentAdminId);
+
     user.setIsDeleted(true);
     user.setDeletedAt(LocalDateTime.now());
     user.setEnabled(false);
     user.setStatus(UserStatus.LOCKED);
 
     this.userRepository.save(user);
+  }
+
+  private void createUsageStatistic(Long currentAdminId) {
+    UsageStatistic mailSendStatistic =
+        usageStatisticPort.createMailSendStatistic(currentAdminId, ActorType.ADMIN);
+    usageStatisticPort.createUsageStatistic(mailSendStatistic);
   }
 }

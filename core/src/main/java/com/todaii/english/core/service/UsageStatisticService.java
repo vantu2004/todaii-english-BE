@@ -30,6 +30,11 @@ public class UsageStatisticService implements UsageStatisticPort {
     return getUsageStatistic(actorId, actorType, UsageType.LOGIN_REQUEST);
   }
 
+  @Override
+  public UsageStatistic createMailSendStatistic(Long actorId, ActorType actorType) {
+    return getUsageStatistic(actorId, actorType, UsageType.MAIL_SEND);
+  }
+
   private UsageStatistic getUsageStatistic(Long actorId, ActorType actorType, UsageType usageType) {
     return UsageStatistic.builder()
         .actorId(actorId)

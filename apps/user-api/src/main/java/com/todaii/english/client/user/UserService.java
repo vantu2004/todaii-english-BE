@@ -66,7 +66,15 @@ public class UserService {
 
     User savedUser = this.userRepository.save(user);
 
-      return modelMapper.map(savedUser, UserDTO.class);
+    createUsageStatistic(savedUser.getId());
+
+    return modelMapper.map(savedUser, UserDTO.class);
+  }
+
+  private void createUsageStatistic(Long currentUserId) {
+    UsageStatistic mailSendStatistic =
+        usageStatisticPort.createMailSendStatistic(currentUserId, ActorType.USER);
+    usageStatisticPort.createUsageStatistic(mailSendStatistic);
   }
 
   public void verifyOtp(VerifyOtpRequest verifyOtpRequest) {
@@ -112,6 +120,8 @@ public class UserService {
     this.userRepository.save(user);
 
     this.smtpService.sendVerifyEmail(email, otp);
+
+    createUsageStatistic(user.getId());
   }
 
   public void updateLastLogin(String email) {
@@ -148,6 +158,8 @@ public class UserService {
     String resetURL = CLIENT_URL + "/client/reset-password/" + token;
 
     this.smtpService.sendForgotPasswordEmail(email, resetURL);
+
+    createUsageStatistic(user.getId());
   }
 
   public void resetPassword(ResetPasswordRequest request) {

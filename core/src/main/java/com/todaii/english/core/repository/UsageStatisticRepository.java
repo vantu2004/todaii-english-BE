@@ -1,4 +1,4 @@
-package com.todaii.english.client.usage_statistic;
+package com.todaii.english.core.repository;
 
 import java.time.LocalDate;
 
@@ -13,4 +13,7 @@ import com.todaii.english.shared.enums.UsageType;
 public interface UsageStatisticRepository extends JpaRepository<UsageStatistic, Long> {
   UsageStatistic findByActorIdAndActorTypeAndUsageTypeAndModelAndCreatedAt(
       Long actorId, ActorType actorType, UsageType usageType, String model, LocalDate currentDate);
+
+  UsageStatistic findByActorIdAndActorTypeAndUsageTypeAndCreatedAt(
+      Long actorId, ActorType actorType, UsageType usageType, LocalDate currentDate);
 }

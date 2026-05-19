@@ -10,8 +10,8 @@ import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.client.usage_statistic.UsageStatisticRepository;
 import com.todaii.english.core.entity.UsageStatistic;
+import com.todaii.english.core.repository.UsageStatisticRepository;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.AiProvider;
 import com.todaii.english.shared.enums.UsageType;

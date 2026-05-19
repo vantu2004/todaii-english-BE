@@ -53,6 +53,18 @@ public class UsageStatisticService implements UsageStatisticPort {
     return usageStatistic;
   }
 
+  @Override
+  public UsageStatistic createGgTranslateStat(Long actorId, Long charQuantity) {
+    actorId = actorId == null ? 0L : actorId;
+    ActorType actorType = actorId == 0L ? ActorType.GUEST : ActorType.USER;
+
+    UsageStatistic usageStatistic =
+        getUsageStatistic(actorId, actorType, UsageType.GOOGLE_TRANSLATE_REQUEST);
+    usageStatistic.setCharQuantity(charQuantity);
+
+    return usageStatistic;
+  }
+
   private UsageStatistic getUsageStatistic(Long actorId, ActorType actorType, UsageType usageType) {
     return UsageStatistic.builder()
         .actorId(actorId)
@@ -67,7 +79,6 @@ public class UsageStatisticService implements UsageStatisticPort {
     UsageStatistic currStatistic;
 
     if (useModelKey(newStatistic.getUsageType())) {
-
       currStatistic =
           usageStatisticRepository.findByActorIdAndActorTypeAndUsageTypeAndModelAndCreatedAt(
               newStatistic.getActorId(),

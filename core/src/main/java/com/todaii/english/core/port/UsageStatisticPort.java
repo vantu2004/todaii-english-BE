@@ -17,5 +17,7 @@ public interface UsageStatisticPort {
 
   UsageStatistic createYoutubeStatistic(Long actorId);
 
+  UsageStatistic createGgTranslateStat(Long actorId, Long charQuantity);
+
   void createUsageStatistic(UsageStatistic newUsageStatistic);
 }

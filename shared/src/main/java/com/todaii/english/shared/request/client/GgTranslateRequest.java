@@ -25,12 +25,21 @@ public class GgTranslateRequest {
 
   @AssertTrue(message = "Total text length must be less than 1024 characters")
   public boolean isTotalTextLengthValid() {
+    return getTotalCharacterCount() <= 1024;
+  }
+
+  public long getTotalCharacterCount() {
     if (texts == null) {
-      return true;
+      return 0;
     }
 
-    int totalLength = texts.stream().filter(StringUtils::hasText).mapToInt(String::length).sum();
+    return texts.stream()
+        .filter(StringUtils::hasText)
+        .mapToLong(this::countUnicodeCharacters)
+        .sum();
+  }
 
-    return totalLength <= 1024;
+  private long countUnicodeCharacters(String text) {
+    return text.codePointCount(0, text.length());
   }
 }

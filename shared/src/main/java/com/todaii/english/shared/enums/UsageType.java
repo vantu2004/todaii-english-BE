@@ -1,8 +1,7 @@
 package com.todaii.english.shared.enums;
 
 public enum UsageType {
-  USER_LOGIN,
-  ADMIN_LOGIN,
+  LOGIN_REQUEST,
 
   AI_REQUEST,
 

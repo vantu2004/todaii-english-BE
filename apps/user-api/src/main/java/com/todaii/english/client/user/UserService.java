@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import com.todaii.english.client.article.ArticleRepository;
 import com.todaii.english.client.video.VideoRepository;
+import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
@@ -64,9 +65,8 @@ public class UserService {
             .build();
 
     User savedUser = this.userRepository.save(user);
-    UserDTO userDTO = modelMapper.map(savedUser, UserDTO.class);
 
-    return userDTO;
+      return modelMapper.map(savedUser, UserDTO.class);
   }
 
   public void verifyOtp(VerifyOtpRequest verifyOtpRequest) {
@@ -123,6 +123,10 @@ public class UserService {
     user.setLastLoginAt(LocalDateTime.now());
 
     this.userRepository.save(user);
+
+    UsageStatistic actorLoginStat =
+        usageStatisticPort.createActorLoginStat(user.getId(), ActorType.USER);
+    usageStatisticPort.createUsageStatistic(actorLoginStat);
   }
 
   public void forgotPassword(String email) {

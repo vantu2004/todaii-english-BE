@@ -8,5 +8,7 @@ public interface UsageStatisticPort {
 
   UsageStatistic createNewsApiStatistic(Long actorId, ActorType actorType);
 
-  UsageStatistic createUsageStatistic(UsageStatistic newUsageStatistic);
+  UsageStatistic createActorLoginStat(Long actorId, ActorType actorType);
+
+  void createUsageStatistic(UsageStatistic newUsageStatistic);
 }

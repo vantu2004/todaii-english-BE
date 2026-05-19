@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.admin.Admin;
 import com.todaii.english.core.entity.admin.AdminRole;
 import com.todaii.english.core.port.CloudinaryPort;
@@ -189,6 +190,10 @@ public class AdminService {
     admin.setLastLoginAt(LocalDateTime.now());
 
     this.adminRepository.save(admin);
+
+    UsageStatistic actorLoginStat =
+        usageStatisticPort.createActorLoginStat(admin.getId(), ActorType.ADMIN);
+    usageStatisticPort.createUsageStatistic(actorLoginStat);
   }
 
   public void toggleEnabled(Long currentAdminId, Long id) {

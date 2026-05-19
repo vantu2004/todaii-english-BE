@@ -25,6 +25,11 @@ public class UsageStatisticService implements UsageStatisticPort {
     return getUsageStatistic(actorId, actorType, UsageType.NEWS_API_REQUEST);
   }
 
+  @Override
+  public UsageStatistic createActorLoginStat(Long actorId, ActorType actorType) {
+    return getUsageStatistic(actorId, actorType, UsageType.LOGIN_REQUEST);
+  }
+
   private UsageStatistic getUsageStatistic(Long actorId, ActorType actorType, UsageType usageType) {
     return UsageStatistic.builder()
         .actorId(actorId)
@@ -35,7 +40,7 @@ public class UsageStatisticService implements UsageStatisticPort {
 
   // phòng trường hợp FE gửi 2 request cùng lúc do strictmode
   @Override
-  public synchronized UsageStatistic createUsageStatistic(UsageStatistic newStatistic) {
+  public synchronized void createUsageStatistic(UsageStatistic newStatistic) {
     UsageStatistic currStatistic;
 
     if (useModelKey(newStatistic.getUsageType())) {
@@ -93,7 +98,7 @@ public class UsageStatisticService implements UsageStatisticPort {
     currStatistic.setCharQuantity(
         safe(currStatistic.getCharQuantity()) + safe(newStatistic.getCharQuantity()));
 
-    return usageStatisticRepository.save(currStatistic);
+    usageStatisticRepository.save(currStatistic);
   }
 
   private Long safe(Long value) {

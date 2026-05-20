@@ -1,4 +1,4 @@
-package com.todaii.english.client.dictionary;
+package com.todaii.english.core.service;
 
 import org.springframework.stereotype.Service;
 

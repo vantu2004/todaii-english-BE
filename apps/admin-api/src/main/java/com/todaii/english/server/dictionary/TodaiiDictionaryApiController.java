@@ -1,4 +1,4 @@
-package com.todaii.english.client.dictionary;
+package com.todaii.english.server.dictionary;
 
 import jakarta.validation.constraints.Min;
 

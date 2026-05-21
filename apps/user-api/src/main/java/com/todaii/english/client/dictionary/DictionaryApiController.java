@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Validated
 @RequestMapping("/api/v1/dictionary")
 public class DictionaryApiController {
-  private final DictionaryService dictionaryService;
+  private final DictionaryServiceV100 dictionaryService;
 
   @GetMapping("/raw-word")
   public ResponseEntity<DictionaryApiResponse[]> getRawWord(

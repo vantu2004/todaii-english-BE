@@ -16,8 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.user.UserRepository;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.article.Article;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -74,7 +74,7 @@ public class ArticleService {
     return articleRepository.search(keyword, pageable);
   }
 
-  public Page<DictionaryEntry> getPagedVocabulary(Long id, int page, int size) {
+  public Page<DictionaryWord> getPagedVocabulary(Long id, int page, int size) {
     if (!articleRepository.existsById(id)) {
       throw new BusinessException(404, "Article not found");
     }

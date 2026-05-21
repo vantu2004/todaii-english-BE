@@ -10,10 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.core.entity.vocabulary.VocabGroup;
-import com.todaii.english.server.dictionary.DictionaryEntryRepository;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.DeckRequest;
 
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VocabDeckService {
   private final VocabDeckRepository vocabDeckRepository;
-  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final DictionaryRepository dictionaryRepository;
   private final VocabGroupRepository vocabGroupRepository;
 
   public VocabDeck createDraftDeck(DeckRequest deckRequest) {
@@ -82,23 +82,23 @@ public class VocabDeckService {
   public VocabDeck addWordToDeck(Long deckId, Long wordId) {
     VocabDeck vocabDeck = findById(deckId);
 
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-    vocabDeck.getWords().add(dictionaryEntry);
+    vocabDeck.getWords().add(dictionaryWord);
     return vocabDeckRepository.save(vocabDeck);
   }
 
   public VocabDeck removeWordFromDeck(Long deckId, Long wordId) {
     VocabDeck vocabDeck = findById(deckId);
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-    boolean removed = vocabDeck.getWords().remove(dictionaryEntry);
+    boolean removed = vocabDeck.getWords().remove(dictionaryWord);
     if (!removed) {
       throw new BusinessException(400, "Word not found in deck");
     }

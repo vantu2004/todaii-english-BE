@@ -1,4 +1,4 @@
-package com.todaii.english.core.entity.dictionary;
+package com.todaii.english.core.entity;
 
 import jakarta.persistence.*;
 
@@ -11,7 +11,6 @@ import lombok.*;
 @Getter
 @Setter
 public class DictionaryWord {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

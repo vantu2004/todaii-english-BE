@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryWord;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ public class NoteDictApiController {
   private final NoteDictService noteDictService;
 
   @GetMapping("/{noteId}/words")
-  public ResponseEntity<List<DictionaryEntry>> getWords(
+  public ResponseEntity<List<DictionaryWord>> getWords(
       Authentication authentication, @PathVariable Long noteId) {
     return ResponseEntity.ok(
         noteDictService.getEntries(UserUtils.getCurrentUserId(authentication), noteId));

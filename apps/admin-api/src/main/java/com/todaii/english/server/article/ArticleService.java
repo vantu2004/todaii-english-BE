@@ -10,12 +10,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.core.port.UsageStatisticPort;
-import com.todaii.english.server.dictionary.DictionaryEntryRepository;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
@@ -30,7 +30,7 @@ public class ArticleService {
   private final NewsApiPort newsApiPort;
   private final ModelMapper modelMapper;
   private final TopicRepository topicRepository;
-  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
 
   public NewsApiResponse fetchFromNewsApi(
@@ -108,11 +108,11 @@ public class ArticleService {
   public Article addWordToArticle(Long articleId, Long wordId) {
     Article article = findById(articleId);
 
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
-    article.getWords().add(dictionaryEntry);
+    article.getWords().add(dictionaryWord);
 
     return articleRepository.save(article);
   }
@@ -120,12 +120,12 @@ public class ArticleService {
   public Article removeWordFromArticle(Long articleId, Long wordId) {
     Article article = findById(articleId);
 
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-    boolean removed = article.getWords().remove(dictionaryEntry);
+    boolean removed = article.getWords().remove(dictionaryWord);
     if (!removed) {
       throw new BusinessException(400, "Word not found in article");
     }

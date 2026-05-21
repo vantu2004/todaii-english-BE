@@ -17,13 +17,13 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.UsageStatistic;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
-import com.todaii.english.server.dictionary.DictionaryEntryRepository;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
@@ -42,7 +42,7 @@ public class VideoService {
   private final ModelMapper modelMapper;
   private final TopicRepository topicRepository;
   private final YoutubeDataApiV3Port youtubeDataApiV3Port;
-  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
 
   public VideoDTO importFromYoutube(String youtubeUrl) {
@@ -181,11 +181,11 @@ public class VideoService {
   public Video addWordToVideo(Long videoId, Long wordId) {
     Video video = findById(videoId);
 
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
-    video.getWords().add(dictionaryEntry);
+    video.getWords().add(dictionaryWord);
 
     return videoRepository.save(video);
   }
@@ -193,12 +193,12 @@ public class VideoService {
   public Video removeWordFromVideo(Long videoId, Long wordId) {
     Video video = findById(videoId);
 
-    DictionaryEntry dictionaryEntry =
-        dictionaryEntryRepository
+    DictionaryWord dictionaryWord =
+        dictionaryRepository
             .findById(wordId)
             .orElseThrow(() -> new BusinessException(404, "Word not found"));
 
-    boolean removed = video.getWords().remove(dictionaryEntry);
+    boolean removed = video.getWords().remove(dictionaryWord);
     if (!removed) {
       throw new BusinessException(400, "Word not found in video");
     }

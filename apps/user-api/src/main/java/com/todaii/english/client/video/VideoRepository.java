@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.shared.enums.CefrLevel;
 
@@ -56,7 +56,7 @@ public interface VideoRepository
 			    SELECT d FROM Video v
 			    JOIN v.words d
 			    WHERE v.id = ?1
-			    ORDER BY d.headword ASC
+			    ORDER BY d.word ASC
 			""")
-  public Page<DictionaryEntry> findPagedWordsByVideoId(Long id, Pageable pageable);
+  public Page<DictionaryWord> findPagedWordsByVideoId(Long id, Pageable pageable);
 }

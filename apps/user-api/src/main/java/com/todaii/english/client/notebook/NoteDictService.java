@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.client.dictionary.DictionaryRepository;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.NotebookItem;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class NoteDictService {
     return item;
   }
 
-  public List<DictionaryEntry> getEntries(Long userId, Long noteId) {
+  public List<DictionaryWord> getEntries(Long userId, Long noteId) {
     NotebookItem notebookItem = getOwned(userId, noteId);
     return new ArrayList<>(notebookItem.getWords());
   }
@@ -38,12 +38,12 @@ public class NoteDictService {
   public void addEntry(Long userId, Long noteId, Long entryId) {
     NotebookItem notebookItem = getOwned(userId, noteId);
 
-    DictionaryEntry dictionaryEntry =
+    DictionaryWord dictionaryWord =
         dictionaryRepository
             .findById(entryId)
             .orElseThrow(() -> new BusinessException(404, "Dictionary entry not found"));
 
-    notebookItem.getWords().add(dictionaryEntry);
+    notebookItem.getWords().add(dictionaryWord);
 
     notebookRepository.save(notebookItem);
   }

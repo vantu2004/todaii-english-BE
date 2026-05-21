@@ -4,23 +4,12 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.shared.enums.CefrLevel;
 
 import lombok.AllArgsConstructor;
@@ -63,7 +52,7 @@ public class VocabDeck {
   private LocalDateTime updatedAt;
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "deck_groups",
       joinColumns = @JoinColumn(name = "deck_id"),
@@ -72,11 +61,11 @@ public class VocabDeck {
   private Set<VocabGroup> groups = new HashSet<>();
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "deck_words",
       joinColumns = @JoinColumn(name = "deck_id"),
       inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
   @Builder.Default
-  private Set<DictionaryEntry> words = new HashSet<>();
+  private Set<DictionaryWord> words = new HashSet<>();
 }

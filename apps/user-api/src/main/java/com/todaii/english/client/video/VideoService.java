@@ -10,7 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.client.user.UserRepository;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.shared.enums.CefrLevel;
@@ -46,7 +46,7 @@ public class VideoService {
     return videoRepository.save(video);
   }
 
-  public Page<DictionaryEntry> getPagedVocabulary(Long id, int page, int size) {
+  public Page<DictionaryWord> getPagedVocabulary(Long id, int page, int size) {
     if (!videoRepository.existsById(id)) {
       throw new BusinessException(404, "Video not found");
     }

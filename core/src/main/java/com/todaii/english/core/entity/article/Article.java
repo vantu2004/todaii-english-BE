@@ -9,8 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.Topic;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.CefrLevel;
 
@@ -73,23 +73,27 @@ public class Article {
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
-  @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "article",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
   @Builder.Default
   // mặc định sort paraOrder theo asc
   @OrderBy("paraOrder ASC")
   private Set<ArticleParagraph> paragraphs = new HashSet<>();
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "article_words",
       joinColumns = @JoinColumn(name = "article_id"),
       inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
   @Builder.Default
-  private Set<DictionaryEntry> words = new HashSet<>();
+  private Set<DictionaryWord> words = new HashSet<>();
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "article_topics",
       joinColumns = @JoinColumn(name = "article_id"),
@@ -97,7 +101,7 @@ public class Article {
   @Builder.Default
   private Set<Topic> topics = new HashSet<>();
 
-  @ManyToMany(mappedBy = "savedArticles")
+  @ManyToMany(mappedBy = "savedArticles", fetch = FetchType.LAZY)
   @JsonIgnore
   @Builder.Default
   private Set<User> users = new HashSet<>();

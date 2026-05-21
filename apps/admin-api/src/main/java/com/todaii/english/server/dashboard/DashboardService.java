@@ -2,9 +2,9 @@ package com.todaii.english.server.dashboard;
 
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.admin.AdminRepository;
 import com.todaii.english.server.article.ArticleRepository;
-import com.todaii.english.server.dictionary.DictionaryEntryRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
 import com.todaii.english.server.user.UserRepository;
 import com.todaii.english.server.video.VideoRepository;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class DashboardService {
   private final AdminRepository adminRepository;
   private final ArticleRepository articleRepository;
-  private final DictionaryEntryRepository dictionaryEntryRepository;
+  private final DictionaryRepository dictionaryRepository;
   private final TestRepository testRepository;
   private final UserRepository userRepository;
   private final VideoRepository videoRepository;
@@ -28,7 +28,7 @@ public class DashboardService {
     return new DashboardSummaryDTO(
         adminRepository.countByIsDeletedFalse(),
         articleRepository.count(),
-        dictionaryEntryRepository.count(),
+        dictionaryRepository.count(),
         testRepository.count(),
         userRepository.countByIsDeletedFalse(),
         videoRepository.count(),

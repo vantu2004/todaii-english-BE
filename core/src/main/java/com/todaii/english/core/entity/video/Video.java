@@ -10,8 +10,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.Topic;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.CefrLevel;
 
@@ -69,16 +69,16 @@ public class Video {
   private LocalDateTime updatedAt;
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "video_words",
       joinColumns = @JoinColumn(name = "video_id"),
       inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
   @Builder.Default
-  private Set<DictionaryEntry> words = new HashSet<>();
+  private Set<DictionaryWord> words = new HashSet<>();
 
   // Quan hệ N-N với topic (1 chiều)
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "videos_topics",
       joinColumns = @JoinColumn(name = "video_id"),
@@ -86,7 +86,7 @@ public class Video {
   @Builder.Default
   private Set<Topic> topics = new HashSet<>();
 
-  @ManyToMany(mappedBy = "savedVideos")
+  @ManyToMany(mappedBy = "savedVideos", fetch = FetchType.LAZY)
   @JsonIgnore
   @Builder.Default
   private Set<User> users = new HashSet<>();

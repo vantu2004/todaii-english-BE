@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.NotebookType;
 
@@ -50,16 +49,16 @@ public class NotebookItem {
   @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   // quan hệ 1 chiều
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "note_words",
       joinColumns = @JoinColumn(name = "note_id"),
       inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
   @Builder.Default
-  private Set<DictionaryEntry> words = new HashSet<>();
+  private Set<DictionaryWord> words = new HashSet<>();
 }

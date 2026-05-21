@@ -13,8 +13,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.security.CustomUserDetails;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry;
-import com.todaii.english.core.entity.dictionary.DictionaryEntry_;
+import com.todaii.english.core.entity.DictionaryWord;
+import com.todaii.english.core.entity.DictionaryWord_;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.response.PagedResponse;
@@ -53,15 +53,15 @@ public class VideoApiController {
   }
 
   @GetMapping("/{id}/entry")
-  public ResponseEntity<PagedResponse<DictionaryEntry>> getPagedVocabulary(
+  public ResponseEntity<PagedResponse<DictionaryWord>> getPagedVocabulary(
       @PathVariable Long id,
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1")
           int page,
       @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
           int size) {
-    Page<DictionaryEntry> entries = videoService.getPagedVocabulary(id, page, size);
+    Page<DictionaryWord> entries = videoService.getPagedVocabulary(id, page, size);
 
-    PagedResponse<DictionaryEntry> response =
+    PagedResponse<DictionaryWord> response =
         new PagedResponse<>(
             entries.getContent(),
             page,
@@ -70,7 +70,7 @@ public class VideoApiController {
             entries.getTotalPages(),
             entries.isFirst(),
             entries.isLast(),
-            DictionaryEntry_.HEADWORD,
+            DictionaryWord_.WORD,
             SORT_DIRECTION);
 
     return ResponseEntity.ok(response);

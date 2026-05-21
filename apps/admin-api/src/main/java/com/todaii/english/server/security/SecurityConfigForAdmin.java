@@ -140,7 +140,6 @@ public class SecurityConfigForAdmin {
         // 5. Quản lý Nội dung (Topic, Dictionary, Video, Article, Vocab, TOEIC)
         .requestMatchers(
             "/api/v1/topic/**",
-            "/api/v1/dictionary/**",
             "/api/v2/dictionary/**",
             "/api/v1/video/**",
             "/api/v1/vocab-group/**",

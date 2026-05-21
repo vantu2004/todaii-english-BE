@@ -141,6 +141,7 @@ public class SecurityConfigForAdmin {
         .requestMatchers(
             "/api/v1/topic/**",
             "/api/v1/dictionary/**",
+            "/api/v2/dictionary/**",
             "/api/v1/video/**",
             "/api/v1/vocab-group/**",
             "/api/v1/vocab-deck/**",

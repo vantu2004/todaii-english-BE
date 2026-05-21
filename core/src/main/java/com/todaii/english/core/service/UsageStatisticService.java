@@ -39,7 +39,7 @@ public class UsageStatisticService implements UsageStatisticPort {
   @Override
   public UsageStatistic createDictionaryStatistic(
       Long actorId, ActorType actorType, UsageType usageType) {
-    return null;
+    return getUsageStatistic(actorId, actorType, usageType);
   }
 
   @Override

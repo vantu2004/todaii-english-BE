@@ -158,10 +158,12 @@ public class SecurityConfigForUser {
         .requestMatchers(HttpMethod.PUT, "/api/v1/user/article/*")
         .hasAuthority("USER")
 
-        // 4. Cho phép xem nội dung còn lại (Article, Video) mà không cần login
+        // 4. Cho phép xem nội dung còn lại (Article, Video, Toeic) mà không cần login
         .requestMatchers("/api/v1/article/**")
         .permitAll()
         .requestMatchers("/api/v1/video/**")
+        .permitAll()
+        .requestMatchers("/api/v1/toeic/**")
         .permitAll()
         .anyRequest()
         .authenticated();

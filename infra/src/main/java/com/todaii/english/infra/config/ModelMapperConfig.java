@@ -19,7 +19,8 @@ public class ModelMapperConfig {
     // Matching STRICT để tránh map nhầm field tương tự (phân biệt cả hoa-thường)
     mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-    // Mapping field imageUrl và audioUrl cho các nested classes trong Part12Request, ToeicPassageRequest
+    // Mapping field imageUrl và audioUrl cho các nested classes trong Part12Request,
+    // ToeicPassageRequest
     mapper
         .typeMap(Part12Request.class, ToeicQuestion.class)
         .addMappings(

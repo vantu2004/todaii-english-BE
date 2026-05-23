@@ -82,7 +82,9 @@ public class DictionaryApiController {
   @GetMapping("/cursor")
   public ResponseEntity<List<DictionaryWord>> getAllWordsCursor(
       @RequestParam(defaultValue = "0") Long lastId,
-      @RequestParam(defaultValue = "50") @Min(value = 1, message = "Size must be greater than or equal to 1") int size) {
+      @RequestParam(defaultValue = "50")
+          @Min(value = 1, message = "Size must be greater than or equal to 1")
+          int size) {
     return ResponseEntity.ok(dictionaryService.getAllWordsByCursor(lastId, size));
   }
 

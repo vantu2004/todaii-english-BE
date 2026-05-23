@@ -1,6 +1,7 @@
 package com.todaii.english.core.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +23,6 @@ public interface DictionaryRepository extends JpaRepository<DictionaryWord, Long
   // Tìm các ID lớn hơn lastId, lấy Limit N dòng
   @Query("SELECT d FROM DictionaryWord d WHERE d.id > :lastId ORDER BY d.id ASC")
   List<DictionaryWord> findNextPageByCursor(Long lastId, Pageable pageable);
+
+  Optional<DictionaryWord> findByWord(String word);
 }

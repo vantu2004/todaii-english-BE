@@ -2,28 +2,44 @@ package com.todaii.english.shared.response;
 
 import java.util.List;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-@Data
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DictionaryApiResponse {
   private String word;
   private String phonetic;
   private List<Phonetic> phonetics;
   private List<Meaning> meanings;
 
-  @Data
+  @Getter
+  @Setter
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Phonetic {
     private String text;
     private String audio;
   }
 
-  @Data
+  @Getter
+  @Setter
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Meaning {
     private String partOfSpeech;
     private List<Definition> definitions;
   }
 
-  @Data
+  @Getter
+  @Setter
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Definition {
     private String definition;
     private String example;

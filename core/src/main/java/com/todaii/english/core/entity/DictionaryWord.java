@@ -2,6 +2,9 @@ package com.todaii.english.core.entity;
 
 import jakarta.persistence.*;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import lombok.*;
 
 @Entity
@@ -17,4 +20,9 @@ public class DictionaryWord {
 
   @Column(length = 64, nullable = false)
   private String word;
+
+  // Hibernate 6 sẽ tự động xử lý kiểu dữ liệu JSON với MySQL
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "json_data", columnDefinition = "json")
+  private String jsonData;
 }

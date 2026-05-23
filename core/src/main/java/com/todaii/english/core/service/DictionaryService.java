@@ -6,43 +6,39 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.port.DictionaryPort;
+import com.todaii.english.core.port.RedisPort;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.shared.enums.ActorType;
+import com.todaii.english.shared.enums.RedisType;
 import com.todaii.english.shared.enums.UsageType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.TodaiiEnglishResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DictionaryService {
   private final DictionaryPort dictionaryPort;
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
+  private final RedisPort redisPort;
+  private final ObjectMapper objectMapper;
 
   public TodaiiEnglishResponse searchByTodaiiDictionary(
       Long currentAdminId, String word, int page, int size) {
-    TodaiiEnglishResponse todaiiEnglishResponse =
-        dictionaryPort.lookupTodaiiDictionaryApi(word, page, size);
-
-    if (todaiiEnglishResponse.getTotal().equals(0L)
-        && Boolean.FALSE.equals(todaiiEnglishResponse.getFound())) {
-      throw new BusinessException(404, "Word not found");
-    }
-
-    UsageStatistic dictionaryStatistic =
-        usageStatisticPort.createDictionaryStatistic(
-            currentAdminId, ActorType.ADMIN, UsageType.TODAII_DICT_REQUEST);
-    usageStatisticPort.createUsageStatistic(dictionaryStatistic);
-
-    return todaiiEnglishResponse;
+    return searchWord(currentAdminId, word, page, size);
   }
 
   public DictionaryApiResponse[] searchByFreeDictionaryApi(Long currentAdminId, String word) {
@@ -120,5 +116,92 @@ public class DictionaryService {
   public void deleteWord(Long id) {
     DictionaryWord existingEntity = getWordById(id);
     dictionaryRepository.delete(existingEntity);
+  }
+
+  public List<String> getAiSuggestions(String word) {
+    // TODO: Gọi sang Gemini hoặc OpenAI để lấy list từ gợi ý
+    // return aiSuggestionService.suggestCorrectWords(word);
+
+    // Mock data tạm thời
+    return List.of("hello", "helloworld", "hero");
+  }
+
+  /** Luồng tìm kiếm chính (Orchestration Flow) */
+  private TodaiiEnglishResponse searchWord(
+      Long currentAdminId, String rawWord, int page, int size) {
+    String word = rawWord.trim().toLowerCase();
+
+    // TH1: có trong redis
+    String cachedJson = redisPort.get(RedisType.DICT_WORD, word);
+    if (cachedJson != null) {
+      log.info("Cache Hit for word: {}", word);
+
+      redisPort.refreshTtlIfNeeded(RedisType.DICT_WORD, word);
+
+      return parseJsonToObject(cachedJson);
+    }
+
+    // TH2: có trong db
+    DictionaryWord dictionaryWord =
+        dictionaryRepository.findByWord(word).orElseGet(DictionaryWord::new);
+    String jsonData =
+        StringUtils.hasText(dictionaryWord.getJsonData()) ? dictionaryWord.getJsonData() : null;
+    if (StringUtils.hasText(jsonData)) {
+      log.info("DB Hit for word: {}", word);
+
+      redisPort.set(RedisType.DICT_WORD, word, jsonData);
+
+      return parseJsonToObject(jsonData);
+    }
+
+    // TH3: jsonData null nên call todaii api để lấy
+    log.info("Cache Miss & DB Miss. Calling External API for word: {}", word);
+    TodaiiEnglishResponse todaiiEnglishResponse =
+        getTodaiiEnglishResponse(currentAdminId, word, page, size);
+
+    jsonData = convertObjectToJson(todaiiEnglishResponse);
+
+    dictionaryWord.setWord(word);
+    dictionaryWord.setJsonData(jsonData);
+
+    dictionaryRepository.save(dictionaryWord);
+
+    redisPort.set(RedisType.DICT_WORD, word, jsonData);
+
+    return todaiiEnglishResponse;
+  }
+
+  private TodaiiEnglishResponse getTodaiiEnglishResponse(
+      Long currentAdminId, String word, int page, int size) {
+    TodaiiEnglishResponse todaiiEnglishResponse =
+        dictionaryPort.lookupTodaiiDictionaryApi(word, page, size);
+
+    if (todaiiEnglishResponse.getTotal().equals(0L)
+        && Boolean.FALSE.equals(todaiiEnglishResponse.getFound())) {
+      throw new BusinessException(404, "Word not found");
+    }
+
+    UsageStatistic dictionaryStatistic =
+        usageStatisticPort.createDictionaryStatistic(
+            currentAdminId, ActorType.ADMIN, UsageType.TODAII_DICT_REQUEST);
+    usageStatisticPort.createUsageStatistic(dictionaryStatistic);
+
+    return todaiiEnglishResponse;
+  }
+
+  private String convertObjectToJson(Object obj) {
+    try {
+      return objectMapper.writeValueAsString(obj);
+    } catch (JsonProcessingException e) {
+      throw new BusinessException(500, "Error serializing API response");
+    }
+  }
+
+  private TodaiiEnglishResponse parseJsonToObject(String json) {
+    try {
+      return objectMapper.readValue(json, TodaiiEnglishResponse.class);
+    } catch (JsonProcessingException e) {
+      throw new BusinessException(500, "Error deserializing stored JSON");
+    }
   }
 }

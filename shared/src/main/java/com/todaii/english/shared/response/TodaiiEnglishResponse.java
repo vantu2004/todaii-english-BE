@@ -13,7 +13,7 @@ import lombok.*;
 // trường hợp TodaiiEnglishResponse thiếu field so với response của todaii API thì ignore luôn
 @JsonIgnoreProperties(ignoreUnknown = true)
 // ko xuất các field bị null
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TodaiiEnglishResponse {
   private Long total;
   private Boolean found;
@@ -22,7 +22,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Result {
     private String id;
     private Long resultID;
@@ -73,7 +73,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Pronounce {
     // Phiên âm Anh - Anh
     private String gb;
@@ -88,7 +88,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class LevelWord {
     // Mức độ theo TOEIC
     private Long toeic;
@@ -100,7 +100,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class ConjugationItem {
     // Phiên âm của dạng chia
     private String p;
@@ -112,7 +112,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class WordFamily {
     // Loại nhóm (ví dụ: related)
     private String kind;
@@ -130,7 +130,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class ResultContent {
     // Loại nội dung (ví dụ: meaning)
     private String kind;
@@ -145,7 +145,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Mean {
     // Nghĩa của từ
     private String mean;
@@ -157,7 +157,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Example {
     // ID ví dụ
     private Long exampleID;
@@ -184,7 +184,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Coll {
     // Loại collocation
     private String kind;
@@ -196,7 +196,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class CollCl {
     // Nghĩa của cụm
     private String mean;
@@ -208,7 +208,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class ClCl {
     // Loại (verb, noun,...)
     private String type;
@@ -220,7 +220,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Cb {
     // Collocation (cụm từ)
     private String cb;
@@ -232,7 +232,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class Snym {
     // Loại (synonym / antonym)
     private String kind;
@@ -244,7 +244,7 @@ public class TodaiiEnglishResponse {
   @Getter
   @Setter
   @JsonIgnoreProperties(ignoreUnknown = true)
-  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonInclude(JsonInclude.Include.NON_EMPTY)
   public static class SnymContent {
     // Từ đồng nghĩa
     private List<String> syno;

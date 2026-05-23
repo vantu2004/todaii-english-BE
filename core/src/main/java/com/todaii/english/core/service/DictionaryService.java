@@ -118,12 +118,8 @@ public class DictionaryService {
     dictionaryRepository.delete(existingEntity);
   }
 
-  public List<String> getAiSuggestions(String word) {
-    // TODO: Gọi sang Gemini hoặc OpenAI để lấy list từ gợi ý
-    // return aiSuggestionService.suggestCorrectWords(word);
-
-    // Mock data tạm thời
-    return List.of("hello", "helloworld", "hero");
+  public List<String> getAiSuggestions(String word, Long currentAdminId) {
+    return dictionaryPort.getAiSuggestions(word, currentAdminId, ActorType.ADMIN);
   }
 
   /** Luồng tìm kiếm chính (Orchestration Flow) */

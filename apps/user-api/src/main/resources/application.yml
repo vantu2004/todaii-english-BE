@@ -53,7 +53,7 @@ spring:
         chat:
           options:
             model: ${GEMINI_MODEL}
-            temperature: 1
+
     retry:
       max-attempts: 1
     chat:

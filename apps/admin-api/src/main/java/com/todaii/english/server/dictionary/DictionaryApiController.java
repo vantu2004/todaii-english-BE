@@ -30,10 +30,12 @@ public class DictionaryApiController {
   @GetMapping("/todaii-dict")
   public ResponseEntity<TodaiiEnglishResponse> searchByTodaiiDictionary(
       Authentication authentication,
-      @RequestParam(required = false) String word,
-      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+      @RequestParam @NotBlank(message = "Word must not be blank") String word,
+      @RequestParam(defaultValue = "1")
+          @Min(value = 1, message = "Page must be greater than or equal to 1")
           int page,
-      @RequestParam(defaultValue = "50") @Min(value = 1, message = "Size must be at least 1")
+      @RequestParam(defaultValue = "50")
+          @Min(value = 1, message = "Size must be greater than or equal to 1")
           int size) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
@@ -43,7 +45,8 @@ public class DictionaryApiController {
 
   @GetMapping("/free-dict")
   public ResponseEntity<DictionaryApiResponse[]> searchByFreeDictionaryApi(
-      Authentication authentication, @RequestParam String word) {
+      Authentication authentication,
+      @RequestParam @NotBlank(message = "Word must not be blank") String word) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
     DictionaryApiResponse[] dictionaryApiResponses =
         dictionaryService.searchByFreeDictionaryApi(currentAdminId, word);
@@ -58,9 +61,13 @@ public class DictionaryApiController {
 
   @GetMapping("/search")
   public ResponseEntity<PagedResponse<DictionaryWord>> searchInDb(
-      @RequestParam(required = false, defaultValue = "") String word,
-      @RequestParam(defaultValue = "1") @Min(1) int page,
-      @RequestParam(defaultValue = "50") @Min(1) int size) {
+      @RequestParam @NotBlank(message = "Word must not be blank") String word,
+      @RequestParam(defaultValue = "1")
+          @Min(value = 1, message = "Page must be greater than or equal to 1")
+          int page,
+      @RequestParam(defaultValue = "50")
+          @Min(value = 1, message = "Size must be greater than or equal to 1")
+          int size) {
     Page<DictionaryWord> dictionaryWords = dictionaryService.searchInDb(word, page, size);
 
     PagedResponse<DictionaryWord> response =
@@ -86,6 +93,15 @@ public class DictionaryApiController {
           @Min(value = 1, message = "Size must be greater than or equal to 1")
           int size) {
     return ResponseEntity.ok(dictionaryService.getAllWordsByCursor(lastId, size));
+  }
+
+  @GetMapping("/ai-suggestion")
+  public ResponseEntity<List<String>> getAiSuggestion(
+      Authentication authentication,
+      @RequestParam @NotBlank(message = "Word must not be blank") String word) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+    return ResponseEntity.ok(dictionaryService.getAiSuggestions(word, currentAdminId));
   }
 
   @PostMapping

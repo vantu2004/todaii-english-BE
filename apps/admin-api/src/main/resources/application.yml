@@ -45,6 +45,7 @@ spring:
       chat:
         options:
           model: ${OPENAI_MODEL}
+          temperature: 1
     google:
       genai:
         api-key: ${GEMINI_API_KEY}

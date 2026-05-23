@@ -1,39 +1,28 @@
 package com.todaii.english.client.chatbot;
 
-import java.time.LocalDate;
-
 import org.springframework.ai.chat.client.ChatClientRequest;
 import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisor;
 import org.springframework.ai.chat.client.advisor.api.StreamAdvisorChain;
 import org.springframework.ai.chat.metadata.Usage;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
 
 import com.todaii.english.core.entity.UsageStatistic;
-import com.todaii.english.core.repository.UsageStatisticRepository;
+import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.AiProvider;
 import com.todaii.english.shared.enums.UsageType;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TokenUsageStreamAdvisor implements StreamAdvisor {
-  private final UsageStatisticRepository usageStatisticRepository;
-  private final String openAiModel;
-  private final String geminiModel;
-
-  public TokenUsageStreamAdvisor(
-      UsageStatisticRepository usageStatisticRepository,
-      @Value("${spring.ai.openai.chat.options.model}") String openAiModel,
-      @Value("${spring.ai.google.genai.chat.options.model}") String geminiModel) {
-    this.usageStatisticRepository = usageStatisticRepository;
-    this.openAiModel = openAiModel;
-    this.geminiModel = geminiModel;
-  }
+  private final UsageStatisticPort usageStatisticPort;
 
   @Override
   public Flux<ChatClientResponse> adviseStream(
@@ -56,11 +45,10 @@ public class TokenUsageStreamAdvisor implements StreamAdvisor {
                 ActorType actorType = (ActorType) request.context().get("actorType");
                 AiProvider aiProvider = (AiProvider) request.context().get("aiProvider");
 
-                ChatClientResponse last = responses.get(responses.size() - 1);
+                ChatClientResponse last = responses.getLast();
+                ChatResponse chatResponse = last.chatResponse();
 
-                Usage usage = last.chatResponse().getMetadata().getUsage();
-
-                saveUsage(actorId, actorType, aiProvider, usage);
+                saveUsage(actorId, actorType, aiProvider, chatResponse);
               } catch (Exception e) {
                 log.error("Cannot save AI usage statistic", e);
               }
@@ -69,42 +57,28 @@ public class TokenUsageStreamAdvisor implements StreamAdvisor {
             });
   }
 
-  private void saveUsage(Long actorId, ActorType actorType, AiProvider aiProvider, Usage usage) {
+  private void saveUsage(
+      Long actorId, ActorType actorType, AiProvider aiProvider, ChatResponse chatResponse) {
+    Usage usage = chatResponse.getMetadata().getUsage();
     if (usage == null) {
       return;
     }
 
     log.info("USAGE: {}", usage);
 
-    LocalDate currentDate = LocalDate.now();
-    String model = aiProvider == AiProvider.OPENAI ? openAiModel : geminiModel;
-
     UsageStatistic usageStatistic =
-        usageStatisticRepository.findByActorIdAndActorTypeAndUsageTypeAndModelAndCreatedAt(
-            actorId, actorType, UsageType.AI_REQUEST, model, currentDate);
+        UsageStatistic.builder()
+            .actorId(actorId)
+            .actorType(actorType)
+            .usageType(UsageType.AI_REQUEST)
+            .aiProvider(aiProvider)
+            .model(chatResponse.getMetadata().getModel())
+            .inputToken(Long.valueOf(usage.getPromptTokens()))
+            .outputToken(Long.valueOf(usage.getCompletionTokens()))
+            .totalToken(Long.valueOf(usage.getTotalTokens()))
+            .build();
 
-    Long inputToken = usage.getPromptTokens() == null ? 0L : usage.getPromptTokens().longValue();
-    Long outputToken =
-        usage.getCompletionTokens() == null ? 0L : usage.getCompletionTokens().longValue();
-    Long totalToken = usage.getTotalTokens() == null ? 0L : usage.getTotalTokens().longValue();
-
-    if (usageStatistic == null) {
-      usageStatistic =
-          UsageStatistic.builder()
-              .actorId(actorId)
-              .actorType(actorType)
-              .usageType(UsageType.AI_REQUEST)
-              .build();
-    }
-
-    usageStatistic.setQuantity(usageStatistic.getQuantity() + 1);
-    usageStatistic.setInputToken(usageStatistic.getInputToken() + inputToken);
-    usageStatistic.setOutputToken(usageStatistic.getOutputToken() + outputToken);
-    usageStatistic.setTotalToken(usageStatistic.getTotalToken() + totalToken);
-    usageStatistic.setAiProvider(aiProvider);
-    usageStatistic.setModel(model);
-
-    usageStatisticRepository.save(usageStatistic);
+    usageStatisticPort.createUsageStatistic(usageStatistic);
   }
 
   @Override

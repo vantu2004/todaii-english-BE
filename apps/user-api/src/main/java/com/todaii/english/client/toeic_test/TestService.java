@@ -41,8 +41,10 @@ public class TestService {
   }
 
   public ToeicTestDTO getPublishedTestDTOById(Long id) {
-    ToeicTest test = testRepository.findPublishedById(id)
-        .orElseThrow(() -> new BusinessException(404, "TOEIC test not found"));
+    ToeicTest test =
+        testRepository
+            .findPublishedById(id)
+            .orElseThrow(() -> new BusinessException(404, "TOEIC test not found"));
     return modelMapper.map(test, ToeicTestDTO.class);
   }
 }

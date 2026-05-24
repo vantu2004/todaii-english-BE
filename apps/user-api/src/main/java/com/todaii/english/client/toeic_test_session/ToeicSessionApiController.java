@@ -30,8 +30,7 @@ public class ToeicSessionApiController {
 
   @PostMapping("/start")
   public ResponseEntity<ToeicTestSessionDTO> startSession(
-      Authentication authentication,
-      @Valid @RequestBody StartSessionRequest request) {
+      Authentication authentication, @Valid @RequestBody StartSessionRequest request) {
     CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
     Long currentUserId = principal.getUser().getId();
     return ResponseEntity.ok(sessionService.startSession(currentUserId, request));
@@ -55,7 +54,8 @@ public class ToeicSessionApiController {
       @RequestParam Boolean isMarked) {
     CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
     Long currentUserId = principal.getUser().getId();
-    return ResponseEntity.ok(sessionService.toggleMark(currentUserId, sessionId, questionId, isMarked));
+    return ResponseEntity.ok(
+        sessionService.toggleMark(currentUserId, sessionId, questionId, isMarked));
   }
 
   @PostMapping("/{sessionId}/submit")
@@ -70,8 +70,7 @@ public class ToeicSessionApiController {
 
   @GetMapping("/{sessionId}")
   public ResponseEntity<ToeicSessionDetailsResponse> getSessionDetails(
-      Authentication authentication,
-      @PathVariable Long sessionId) {
+      Authentication authentication, @PathVariable Long sessionId) {
     CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
     Long currentUserId = principal.getUser().getId();
     return ResponseEntity.ok(sessionService.getSessionDetails(currentUserId, sessionId));
@@ -80,8 +79,10 @@ public class ToeicSessionApiController {
   @GetMapping("/history")
   public ResponseEntity<PagedResponse<ToeicTestSessionDTO>> getSessionHistory(
       Authentication authentication,
-      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1") int page,
-      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1") int size) {
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
+          int page,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
+          int size) {
     CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
     Long currentUserId = principal.getUser().getId();
     return ResponseEntity.ok(sessionService.getSessionHistory(currentUserId, page, size));

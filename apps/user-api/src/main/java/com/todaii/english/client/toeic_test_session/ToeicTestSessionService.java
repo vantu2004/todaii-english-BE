@@ -22,7 +22,6 @@ import com.todaii.english.core.entity.toeic.ToeicUserAnswer;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.dto.ToeicTestSessionDTO;
 import com.todaii.english.shared.dto.ToeicUserAnswerDTO;
-import com.todaii.english.shared.enums.Answer;
 import com.todaii.english.shared.enums.ToeicSessionMode;
 import com.todaii.english.shared.enums.ToeicSessionStatus;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -45,27 +44,33 @@ public class ToeicTestSessionService {
 
   @Transactional
   public ToeicTestSessionDTO startSession(Long userId, StartSessionRequest request) {
-    User user = userRepository.findById(userId)
-        .orElseThrow(() -> new BusinessException(404, "User not found"));
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new BusinessException(404, "User not found"));
 
-    ToeicTest test = testRepository.findById(request.getTestId())
-        .orElseThrow(() -> new BusinessException(404, "TOEIC test not found"));
+    ToeicTest test =
+        testRepository
+            .findById(request.getTestId())
+            .orElseThrow(() -> new BusinessException(404, "TOEIC test not found"));
 
-    ToeicTestSession session = ToeicTestSession.builder()
-        .user(user)
-        .test(test)
-        .mode(request.getMode())
-        .status(ToeicSessionStatus.IN_PROGRESS)
-        .scoreL(0)
-        .scoreR(0)
-        .totalScore(0)
-        .correctCount(0)
-        .incorrectCount(0)
-        .skippedCount(0)
-        .timeSpent(0)
-        .partsDone(request.getMode() == ToeicSessionMode.PRACTICE ? request.getPartsDone() : null)
-        .startedAt(LocalDateTime.now())
-        .build();
+    ToeicTestSession session =
+        ToeicTestSession.builder()
+            .user(user)
+            .test(test)
+            .mode(request.getMode())
+            .status(ToeicSessionStatus.IN_PROGRESS)
+            .scoreL(0)
+            .scoreR(0)
+            .totalScore(0)
+            .correctCount(0)
+            .incorrectCount(0)
+            .skippedCount(0)
+            .timeSpent(0)
+            .partsDone(
+                request.getMode() == ToeicSessionMode.PRACTICE ? request.getPartsDone() : null)
+            .startedAt(LocalDateTime.now())
+            .build();
 
     session = sessionRepository.save(session);
     return mapToSessionDTO(session);
@@ -73,28 +78,35 @@ public class ToeicTestSessionService {
 
   @Transactional
   public ToeicUserAnswerDTO saveAnswer(Long userId, Long sessionId, AnswerRequest request) {
-    ToeicTestSession session = sessionRepository.findByIdAndUserId(sessionId, userId)
-        .orElseThrow(() -> new BusinessException(404, "Test session not found or does not belong to the user"));
+    ToeicTestSession session =
+        sessionRepository
+            .findByIdAndUserId(sessionId, userId)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        404, "Test session not found or does not belong to the user"));
 
     if (session.getStatus() == ToeicSessionStatus.COMPLETED) {
       throw new BusinessException(400, "Cannot change answers for a completed session");
     }
 
-    ToeicQuestion question = questionRepository.findById(request.getQuestionId())
-        .orElseThrow(() -> new BusinessException(404, "Question not found"));
+    ToeicQuestion question =
+        questionRepository
+            .findById(request.getQuestionId())
+            .orElseThrow(() -> new BusinessException(404, "Question not found"));
 
-    if (question.getTest() == null || !question.getTest().getId().equals(session.getTest().getId())) {
+    if (question.getTest() == null
+        || !question.getTest().getId().equals(session.getTest().getId())) {
       throw new BusinessException(400, "Question does not belong to this test");
     }
 
-    ToeicUserAnswer userAnswer = userAnswerRepository.findBySessionIdAndQuestionId(sessionId, request.getQuestionId())
-        .orElse(null);
+    ToeicUserAnswer userAnswer =
+        userAnswerRepository
+            .findBySessionIdAndQuestionId(sessionId, request.getQuestionId())
+            .orElse(null);
 
     if (userAnswer == null) {
-      userAnswer = ToeicUserAnswer.builder()
-          .session(session)
-          .question(question)
-          .build();
+      userAnswer = ToeicUserAnswer.builder().session(session).question(question).build();
     }
 
     userAnswer.setUserChoice(request.getUserChoice());
@@ -117,7 +129,8 @@ public class ToeicTestSessionService {
   }
 
   @Transactional
-  public List<ToeicUserAnswerDTO> saveAnswers(Long userId, Long sessionId, List<AnswerRequest> requests) {
+  public List<ToeicUserAnswerDTO> saveAnswers(
+      Long userId, Long sessionId, List<AnswerRequest> requests) {
     if (requests == null || requests.isEmpty()) {
       return Collections.emptyList();
     }
@@ -130,28 +143,38 @@ public class ToeicTestSessionService {
   }
 
   @Transactional
-  public ToeicUserAnswerDTO toggleMark(Long userId, Long sessionId, Long questionId, Boolean isMarked) {
-    ToeicTestSession session = sessionRepository.findByIdAndUserId(sessionId, userId)
-        .orElseThrow(() -> new BusinessException(404, "Test session not found or does not belong to the user"));
+  public ToeicUserAnswerDTO toggleMark(
+      Long userId, Long sessionId, Long questionId, Boolean isMarked) {
+    ToeicTestSession session =
+        sessionRepository
+            .findByIdAndUserId(sessionId, userId)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        404, "Test session not found or does not belong to the user"));
 
-    ToeicQuestion question = questionRepository.findById(questionId)
-        .orElseThrow(() -> new BusinessException(404, "Question not found"));
+    ToeicQuestion question =
+        questionRepository
+            .findById(questionId)
+            .orElseThrow(() -> new BusinessException(404, "Question not found"));
 
-    if (question.getTest() == null || !question.getTest().getId().equals(session.getTest().getId())) {
+    if (question.getTest() == null
+        || !question.getTest().getId().equals(session.getTest().getId())) {
       throw new BusinessException(400, "Question does not belong to this test");
     }
 
-    ToeicUserAnswer userAnswer = userAnswerRepository.findBySessionIdAndQuestionId(sessionId, questionId)
-        .orElse(null);
+    ToeicUserAnswer userAnswer =
+        userAnswerRepository.findBySessionIdAndQuestionId(sessionId, questionId).orElse(null);
 
     if (userAnswer == null) {
-      userAnswer = ToeicUserAnswer.builder()
-          .session(session)
-          .question(question)
-          .userChoice(null)
-          .status(2) // Default to skipped if not answered yet
-          .isMarked(isMarked)
-          .build();
+      userAnswer =
+          ToeicUserAnswer.builder()
+              .session(session)
+              .question(question)
+              .userChoice(null)
+              .status(2) // Default to skipped if not answered yet
+              .isMarked(isMarked)
+              .build();
     } else {
       userAnswer.setIsMarked(isMarked);
     }
@@ -161,9 +184,15 @@ public class ToeicTestSessionService {
   }
 
   @Transactional
-  public ToeicTestSessionDTO submitSession(Long userId, Long sessionId, SubmitSessionRequest request) {
-    ToeicTestSession session = sessionRepository.findByIdAndUserId(sessionId, userId)
-        .orElseThrow(() -> new BusinessException(404, "Test session not found or does not belong to the user"));
+  public ToeicTestSessionDTO submitSession(
+      Long userId, Long sessionId, SubmitSessionRequest request) {
+    ToeicTestSession session =
+        sessionRepository
+            .findByIdAndUserId(sessionId, userId)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        404, "Test session not found or does not belong to the user"));
 
     if (session.getStatus() == ToeicSessionStatus.COMPLETED) {
       return mapToSessionDTO(session);
@@ -188,30 +217,36 @@ public class ToeicTestSessionService {
     List<ToeicQuestion> allQuestions = session.getTest().getQuestions();
 
     // Filter questions based on parts if it is a PRACTICE session
-    if (session.getMode() == ToeicSessionMode.PRACTICE && session.getPartsDone() != null && !session.getPartsDone().isEmpty()) {
+    if (session.getMode() == ToeicSessionMode.PRACTICE
+        && session.getPartsDone() != null
+        && !session.getPartsDone().isEmpty()) {
       List<Integer> parts = session.getPartsDone();
-      allQuestions = allQuestions.stream()
-          .filter(q -> parts.contains(q.getPartNumber()))
-          .collect(Collectors.toList());
+      allQuestions =
+          allQuestions.stream()
+              .filter(q -> parts.contains(q.getPartNumber()))
+              .collect(Collectors.toList());
     }
 
     // Fetch existing answers from database
     List<ToeicUserAnswer> existingAnswers = userAnswerRepository.findBySessionId(sessionId);
-    Map<Long, ToeicUserAnswer> answerMap = existingAnswers.stream()
-        .collect(Collectors.toMap(ans -> ans.getQuestion().getId(), ans -> ans));
+    Map<Long, ToeicUserAnswer> answerMap =
+        existingAnswers.stream()
+            .collect(Collectors.toMap(ans -> ans.getQuestion().getId(), ans -> ans));
 
-    // Ensure there is a UserAnswer record for every question in the session (non-answered questions are recorded as skipped)
+    // Ensure there is a UserAnswer record for every question in the session (non-answered questions
+    // are recorded as skipped)
     List<ToeicUserAnswer> finalAnswers = new ArrayList<>();
     for (ToeicQuestion q : allQuestions) {
       ToeicUserAnswer ans = answerMap.get(q.getId());
       if (ans == null) {
-        ans = ToeicUserAnswer.builder()
-            .session(session)
-            .question(q)
-            .userChoice(null)
-            .status(2) // Skipped
-            .isMarked(false)
-            .build();
+        ans =
+            ToeicUserAnswer.builder()
+                .session(session)
+                .question(q)
+                .userChoice(null)
+                .status(2) // Skipped
+                .isMarked(false)
+                .build();
         ans = userAnswerRepository.save(ans);
       }
       finalAnswers.add(ans);
@@ -282,24 +317,33 @@ public class ToeicTestSessionService {
 
   @Transactional(readOnly = true)
   public ToeicSessionDetailsResponse getSessionDetails(Long userId, Long sessionId) {
-    ToeicTestSession session = sessionRepository.findByIdAndUserId(sessionId, userId)
-        .orElseThrow(() -> new BusinessException(404, "Test session not found or does not belong to the user"));
+    ToeicTestSession session =
+        sessionRepository
+            .findByIdAndUserId(sessionId, userId)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        404, "Test session not found or does not belong to the user"));
 
     // Retrieve all test questions
     List<ToeicQuestion> allQuestions = session.getTest().getQuestions();
 
     // Filter questions if PRACTICE mode
-    if (session.getMode() == ToeicSessionMode.PRACTICE && session.getPartsDone() != null && !session.getPartsDone().isEmpty()) {
+    if (session.getMode() == ToeicSessionMode.PRACTICE
+        && session.getPartsDone() != null
+        && !session.getPartsDone().isEmpty()) {
       List<Integer> parts = session.getPartsDone();
-      allQuestions = allQuestions.stream()
-          .filter(q -> parts.contains(q.getPartNumber()))
-          .collect(Collectors.toList());
+      allQuestions =
+          allQuestions.stream()
+              .filter(q -> parts.contains(q.getPartNumber()))
+              .collect(Collectors.toList());
     }
 
     // Fetch user answers from database
     List<ToeicUserAnswer> savedAnswers = userAnswerRepository.findBySessionId(sessionId);
-    Map<Long, ToeicUserAnswer> answerMap = savedAnswers.stream()
-        .collect(Collectors.toMap(ans -> ans.getQuestion().getId(), ans -> ans));
+    Map<Long, ToeicUserAnswer> answerMap =
+        savedAnswers.stream()
+            .collect(Collectors.toMap(ans -> ans.getQuestion().getId(), ans -> ans));
 
     // Combine questions and user answers
     List<ToeicUserAnswerDTO> dtoList = new ArrayList<>();
@@ -331,8 +375,9 @@ public class ToeicTestSessionService {
     }
 
     // Sort by part number and question ID to keep it structured
-    dtoList.sort(Comparator.comparing(ToeicUserAnswerDTO::getPartNumber)
-        .thenComparing(ToeicUserAnswerDTO::getQuestionId));
+    dtoList.sort(
+        Comparator.comparing(ToeicUserAnswerDTO::getPartNumber)
+            .thenComparing(ToeicUserAnswerDTO::getQuestionId));
 
     return new ToeicSessionDetailsResponse(mapToSessionDTO(session), dtoList);
   }
@@ -342,9 +387,8 @@ public class ToeicTestSessionService {
     Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "startedAt"));
     Page<ToeicTestSession> pageResult = sessionRepository.findByUserId(userId, pageable);
 
-    List<ToeicTestSessionDTO> content = pageResult.getContent().stream()
-        .map(this::mapToSessionDTO)
-        .collect(Collectors.toList());
+    List<ToeicTestSessionDTO> content =
+        pageResult.getContent().stream().map(this::mapToSessionDTO).collect(Collectors.toList());
 
     return new PagedResponse<>(
         content,
@@ -355,8 +399,7 @@ public class ToeicTestSessionService {
         pageResult.isFirst(),
         pageResult.isLast(),
         "startedAt",
-        "desc"
-    );
+        "desc");
   }
 
   private int scaleToToeicScore(int correctCount) {

@@ -59,7 +59,8 @@ public class TestApiController {
       @RequestParam(required = false) String keyword) {
 
     Page<ToeicTestDTO> testResponses =
-        testService.findPublishedByCollectionId(collectionId, page, size, sortBy, direction, keyword);
+        testService.findPublishedByCollectionId(
+            collectionId, page, size, sortBy, direction, keyword);
 
     PagedResponse<ToeicTestDTO> response =
         new PagedResponse<>(

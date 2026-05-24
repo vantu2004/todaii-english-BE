@@ -11,5 +11,6 @@ import com.todaii.english.core.entity.toeic.ToeicUserAnswer;
 @Repository
 public interface ToeicUserAnswerRepository extends JpaRepository<ToeicUserAnswer, Long> {
   Optional<ToeicUserAnswer> findBySessionIdAndQuestionId(Long sessionId, Long questionId);
+
   List<ToeicUserAnswer> findBySessionId(Long sessionId);
 }

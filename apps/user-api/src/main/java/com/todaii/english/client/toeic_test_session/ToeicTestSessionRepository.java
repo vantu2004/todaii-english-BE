@@ -13,6 +13,8 @@ import com.todaii.english.core.entity.toeic.ToeicTestSession;
 @Repository
 public interface ToeicTestSessionRepository extends JpaRepository<ToeicTestSession, Long> {
   Page<ToeicTestSession> findByUserId(Long userId, Pageable pageable);
+
   List<ToeicTestSession> findByUserIdOrderByStartedAtDesc(Long userId);
+
   Optional<ToeicTestSession> findByIdAndUserId(Long id, Long userId);
 }

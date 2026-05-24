@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
-@Aspect
 @Slf4j
+@Aspect
+@Component
 public class VocabPerformanceMonitorAspect {
   /*
    * "return type, package-name.class-name.method-name(args)"
@@ -30,7 +30,7 @@ public class VocabPerformanceMonitorAspect {
     long endAt = System.nanoTime();
 
     log.info(
-        "Time taken: "
+        "AOP: Time taken: "
             + (endAt - startAt) / (10e5)
             + " ms in "
             + proceedingJoinPoint.getSignature().getName());

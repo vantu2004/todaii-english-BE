@@ -44,8 +44,13 @@ spring:
       api-key: ${OPENAI_API_KEY}
       chat:
         options:
-          model: ${OPENAI_MODEL}
+          model: ${OPENAI_CHAT_MODEL}
           temperature: 1
+      audio:
+        speech:
+          options:
+            model: ${OPENAI_TTS_MODEL}
+            voice: ${OPENAI_VOICE}
     google:
       genai:
         api-key: ${GEMINI_API_KEY}

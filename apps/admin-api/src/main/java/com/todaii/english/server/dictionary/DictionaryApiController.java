@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@RequestMapping("/api/v2/dictionary")
+@RequestMapping("/api/v1/dictionary")
 public class DictionaryApiController {
   private final DictionaryService dictionaryService;
 

@@ -18,6 +18,7 @@ import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.UserStatus;
@@ -49,7 +50,7 @@ public class UserService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    Page<User> userPage = userRepository.findAllActive(keyword, pageable);
+    Page<User> userPage = userRepository.findAllActive(AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return userPage.map(user -> modelMapper.map(user, UserDTO.class));
   }

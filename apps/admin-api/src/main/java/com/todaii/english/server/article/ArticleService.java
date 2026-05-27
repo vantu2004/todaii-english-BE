@@ -17,6 +17,7 @@ import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.topic.TopicRepository;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -75,7 +76,7 @@ public class ArticleService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return articleRepository.search(topicId, keyword, pageable);
+    return articleRepository.search(topicId, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Article findById(Long id) {

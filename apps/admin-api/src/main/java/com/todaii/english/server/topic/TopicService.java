@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.Topic;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.enums.TopicType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.CreateTopicRequest;
@@ -30,7 +31,7 @@ public class TopicService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return topicRepository.findAllActive(keyword, topicType, pageable);
+    return topicRepository.findAllActive(AdminUtils.formatSearchKeyword(keyword), topicType, pageable);
   }
 
   public List<Topic> findAllNoPaged(TopicType topicType) {

@@ -16,7 +16,7 @@ public class ToeicTag {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private Integer partNumber;
 
   @Column(nullable = false, length = 191)

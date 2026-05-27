@@ -26,6 +26,7 @@ import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.VideoDTO;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -116,7 +117,7 @@ public class VideoService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return videoRepository.search(null, keyword, pageable);
+    return videoRepository.search(null, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Page<Video> findByTopicId(
@@ -128,7 +129,7 @@ public class VideoService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return videoRepository.search(topicId, keyword, pageable);
+    return videoRepository.search(topicId, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Video createVideo(VideoDTO videoDTO) {

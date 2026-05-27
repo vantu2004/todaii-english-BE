@@ -18,4 +18,11 @@ public class AdminUtils {
   public static String toAlias(String name) {
     return name.trim().toLowerCase().replaceAll("\\s+", "-");
   }
+
+  public static String formatSearchKeyword(String keyword) {
+    if (keyword == null || keyword.trim().isEmpty()) {
+      return null;
+    }
+    return keyword.trim().replaceAll("\\s+", "%");
+  }
 }

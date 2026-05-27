@@ -141,16 +141,28 @@ public class QuestionService {
 
     toeicQuestion.setTags(getToeicTags(request.getTagIds()));
 
-    // ưu tiên dùng url ảnh đã upload
-    String uploadedImageUrl = request.getImageRequest().getUploadedImage();
-    if (StringUtils.hasText(uploadedImageUrl)) {
-      toeicQuestion.setImageUrl(uploadedImageUrl);
+    if (request.getImageRequest() != null) {
+      String uploadedImageUrl = request.getImageRequest().getUploadedImage();
+      String manualImageUrl = request.getImageRequest().getImageUrl();
+      if (StringUtils.hasText(uploadedImageUrl)) {
+        toeicQuestion.setImageUrl(uploadedImageUrl);
+      } else if (StringUtils.hasText(manualImageUrl)) {
+        toeicQuestion.setImageUrl(manualImageUrl);
+      } else {
+        toeicQuestion.setImageUrl(null);
+      }
     }
 
-    // ưu tiên dùng url audio đã upload
-    String uploadedAudioUrl = request.getAudioRequest().getUploadedAudio();
-    if (StringUtils.hasText(uploadedAudioUrl)) {
-      toeicQuestion.setAudioUrl(uploadedAudioUrl);
+    if (request.getAudioRequest() != null) {
+      String uploadedAudioUrl = request.getAudioRequest().getUploadedAudio();
+      String manualAudioUrl = request.getAudioRequest().getAudioUrl();
+      if (StringUtils.hasText(uploadedAudioUrl)) {
+        toeicQuestion.setAudioUrl(uploadedAudioUrl);
+      } else if (StringUtils.hasText(manualAudioUrl)) {
+        toeicQuestion.setAudioUrl(manualAudioUrl);
+      } else {
+        toeicQuestion.setAudioUrl(null);
+      }
     }
   }
 

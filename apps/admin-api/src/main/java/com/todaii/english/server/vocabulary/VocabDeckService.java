@@ -14,6 +14,7 @@ import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.vocabulary.VocabDeck;
 import com.todaii.english.core.entity.vocabulary.VocabGroup;
 import com.todaii.english.core.repository.DictionaryRepository;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.DeckRequest;
 
@@ -57,7 +58,7 @@ public class VocabDeckService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return vocabDeckRepository.search(null, keyword, pageable);
+    return vocabDeckRepository.search(null, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Page<VocabDeck> findByGroupId(
@@ -69,7 +70,7 @@ public class VocabDeckService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return vocabDeckRepository.search(groupId, keyword, pageable);
+    return vocabDeckRepository.search(groupId, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public VocabDeck findById(Long deckId) {

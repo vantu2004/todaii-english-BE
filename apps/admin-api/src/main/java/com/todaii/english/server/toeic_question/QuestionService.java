@@ -120,15 +120,17 @@ public class QuestionService {
   }
 
   private void validateImage(Part12Request request) {
-    if (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
-        && !StringUtils.hasText(request.getImageRequest().getImageUrl())) {
+    if (request.getImageRequest() == null
+        || (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+        && !StringUtils.hasText(request.getImageRequest().getImageUrl()))) {
       throw new BusinessException(400, "Image is required");
     }
   }
 
   private void validateAudio(Part12Request request) {
-    if (!StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
-        && !StringUtils.hasText(request.getAudioRequest().getAudioUrl())) {
+    if (request.getAudioRequest() == null
+        || (!StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+        && !StringUtils.hasText(request.getAudioRequest().getAudioUrl()))) {
       throw new BusinessException(400, "Audio is required");
     }
   }

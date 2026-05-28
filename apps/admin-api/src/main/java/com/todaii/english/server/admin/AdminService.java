@@ -51,7 +51,8 @@ public class AdminService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return this.adminRepository.findAllActive(currentAdminId, AdminUtils.formatSearchKeyword(keyword), pageable);
+    return this.adminRepository.findAllActive(
+        currentAdminId, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Admin findById(Long id) {

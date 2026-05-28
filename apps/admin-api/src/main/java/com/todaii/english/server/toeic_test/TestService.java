@@ -38,7 +38,8 @@ public class TestService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    Page<ToeicTest> toeicTestPage = testRepository.getAllPaged(AdminUtils.formatSearchKeyword(keyword), pageable);
+    Page<ToeicTest> toeicTestPage =
+        testRepository.getAllPaged(AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
@@ -51,7 +52,8 @@ public class TestService {
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
     Page<ToeicTest> toeicTestPage =
-        testRepository.findByCollectionId(collectionId, AdminUtils.formatSearchKeyword(keyword), pageable);
+        testRepository.findByCollectionId(
+            collectionId, AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }

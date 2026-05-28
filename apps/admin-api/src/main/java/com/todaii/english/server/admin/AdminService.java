@@ -19,6 +19,7 @@ import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.AdminStatus;
 import com.todaii.english.shared.enums.error_code.AdminErrorCode;
@@ -50,7 +51,7 @@ public class AdminService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return this.adminRepository.findAllActive(currentAdminId, keyword, pageable);
+    return this.adminRepository.findAllActive(currentAdminId, AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public Admin findById(Long id) {

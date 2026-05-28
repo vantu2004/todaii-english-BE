@@ -38,7 +38,8 @@ public class TagApiController {
           @Length(max = 191, message = "Toeic tag name must not exceed 191 characters")
           @RequestParam
           String name,
-      @Range(min = 1, max = 7, message = "Part number must be between 1 and 7") @RequestParam
+      @Range(min = 1, max = 7, message = "Part number must be between 1 and 7")
+          @RequestParam(required = false)
           Integer partNumber) {
     return ResponseEntity.status(HttpStatus.CREATED).body(tagService.create(name, partNumber));
   }

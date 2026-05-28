@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.core.entity.toeic.ToeicCollection;
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.port.CloudinaryPort;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -37,7 +38,7 @@ public class TestService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    Page<ToeicTest> toeicTestPage = testRepository.getAllPaged(keyword, pageable);
+    Page<ToeicTest> toeicTestPage = testRepository.getAllPaged(AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
@@ -50,7 +51,7 @@ public class TestService {
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
     Page<ToeicTest> toeicTestPage =
-        testRepository.findByCollectionId(collectionId, keyword, pageable);
+        testRepository.findByCollectionId(collectionId, AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return toeicTestPage.map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class));
   }
@@ -97,16 +98,28 @@ public class TestService {
   private void mapRequestToEntity(ToeicTestRequest toeicTestRequest, ToeicTest toeicTest) {
     modelMapper.map(toeicTestRequest, toeicTest);
 
-    // ưu tiên dùng url image đã upload
-    String imageUrl = toeicTestRequest.getImageRequest().getUploadedImage();
-    if (StringUtils.hasText(imageUrl)) {
-      toeicTest.setImageUrl(imageUrl);
+    if (toeicTestRequest.getImageRequest() != null) {
+      String uploadedImageUrl = toeicTestRequest.getImageRequest().getUploadedImage();
+      String manualImageUrl = toeicTestRequest.getImageRequest().getImageUrl();
+      if (StringUtils.hasText(uploadedImageUrl)) {
+        toeicTest.setImageUrl(uploadedImageUrl);
+      } else if (StringUtils.hasText(manualImageUrl)) {
+        toeicTest.setImageUrl(manualImageUrl);
+      } else {
+        toeicTest.setImageUrl(null);
+      }
     }
 
-    // ưu tiên dùng url audio đã upload
-    String audioUrl = toeicTestRequest.getAudioRequest().getUploadedAudio();
-    if (StringUtils.hasText(audioUrl)) {
-      toeicTest.setAudioUrl(audioUrl);
+    if (toeicTestRequest.getAudioRequest() != null) {
+      String uploadedAudioUrl = toeicTestRequest.getAudioRequest().getUploadedAudio();
+      String manualAudioUrl = toeicTestRequest.getAudioRequest().getAudioUrl();
+      if (StringUtils.hasText(uploadedAudioUrl)) {
+        toeicTest.setAudioUrl(uploadedAudioUrl);
+      } else if (StringUtils.hasText(manualAudioUrl)) {
+        toeicTest.setAudioUrl(manualAudioUrl);
+      } else {
+        toeicTest.setAudioUrl(null);
+      }
     }
   }
 

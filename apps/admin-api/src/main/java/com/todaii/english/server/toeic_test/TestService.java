@@ -14,6 +14,7 @@ import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
+import com.todaii.english.shared.enums.TestType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.ToeicTestRequest;
 
@@ -61,6 +62,8 @@ public class TestService {
   }
 
   public ToeicTestDTO create(ToeicTestRequest toeicTestRequest) {
+    validateAudio(toeicTestRequest);
+
     ToeicCollection collection =
         collectionRepository
             .findById(toeicTestRequest.getCollectionId())
@@ -78,6 +81,8 @@ public class TestService {
   }
 
   public ToeicTestDTO update(Long id, ToeicTestRequest toeicTestRequest) {
+    validateAudio(toeicTestRequest);
+
     ToeicTest toeicTest = findById(id);
 
     mapRequestToEntity(toeicTestRequest, toeicTest);
@@ -120,6 +125,16 @@ public class TestService {
       } else {
         toeicTest.setAudioUrl(null);
       }
+    }
+  }
+
+  private void validateAudio(ToeicTestRequest request) {
+    boolean hasAudio = request.getAudioRequest() != null
+        && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+            || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
+
+    if (request.getTestType() == TestType.TOEIC_LR && !hasAudio) {
+      throw new BusinessException(400, "Audio is required");
     }
   }
 

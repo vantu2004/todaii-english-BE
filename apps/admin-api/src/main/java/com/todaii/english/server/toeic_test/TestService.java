@@ -1,5 +1,6 @@
 package com.todaii.english.server.toeic_test;
 
+import com.todaii.english.shared.request.server.toeic.Part12Request;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +63,7 @@ public class TestService {
   }
 
   public ToeicTestDTO create(ToeicTestRequest toeicTestRequest) {
-    validateAudio(toeicTestRequest);
+    validateMedia(toeicTestRequest);
 
     ToeicCollection collection =
         collectionRepository
@@ -81,7 +82,7 @@ public class TestService {
   }
 
   public ToeicTestDTO update(Long id, ToeicTestRequest toeicTestRequest) {
-    validateAudio(toeicTestRequest);
+    validateMedia(toeicTestRequest);
 
     ToeicTest toeicTest = findById(id);
 
@@ -125,6 +126,19 @@ public class TestService {
       } else {
         toeicTest.setAudioUrl(null);
       }
+    }
+  }
+
+  private void validateMedia(ToeicTestRequest request){
+    validateImage(request);
+    validateMedia(request);
+  }
+
+  private void validateImage(ToeicTestRequest request) {
+    if (request.getImageRequest() == null
+            || (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+            && !StringUtils.hasText(request.getImageRequest().getImageUrl()))) {
+      throw new BusinessException(400, "Image is required");
     }
   }
 

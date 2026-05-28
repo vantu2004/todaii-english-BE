@@ -79,16 +79,28 @@ public class PassageService {
   private void mapRequestToEntity(ToeicPassageRequest request, ToeicPassage passage) {
     modelMapper.map(request, passage);
 
-    // ưu tiên uploaded image
-    String imageUrl = request.getImageRequest().getUploadedImage();
-    if (StringUtils.hasText(imageUrl)) {
-      passage.setImageUrl(imageUrl);
+    if (request.getImageRequest() != null) {
+      String uploadedImageUrl = request.getImageRequest().getUploadedImage();
+      String manualImageUrl = request.getImageRequest().getImageUrl();
+      if (StringUtils.hasText(uploadedImageUrl)) {
+        passage.setImageUrl(uploadedImageUrl);
+      } else if (StringUtils.hasText(manualImageUrl)) {
+        passage.setImageUrl(manualImageUrl);
+      } else {
+        passage.setImageUrl(null);
+      }
     }
 
-    // ưu tiên uploaded audio
-    String audioUrl = request.getAudioRequest().getUploadedAudio();
-    if (StringUtils.hasText(audioUrl)) {
-      passage.setAudioUrl(audioUrl);
+    if (request.getAudioRequest() != null) {
+      String uploadedAudioUrl = request.getAudioRequest().getUploadedAudio();
+      String manualAudioUrl = request.getAudioRequest().getAudioUrl();
+      if (StringUtils.hasText(uploadedAudioUrl)) {
+        passage.setAudioUrl(uploadedAudioUrl);
+      } else if (StringUtils.hasText(manualAudioUrl)) {
+        passage.setAudioUrl(manualAudioUrl);
+      } else {
+        passage.setAudioUrl(null);
+      }
     }
   }
 

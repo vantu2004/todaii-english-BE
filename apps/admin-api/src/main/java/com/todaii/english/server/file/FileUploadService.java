@@ -22,16 +22,22 @@ public class FileUploadService {
   private final UsageStatisticPort usageStatisticPort;
 
   public String upload(Long currentAdminId, Long testId, MultipartFile file) {
-    ToeicTest toeicTest =
-        testRepository
-            .findById(testId)
-            .orElseThrow(() -> new BusinessException(404, "Test not found"));
+    String folderName;
+    if (testId == null || testId == 0L) {
+      folderName = "toeic/temp";
+    } else {
+      ToeicTest toeicTest =
+          testRepository
+              .findById(testId)
+              .orElseThrow(() -> new BusinessException(404, "Test not found"));
+      folderName = "toeic/" + toeicTest.getTitle();
+    }
 
     usageStatisticPort.createUsageStatistic(
         usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
 
     try {
-      return cloudinaryPort.uploadFile(file, "toeic/" + toeicTest.getTitle());
+      return cloudinaryPort.uploadFile(file, folderName);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

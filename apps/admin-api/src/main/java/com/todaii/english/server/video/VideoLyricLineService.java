@@ -18,6 +18,7 @@ import com.github.dnbn.submerge.api.subtitle.srt.SRTLine;
 import com.github.dnbn.submerge.api.subtitle.srt.SRTSub;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.entity.video.VideoLyricLine;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.dto.VideoLyricLineDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.utils.DateTimeUtils;
@@ -75,7 +76,7 @@ public class VideoLyricLineService {
       Long videoId, String sortBy, String direction, String keyword) {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
 
-    return videoLyricLineRepository.findAll(videoId, keyword, sort);
+    return videoLyricLineRepository.findAll(videoId, AdminUtils.formatSearchKeyword(keyword), sort);
   }
 
   public VideoLyricLine findById(Long lyricId) {

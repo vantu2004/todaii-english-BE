@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.vocabulary.VocabGroup;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class VocabGroupService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return vocabGroupRepository.search(keyword, pageable);
+    return vocabGroupRepository.search(AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public VocabGroup findById(Long id) {

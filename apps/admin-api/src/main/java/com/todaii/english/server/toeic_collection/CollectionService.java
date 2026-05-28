@@ -23,7 +23,7 @@ public class CollectionService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return collectionRepository.search(keyword, pageable);
+    return collectionRepository.search(AdminUtils.formatSearchKeyword(keyword), pageable);
   }
 
   public ToeicCollection findById(Long collectionId) {

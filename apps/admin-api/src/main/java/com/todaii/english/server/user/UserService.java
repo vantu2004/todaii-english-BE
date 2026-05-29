@@ -50,7 +50,8 @@ public class UserService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    Page<User> userPage = userRepository.findAllActive(AdminUtils.formatSearchKeyword(keyword), pageable);
+    Page<User> userPage =
+        userRepository.findAllActive(AdminUtils.formatSearchKeyword(keyword), pageable);
 
     return userPage.map(user -> modelMapper.map(user, UserDTO.class));
   }

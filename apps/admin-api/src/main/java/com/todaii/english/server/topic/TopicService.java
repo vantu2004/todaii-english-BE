@@ -31,7 +31,8 @@ public class TopicService {
     Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
     Pageable pageable = PageRequest.of(page - 1, size, sort);
 
-    return topicRepository.findAllActive(AdminUtils.formatSearchKeyword(keyword), topicType, pageable);
+    return topicRepository.findAllActive(
+        AdminUtils.formatSearchKeyword(keyword), topicType, pageable);
   }
 
   public List<Topic> findAllNoPaged(TopicType topicType) {

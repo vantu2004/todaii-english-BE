@@ -1,6 +1,5 @@
 package com.todaii.english.server.toeic_test;
 
-import com.todaii.english.shared.request.server.toeic.Part12Request;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -131,23 +130,24 @@ public class TestService {
     }
   }
 
-  private void validateMedia(ToeicTestRequest request){
+  private void validateMedia(ToeicTestRequest request) {
     validateImage(request);
-    validateMedia(request);
+    validateAudio(request);
   }
 
   private void validateImage(ToeicTestRequest request) {
     if (request.getImageRequest() == null
-            || (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+        || (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
             && !StringUtils.hasText(request.getImageRequest().getImageUrl()))) {
       throw new BusinessException(400, "Image is required");
     }
   }
 
   private void validateAudio(ToeicTestRequest request) {
-    boolean hasAudio = request.getAudioRequest() != null
-        && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
-            || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
+    boolean hasAudio =
+        request.getAudioRequest() != null
+            && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+                || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
 
     if (request.getTestType() == TestType.TOEIC_LR && !hasAudio) {
       throw new BusinessException(400, "Audio is required");

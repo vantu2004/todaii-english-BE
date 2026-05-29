@@ -10,7 +10,7 @@ import lombok.Setter;
 public class DashboardSummaryDTO {
   private Long totalAdmins;
   private Long totalArticles;
-  private Long totalDictionaryEntries;
+  private Long totalDictionaryWords;
   private Long totalToeicTest;
   private Long totalUsers;
   private Long totalVideos;

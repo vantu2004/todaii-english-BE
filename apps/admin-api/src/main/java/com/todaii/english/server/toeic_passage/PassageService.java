@@ -105,9 +105,10 @@ public class PassageService {
   }
 
   private void validateAudio(Integer partNumber, ToeicPassageRequest request) {
-    boolean hasAudio = request.getAudioRequest() != null
-        && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
-            || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
+    boolean hasAudio =
+        request.getAudioRequest() != null
+            && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+                || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
 
     if ((partNumber == 3 || partNumber == 4) && !hasAudio) {
       throw new BusinessException(400, "Audio is required");

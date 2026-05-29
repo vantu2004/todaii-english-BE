@@ -1,5 +1,6 @@
 package com.todaii.english.server.toeic_test;
 
+import com.todaii.english.shared.request.server.toeic.Part12Request;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.toeic_collection.CollectionRepository;
 import com.todaii.english.shared.dto.ToeicTestDTO;
+import com.todaii.english.shared.enums.TestType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.ToeicTestRequest;
 
@@ -61,6 +63,8 @@ public class TestService {
   }
 
   public ToeicTestDTO create(ToeicTestRequest toeicTestRequest) {
+    validateMedia(toeicTestRequest);
+
     ToeicCollection collection =
         collectionRepository
             .findById(toeicTestRequest.getCollectionId())
@@ -78,6 +82,8 @@ public class TestService {
   }
 
   public ToeicTestDTO update(Long id, ToeicTestRequest toeicTestRequest) {
+    validateMedia(toeicTestRequest);
+
     ToeicTest toeicTest = findById(id);
 
     mapRequestToEntity(toeicTestRequest, toeicTest);
@@ -120,6 +126,29 @@ public class TestService {
       } else {
         toeicTest.setAudioUrl(null);
       }
+    }
+  }
+
+  private void validateMedia(ToeicTestRequest request){
+    validateImage(request);
+    validateMedia(request);
+  }
+
+  private void validateImage(ToeicTestRequest request) {
+    if (request.getImageRequest() == null
+            || (!StringUtils.hasText(request.getImageRequest().getUploadedImage())
+            && !StringUtils.hasText(request.getImageRequest().getImageUrl()))) {
+      throw new BusinessException(400, "Image is required");
+    }
+  }
+
+  private void validateAudio(ToeicTestRequest request) {
+    boolean hasAudio = request.getAudioRequest() != null
+        && (StringUtils.hasText(request.getAudioRequest().getUploadedAudio())
+            || StringUtils.hasText(request.getAudioRequest().getAudioUrl()));
+
+    if (request.getTestType() == TestType.TOEIC_LR && !hasAudio) {
+      throw new BusinessException(400, "Audio is required");
     }
   }
 

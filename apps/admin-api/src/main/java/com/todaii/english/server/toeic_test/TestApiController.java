@@ -90,7 +90,7 @@ public class TestApiController {
 
   @PutMapping("/{id}")
   public ResponseEntity<ToeicTestDTO> updateTest(
-      @PathVariable Long id, @RequestBody ToeicTestRequest dto) {
+      @PathVariable Long id, @Valid @RequestBody ToeicTestRequest dto) {
     return ResponseEntity.ok(testService.update(id, dto));
   }
 

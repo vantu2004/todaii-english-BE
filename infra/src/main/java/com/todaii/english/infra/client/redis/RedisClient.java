@@ -1,10 +1,10 @@
-package com.todaii.english.infra.client;
+package com.todaii.english.infra.client.redis;
 
 import java.time.Duration;
 
 import org.springframework.stereotype.Component;
 
-import com.todaii.english.core.port.RedisPort;
+import com.todaii.english.core.port.redis.RedisPort;
 import com.todaii.english.shared.enums.RedisType;
 
 import lombok.RequiredArgsConstructor;

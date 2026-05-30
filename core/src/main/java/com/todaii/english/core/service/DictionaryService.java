@@ -13,8 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.port.DictionaryPort;
-import com.todaii.english.core.port.RedisPort;
 import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.core.port.redis.RedisPort;
+import com.todaii.english.core.port.redis.RedisRankingPort;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.RedisType;
@@ -22,6 +23,7 @@ import com.todaii.english.shared.enums.UsageType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.TodaiiEnglishResponse;
+import com.todaii.english.shared.response.TopWordResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ public class DictionaryService {
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
   private final RedisPort redisPort;
+  private final RedisRankingPort redisRankingPort;
   private final ObjectMapper objectMapper;
 
   public TodaiiEnglishResponse searchByTodaiiDictionary(
@@ -43,6 +46,9 @@ public class DictionaryService {
 
   public DictionaryApiResponse[] searchByFreeDictionaryApi(Long currentAdminId, String word) {
     DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupFreeDictionaryApi(word);
+    if (dictionaryApiResponses != null && dictionaryApiResponses.length > 0) {
+      redisRankingPort.incrementWordSearchCount(word);
+    }
 
     UsageStatistic dictionaryStatistic =
         usageStatisticPort.createDictionaryStatistic(
@@ -81,6 +87,10 @@ public class DictionaryService {
     Long cursor = (lastId == null) ? 0L : lastId;
 
     return dictionaryRepository.findNextPageByCursor(cursor, pageRequest);
+  }
+
+  public List<TopWordResponse> getTopWords() {
+    return redisRankingPort.getTopWords(20);
   }
 
   public DictionaryWord createWord(String rawWord) {
@@ -122,7 +132,7 @@ public class DictionaryService {
     return dictionaryPort.getAiSuggestions(word, currentAdminId, ActorType.ADMIN);
   }
 
-  /** Luồng tìm kiếm chính (Orchestration Flow) */
+  // Luồng tìm kiếm chính (Orchestration Flow)
   private TodaiiEnglishResponse searchWord(
       Long currentAdminId, String rawWord, int page, int size) {
     String word = rawWord.trim().toLowerCase();
@@ -132,6 +142,7 @@ public class DictionaryService {
     if (cachedJson != null) {
       log.info("Cache Hit for word: {}", word);
 
+      redisRankingPort.incrementWordSearchCount(word);
       redisPort.refreshTtlIfNeeded(RedisType.DICT_WORD, word);
 
       return parseJsonToObject(cachedJson);
@@ -145,6 +156,7 @@ public class DictionaryService {
     if (StringUtils.hasText(jsonData)) {
       log.info("DB Hit for word: {}", word);
 
+      redisRankingPort.incrementWordSearchCount(word);
       redisPort.set(RedisType.DICT_WORD, word, jsonData);
 
       return parseJsonToObject(jsonData);
@@ -163,6 +175,7 @@ public class DictionaryService {
     dictionaryRepository.save(dictionaryWord);
 
     redisPort.set(RedisType.DICT_WORD, word, jsonData);
+    redisRankingPort.incrementWordSearchCount(word);
 
     return todaiiEnglishResponse;
   }

@@ -17,6 +17,7 @@ import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
 import com.todaii.english.shared.response.TodaiiEnglishResponse;
+import com.todaii.english.shared.response.TopWordResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -102,6 +103,11 @@ public class DictionaryApiController {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
     return ResponseEntity.ok(dictionaryService.getAiSuggestions(word, currentAdminId));
+  }
+
+  @GetMapping("/top-words")
+  public ResponseEntity<List<TopWordResponse>> getTopWords() {
+    return ResponseEntity.ok(dictionaryService.getTopWords());
   }
 
   @PostMapping

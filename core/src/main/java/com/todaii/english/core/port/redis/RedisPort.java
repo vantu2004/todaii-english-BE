@@ -1,4 +1,4 @@
-package com.todaii.english.core.port;
+package com.todaii.english.core.port.redis;
 
 import com.todaii.english.shared.enums.RedisType;
 

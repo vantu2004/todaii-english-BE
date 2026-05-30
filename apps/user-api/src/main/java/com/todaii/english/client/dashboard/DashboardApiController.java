@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
 import com.todaii.english.core.service.DashboardService;
+import com.todaii.english.shared.dto.dashboard.DashboardChartDTO;
 import com.todaii.english.shared.enums.ActorType;
-import com.todaii.english.shared.response.DashboardChartDTO;
 
 import lombok.RequiredArgsConstructor;
 

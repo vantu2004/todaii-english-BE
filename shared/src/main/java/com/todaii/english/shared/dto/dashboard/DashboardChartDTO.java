@@ -1,4 +1,4 @@
-package com.todaii.english.shared.response;
+package com.todaii.english.shared.dto.dashboard;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

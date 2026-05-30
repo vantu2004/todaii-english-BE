@@ -2,17 +2,24 @@ package com.todaii.english.infra.config;
 
 import java.net.URI;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 @Configuration
 public class RedisConfig {
-  @Bean
-  public Jedis jedisPooled() {
-    String UPSTASH_REDIS_URL = System.getenv("UPSTASH_REDIS_URL");
+  @Value("${upstash.redis-url}")
+  private String redisUrl;
 
-    return new Jedis(URI.create(UPSTASH_REDIS_URL));
+  @Bean
+  public JedisPool jedisPool() {
+    GenericObjectPoolConfig<Jedis> poolConfig = new GenericObjectPoolConfig<>();
+    poolConfig.setJmxEnabled(false);
+
+    return new JedisPool(poolConfig, URI.create(redisUrl));
   }
 }

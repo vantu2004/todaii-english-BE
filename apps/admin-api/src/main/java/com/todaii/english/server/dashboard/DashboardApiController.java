@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.core.service.DashboardService;
 import com.todaii.english.server.AdminUtils;
+import com.todaii.english.shared.dto.dashboard.DashboardChartDTO;
+import com.todaii.english.shared.dto.dashboard.DashboardSummaryDTO;
+import com.todaii.english.shared.dto.dashboard.UpstashDashboardStatDTO;
 import com.todaii.english.shared.enums.ActorType;
-import com.todaii.english.shared.response.DashboardChartDTO;
-import com.todaii.english.shared.response.DashboardSummaryDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -117,5 +118,10 @@ public class DashboardApiController {
 
     return ResponseEntity.ok(
         dashboardService.getChartByActorId(ActorType.ADMIN, currentAdminId, startDate, endDate));
+  }
+
+  @GetMapping("/upstash-stats")
+  public ResponseEntity<UpstashDashboardStatDTO> getStats() {
+    return ResponseEntity.ok(serverDashboardService.getStats());
   }
 }

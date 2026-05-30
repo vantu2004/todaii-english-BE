@@ -87,3 +87,9 @@ cloudinary:
 google:
   cloud:
     project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+
+upstash:
+  redis-url: ${UPSTASH_REDIS_URL}
+  database-id: ${UPSTASH_DB_ID}
+  username: ${UPSTASH_USERNAME}
+  password: ${UPSTASH_PASSWORD}

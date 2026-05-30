@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.repository.DashboardRepository;
+import com.todaii.english.shared.dto.dashboard.DashboardChartDTO;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.AiProvider;
 import com.todaii.english.shared.enums.UsageType;
-import com.todaii.english.shared.response.DashboardChartDTO;
 
 import lombok.RequiredArgsConstructor;
 

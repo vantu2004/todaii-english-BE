@@ -1,4 +1,4 @@
-package com.todaii.english.server.dashboard;
+package com.todaii.english.core.service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -10,43 +10,18 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.UsageStatistic;
-import com.todaii.english.core.repository.DictionaryRepository;
-import com.todaii.english.server.admin.AdminRepository;
-import com.todaii.english.server.article.ArticleRepository;
-import com.todaii.english.server.toeic_test.TestRepository;
-import com.todaii.english.server.user.UserRepository;
-import com.todaii.english.server.video.VideoRepository;
-import com.todaii.english.server.vocabulary.VocabDeckRepository;
+import com.todaii.english.core.repository.DashboardRepository;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.AiProvider;
 import com.todaii.english.shared.enums.UsageType;
 import com.todaii.english.shared.response.DashboardChartDTO;
-import com.todaii.english.shared.response.DashboardSummaryDTO;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
-  private final AdminRepository adminRepository;
-  private final ArticleRepository articleRepository;
-  private final DictionaryRepository dictionaryRepository;
-  private final TestRepository testRepository;
-  private final UserRepository userRepository;
-  private final VideoRepository videoRepository;
-  private final VocabDeckRepository vocabDeckRepository;
   private final DashboardRepository dashboardRepository;
-
-  public DashboardSummaryDTO getDashboardSummary() {
-    return new DashboardSummaryDTO(
-        adminRepository.countByIsDeletedFalse(),
-        articleRepository.count(),
-        dictionaryRepository.count(),
-        testRepository.count(),
-        userRepository.countByIsDeletedFalse(),
-        videoRepository.count(),
-        vocabDeckRepository.count());
-  }
 
   public List<DashboardChartDTO> getChartByActorType(
       ActorType actorType, LocalDate startDate, LocalDate endDate) {
@@ -95,7 +70,7 @@ public class DashboardService {
     DashboardChartDTO chartDTO =
         DashboardChartDTO.builder()
             .date(date)
-            .aiRequests(new java.util.ArrayList<>()) // Khởi tạo list trống cho dữ liệu AI
+            .aiRequests(new ArrayList<>()) // Khởi tạo list trống cho dữ liệu AI
             .build();
 
     // BƯỚC 1: Lọc riêng các event AI_REQUEST và gom nhóm theo (AiProvider, Model)

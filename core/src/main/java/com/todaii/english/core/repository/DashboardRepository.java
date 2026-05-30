@@ -1,4 +1,4 @@
-package com.todaii.english.server.dashboard;
+package com.todaii.english.core.repository;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -55,7 +55,7 @@ public class CommentAdminController {
     return ResponseEntity.ok(response);
   }
 
-  @PatchMapping("/comments/{id}/status")
+  @PatchMapping("/comments/{id}")
   public ResponseEntity<CommentDTO> updateCommentStatus(
       @PathVariable Long id, @RequestParam CommentStatus status) {
     return ResponseEntity.ok(commentAdminService.updateCommentStatus(id, status));

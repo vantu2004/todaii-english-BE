@@ -147,8 +147,15 @@ public class SecurityConfigForUser {
             "/api/v1/article/*/is-saved",
             "/api/v1/video/saved",
             "/api/v1/video/*/is-saved",
-            "/api/v1/notebook/**")
+            "/api/v1/notebook/**",
+            "/api/v1/toeic/highlights/**")
         .hasAuthority("USER")
+        .requestMatchers(HttpMethod.POST, "/api/v1/comments", "/api/v1/comments/*/report")
+        .hasAuthority("USER")
+        .requestMatchers(HttpMethod.DELETE, "/api/v1/comments/*")
+        .hasAuthority("USER")
+        .requestMatchers(HttpMethod.GET, "/api/v1/comments")
+        .permitAll()
 
         // 3. User Profile & Actions
         .requestMatchers(HttpMethod.GET, "/api/v1/user/me")

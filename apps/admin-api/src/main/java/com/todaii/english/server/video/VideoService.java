@@ -184,7 +184,7 @@ public class VideoService {
     videoRepository.deleteById(id);
   }
 
-  public List<String> vocabExtraction(Long currentAdminId, Long videoId) {
+  public List<DictionaryWord> vocabExtraction(Long currentAdminId, Long videoId) {
     Video video = findById(videoId);
 
     List<VideoLyricLine> videoLyricLines = videoLyricLineRepository.findAllByVideoId(videoId);
@@ -198,7 +198,10 @@ public class VideoService {
     String words =
         video.getWords().stream().map(DictionaryWord::getWord).collect(Collectors.joining("\n"));
 
-    return vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
+    List<String> vocabs =
+        vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
+
+    return dictionaryRepository.findAllByWordIn(vocabs);
   }
 
   public Video addWordToVideo(Long videoId, Long wordId) {

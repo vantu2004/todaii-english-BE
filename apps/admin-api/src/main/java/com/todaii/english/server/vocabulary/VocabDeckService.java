@@ -157,7 +157,7 @@ public class VocabDeckService {
     return vocabDeckRepository.save(vocabDeck);
   }
 
-  public List<String> vocabExtraction(Long currentAdminId, Long deckId) {
+  public List<DictionaryWord> vocabExtraction(Long currentAdminId, Long deckId) {
     VocabDeck vocabDeck = findById(deckId);
 
     String words =
@@ -178,7 +178,10 @@ public class VocabDeckService {
     try {
       String text = objectMapper.writeValueAsString(clone);
 
-      return vocabExtractionPort.vocabExtraction(text, words, currentAdminId, ActorType.ADMIN);
+      List<String> vocabs =
+          vocabExtractionPort.vocabExtraction(text, words, currentAdminId, ActorType.ADMIN);
+
+      return dictionaryRepository.findAllByWordIn(vocabs);
     } catch (JsonProcessingException e) {
       throw new RuntimeException("Failed to serialize vocab deck", e);
     }

@@ -111,7 +111,7 @@ public class ArticleService {
     articleRepository.deleteById(id);
   }
 
-  public List<String> vocabExtraction(Long currentAdminId, Long articleId) {
+  public List<DictionaryWord> vocabExtraction(Long currentAdminId, Long articleId) {
     Article article = findById(articleId);
     if (article.getParagraphs().isEmpty()) {
       throw new BusinessException(400, "This article has no content.");
@@ -125,7 +125,10 @@ public class ArticleService {
     String words =
         article.getWords().stream().map(DictionaryWord::getWord).collect(Collectors.joining("\n"));
 
-    return vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
+    List<String> vocabs =
+        vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
+
+    return dictionaryRepository.findAllByWordIn(vocabs);
   }
 
   public Article addWordToArticle(Long articleId, Long wordId) {

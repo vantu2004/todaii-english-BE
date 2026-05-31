@@ -25,4 +25,6 @@ public interface DictionaryRepository extends JpaRepository<DictionaryWord, Long
   List<DictionaryWord> findNextPageByCursor(Long lastId, Pageable pageable);
 
   Optional<DictionaryWord> findByWord(String word);
+
+  List<DictionaryWord> findAllByWordIn(List<String> vocabs);
 }

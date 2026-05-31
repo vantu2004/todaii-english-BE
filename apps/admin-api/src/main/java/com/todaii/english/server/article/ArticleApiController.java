@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.exceptions.BusinessException;
@@ -156,7 +157,7 @@ public class ArticleApiController {
   }
 
   @GetMapping("/{articleId}/vocab-extraction")
-  public ResponseEntity<List<String>> vocabExtraction(
+  public ResponseEntity<List<DictionaryWord>> vocabExtraction(
       Authentication authentication, @PathVariable Long articleId) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 

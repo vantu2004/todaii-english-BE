@@ -2,6 +2,7 @@ package com.todaii.english.server.article;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -10,8 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
@@ -39,7 +38,6 @@ public class ArticleService {
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
   private final VocabExtractionPort vocabExtractionPort;
-  private final ObjectMapper objectMapper;
 
   public NewsApiResponse fetchFromNewsApi(
       Long currentAdminId, String query, int pageSize, int page, String sortBy) {
@@ -119,15 +117,10 @@ public class ArticleService {
       throw new BusinessException(400, "This article has no content.");
     }
 
-    List<String> textEns =
-        article.getParagraphs().stream().map(ArticleParagraph::getTextEn).toList();
-
-    String textEn = null;
-    try {
-      textEn = objectMapper.writeValueAsString(textEns);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
+    String textEn =
+        article.getParagraphs().stream()
+            .map(ArticleParagraph::getTextEn)
+            .collect(Collectors.joining("\n"));
 
     return vocabExtractionPort.vocabExtraction(textEn, currentAdminId, ActorType.ADMIN);
   }

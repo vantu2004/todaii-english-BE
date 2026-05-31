@@ -43,8 +43,7 @@ public class VideoApiController {
       @RequestParam
           @NotBlank(message = "URL must not be blank")
           @Length(max = 1024, message = "URL must not exceed 1024 characters")
-          String url)
-      throws BadRequestException {
+          String url) {
     return ResponseEntity.ok(videoService.importFromYoutube(url));
   }
 
@@ -157,6 +156,14 @@ public class VideoApiController {
   public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
     videoService.deleteVideo(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{videoId}/vocab-extraction")
+  public ResponseEntity<List<String>> vocabExtraction(
+      Authentication authentication, @PathVariable Long videoId) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+    return ResponseEntity.ok(videoService.vocabExtraction(currentAdminId, videoId));
   }
 
   @PostMapping("/{videoId}/word/{wordId}")

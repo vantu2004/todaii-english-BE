@@ -3,6 +3,7 @@ package com.todaii.english.server.video;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 
@@ -21,13 +22,16 @@ import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.Topic;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.video.Video;
+import com.todaii.english.core.entity.video.VideoLyricLine;
 import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.core.port.VocabExtractionPort;
 import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.topic.TopicRepository;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.dto.VideoDTO;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
@@ -45,6 +49,7 @@ public class VideoService {
   private final YoutubeDataApiV3Port youtubeDataApiV3Port;
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
+  private final VocabExtractionPort vocabExtractionPort;
 
   public VideoDTO importFromYoutube(String youtubeUrl) {
     String requestUri =
@@ -177,6 +182,18 @@ public class VideoService {
   public void deleteVideo(Long id) {
     videoLyricLineRepository.deleteAllByVideoId(id);
     videoRepository.deleteById(id);
+  }
+
+  public List<String> vocabExtraction(Long currentAdminId, Long videoId) {
+    List<VideoLyricLine> videoLyricLines = videoLyricLineRepository.findAllByVideoId(videoId);
+    if (videoLyricLines.isEmpty()) {
+      throw new BusinessException(400, "This video has no content.");
+    }
+
+    String textEn =
+        videoLyricLines.stream().map(VideoLyricLine::getTextEn).collect(Collectors.joining("\n"));
+
+    return vocabExtractionPort.vocabExtraction(textEn, currentAdminId, ActorType.ADMIN);
   }
 
   public Video addWordToVideo(Long videoId, Long wordId) {

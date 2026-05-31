@@ -22,6 +22,9 @@ Rules:
 
 Output:
 Return ONLY a valid JSON array of strings.
+Do not wrap the JSON in markdown.
+Do not use ```json.
+Do not add explanations.
 
 Example:
 ["electric vehicle","battery","charging station","consumer demand"]

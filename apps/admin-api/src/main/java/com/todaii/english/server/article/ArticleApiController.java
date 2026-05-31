@@ -76,7 +76,7 @@ public class ArticleApiController {
   }
 
   @GetMapping("/topic/{topicId}")
-  public ResponseEntity<PagedResponse<Article>> getArticlesBytopicId(
+  public ResponseEntity<PagedResponse<Article>> getArticlesByTopicId(
       @PathVariable Long topicId,
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
           int page,
@@ -153,6 +153,14 @@ public class ArticleApiController {
   public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
     articleService.deleteById(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{articleId}/vocab-extraction")
+  public ResponseEntity<List<String>> vocabExtraction(
+      Authentication authentication, @PathVariable Long articleId) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+    return ResponseEntity.ok(articleService.vocabExtraction(currentAdminId, articleId));
   }
 
   @PostMapping("/{articleId}/word/{wordId}")

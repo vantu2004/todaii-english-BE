@@ -128,8 +128,6 @@ public class SecurityConfigForUser {
         .permitAll()
         .requestMatchers("/api/v1/dictionary/**")
         .permitAll()
-        .requestMatchers("/api/v1/todaii-dictionary/**")
-        .permitAll()
         .requestMatchers("/api/v1/chatbot/**")
         .permitAll()
         .requestMatchers("/api/v1/gg-translate/**")

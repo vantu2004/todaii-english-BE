@@ -10,14 +10,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.article.ArticleParagraph;
 import com.todaii.english.core.port.NewsApiPort;
 import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.core.port.VocabExtractionPort;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.topic.TopicRepository;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.ArticleRequest;
 import com.todaii.english.shared.response.NewsApiResponse;
@@ -33,6 +38,8 @@ public class ArticleService {
   private final TopicRepository topicRepository;
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
+  private final VocabExtractionPort vocabExtractionPort;
+  private final ObjectMapper objectMapper;
 
   public NewsApiResponse fetchFromNewsApi(
       Long currentAdminId, String query, int pageSize, int page, String sortBy) {
@@ -104,6 +111,25 @@ public class ArticleService {
 
   public void deleteById(Long id) {
     articleRepository.deleteById(id);
+  }
+
+  public List<String> vocabExtraction(Long currentAdminId, Long articleId) {
+    Article article = findById(articleId);
+    if (article.getParagraphs().isEmpty()) {
+      throw new BusinessException(400, "This article has no content.");
+    }
+
+    List<String> textEns =
+        article.getParagraphs().stream().map(ArticleParagraph::getTextEn).toList();
+
+    String textEn = null;
+    try {
+      textEn = objectMapper.writeValueAsString(textEns);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
+    }
+
+    return vocabExtractionPort.vocabExtraction(textEn, currentAdminId, ActorType.ADMIN);
   }
 
   public Article addWordToArticle(Long articleId, Long wordId) {

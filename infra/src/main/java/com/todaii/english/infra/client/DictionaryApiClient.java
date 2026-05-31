@@ -74,8 +74,8 @@ public class DictionaryApiClient implements DictionaryPort {
                       .chatResponse());
 
       String content = response.getResult().getOutput().getText();
-      return objectMapper.readValue(content, new TypeReference<>() {});
 
+      return objectMapper.readValue(content, new TypeReference<>() {});
     } catch (Exception ex) {
       // Business logic của hàm này là: Nếu lỗi AI thì ko ném lỗi ra ngoài, mà trả về List rỗng
       log.error("💥 All AI providers failed to suggest for word '{}'", word, ex);

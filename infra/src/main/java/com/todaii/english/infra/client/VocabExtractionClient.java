@@ -26,8 +26,12 @@ public class VocabExtractionClient implements VocabExtractionPort {
   @Value("classpath:/promptTemplates/systemPromptVocabExtractionTemplate.st")
   private Resource systemPromptVocabExtractionTemplate;
 
+  @Value("classpath:/promptTemplates/userPromptVocabExtractionTemplate.st")
+  private Resource userPromptVocabExtractionTemplate;
+
   @Override
-  public List<String> vocabExtraction(String text, Long actorId, ActorType actorType) {
+  public List<String> vocabExtraction(
+      String text, String words, Long actorId, ActorType actorType) {
     try {
       // Truyền logic prompt dưới dạng Lambda Function để bên kia tự gán Chatclient cho chạy
       ChatResponse response =
@@ -37,8 +41,15 @@ public class VocabExtractionClient implements VocabExtractionPort {
               client ->
                   client
                       .prompt()
-                      .system(sys -> sys.text(systemPromptVocabExtractionTemplate))
-                      .user(text)
+                      .system(
+                          promptSystemSpec ->
+                              promptSystemSpec.text(systemPromptVocabExtractionTemplate))
+                      .user(
+                          promptUserSpec ->
+                              promptUserSpec
+                                  .text(userPromptVocabExtractionTemplate)
+                                  .param("input_text", text)
+                                  .param("input_words", words))
                       .call()
                       .chatResponse());
 

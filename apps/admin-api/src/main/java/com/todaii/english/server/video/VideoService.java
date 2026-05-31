@@ -185,6 +185,8 @@ public class VideoService {
   }
 
   public List<String> vocabExtraction(Long currentAdminId, Long videoId) {
+    Video video = findById(videoId);
+
     List<VideoLyricLine> videoLyricLines = videoLyricLineRepository.findAllByVideoId(videoId);
     if (videoLyricLines.isEmpty()) {
       throw new BusinessException(400, "This video has no content.");
@@ -193,7 +195,10 @@ public class VideoService {
     String textEn =
         videoLyricLines.stream().map(VideoLyricLine::getTextEn).collect(Collectors.joining("\n"));
 
-    return vocabExtractionPort.vocabExtraction(textEn, currentAdminId, ActorType.ADMIN);
+    String words =
+        video.getWords().stream().map(DictionaryWord::getWord).collect(Collectors.joining("\n"));
+
+    return vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
   }
 
   public Video addWordToVideo(Long videoId, Long wordId) {

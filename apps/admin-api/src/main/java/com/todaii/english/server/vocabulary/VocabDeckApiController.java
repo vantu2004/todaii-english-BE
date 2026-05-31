@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Min;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.core.entity.vocabulary.VocabDeck;
+import com.todaii.english.server.AdminUtils;
 import com.todaii.english.shared.request.server.DeckRequest;
 import com.todaii.english.shared.response.PagedResponse;
 
@@ -103,23 +105,6 @@ public class VocabDeckApiController {
     return ResponseEntity.ok(vocabDeckService.createDraftDeck(deckRequest));
   }
 
-  @PostMapping("/{deckId}/word/{wordId}")
-  public ResponseEntity<VocabDeck> addWordToDeck(
-      @PathVariable Long deckId, @PathVariable Long wordId) {
-    return ResponseEntity.ok(vocabDeckService.addWordToDeck(deckId, wordId));
-  }
-
-  @DeleteMapping("/{deckId}/word/{wordId}")
-  public ResponseEntity<VocabDeck> removeWordFromDeck(
-      @PathVariable Long deckId, @PathVariable Long wordId) {
-    return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
-  }
-
-  @DeleteMapping("/{deckId}/word")
-  public ResponseEntity<VocabDeck> removeAllWordsFromDeck(@PathVariable Long deckId) {
-    return ResponseEntity.ok(vocabDeckService.removeAllWordsFromDeck(deckId));
-  }
-
   @PutMapping("/{deckId}")
   public ResponseEntity<VocabDeck> updateVocabDeck(
       @PathVariable Long deckId, @Valid @RequestBody DeckRequest deckRequest) {
@@ -136,5 +121,30 @@ public class VocabDeckApiController {
   public ResponseEntity<Void> deleteVocabDeck(@PathVariable Long deckId) {
     vocabDeckService.deleteById(deckId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/{deckId}/vocab-extraction")
+  public ResponseEntity<List<String>> vocabExtraction(
+      Authentication authentication, @PathVariable Long deckId) {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+    return ResponseEntity.ok(vocabDeckService.vocabExtraction(currentAdminId, deckId));
+  }
+
+  @PostMapping("/{deckId}/word/{wordId}")
+  public ResponseEntity<VocabDeck> addWordToDeck(
+      @PathVariable Long deckId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(vocabDeckService.addWordToDeck(deckId, wordId));
+  }
+
+  @DeleteMapping("/{deckId}/word/{wordId}")
+  public ResponseEntity<VocabDeck> removeWordFromDeck(
+      @PathVariable Long deckId, @PathVariable Long wordId) {
+    return ResponseEntity.ok(vocabDeckService.removeWordFromDeck(deckId, wordId));
+  }
+
+  @DeleteMapping("/{deckId}/word")
+  public ResponseEntity<VocabDeck> removeAllWordsFromDeck(@PathVariable Long deckId) {
+    return ResponseEntity.ok(vocabDeckService.removeAllWordsFromDeck(deckId));
   }
 }

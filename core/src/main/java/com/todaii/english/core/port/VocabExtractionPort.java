@@ -5,5 +5,5 @@ import java.util.List;
 import com.todaii.english.shared.enums.ActorType;
 
 public interface VocabExtractionPort {
-  List<String> vocabExtraction(String text, Long actorId, ActorType actorType);
+  List<String> vocabExtraction(String text, String words, Long actorId, ActorType actorType);
 }

@@ -67,9 +67,14 @@ public class DictionaryApiClient implements DictionaryPort {
               client ->
                   client
                       .prompt()
-                      .system(sys -> sys.text(systemPromptAiSuggestionTemplate))
+                      .system(
+                          promptSystemSpec ->
+                              promptSystemSpec.text(systemPromptAiSuggestionTemplate))
                       .user(
-                          req -> req.text(userPromptAiSuggestionTemplate).param("input_word", word))
+                          promptUserSpec ->
+                              promptUserSpec
+                                  .text(userPromptAiSuggestionTemplate)
+                                  .param("input_word", word))
                       .call()
                       .chatResponse());
 

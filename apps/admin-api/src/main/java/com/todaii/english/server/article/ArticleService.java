@@ -122,7 +122,10 @@ public class ArticleService {
             .map(ArticleParagraph::getTextEn)
             .collect(Collectors.joining("\n"));
 
-    return vocabExtractionPort.vocabExtraction(textEn, currentAdminId, ActorType.ADMIN);
+    String words =
+        article.getWords().stream().map(DictionaryWord::getWord).collect(Collectors.joining("\n"));
+
+    return vocabExtractionPort.vocabExtraction(textEn, words, currentAdminId, ActorType.ADMIN);
   }
 
   public Article addWordToArticle(Long articleId, Long wordId) {

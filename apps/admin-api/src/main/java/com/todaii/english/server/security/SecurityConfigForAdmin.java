@@ -137,7 +137,7 @@ public class SecurityConfigForAdmin {
         .requestMatchers("/api/v1/user/**")
         .hasAnyAuthority(AdminAuthorities.SUPER_AND_USER)
 
-        // 5. Quản lý Nội dung (Topic, Dictionary, Video, Article, Vocab, TOEIC)
+        // 5. Quản lý Nội dung (Topic, Dictionary, Video, Article, Vocab, TOEIC, Comments, Reports)
         .requestMatchers(
             "/api/v1/topic/**",
             "/api/v2/dictionary/**",
@@ -146,6 +146,8 @@ public class SecurityConfigForAdmin {
             "/api/v1/vocab-deck/**",
             "/api/v1/article/**",
             "/api/v1/toeic/**",
+            "/api/v1/comments/**",
+            "/api/v1/reports/**",
             "/api/v1/cloudinary/file/**")
         .hasAnyAuthority(AdminAuthorities.SUPER_AND_CONTENT)
 

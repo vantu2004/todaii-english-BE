@@ -87,6 +87,8 @@ cloudinary:
 google:
   cloud:
     project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+  credentials:
+    json: ${GOOGLE_CREDENTIALS_JSON}
 
 upstash:
   redis-url: ${UPSTASH_REDIS_URL}

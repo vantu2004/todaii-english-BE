@@ -1,11 +1,12 @@
 package com.todaii.english.infra.config;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -14,23 +15,36 @@ import com.google.cloud.translate.v3.TranslationServiceSettings;
 
 @Configuration
 public class GgTranslateConfig {
-  // lấy file cấu hình dựa theo classpath (classpath nghĩa là tìm file trong thư mục resources)
-  @Value("classpath:google-credentials.json")
-  private Resource credentialsResource;
+
+  // Lấy JSON credentials từ biến môi trường trên Render
+  @Value("${google.credentials.json}")
+  private String credentialsJson;
 
   @Bean
   public TranslationServiceClient translationServiceClient() throws IOException {
-    // Đọc file JSON
+
+    // Kiểm tra ENV có tồn tại không
+    if (credentialsJson == null || credentialsJson.isBlank()) {
+      throw new RuntimeException("Env variavle GOOGLE_CREDENTIALS_JSON missing");
+    }
+
+    // Fix lỗi Render escape ký tự xuống dòng (\n bị thành \\n)
+    String fixedJson = credentialsJson.replace("\\n", "\n");
+
+    // Chuyển JSON → InputStream
     GoogleCredentials credentials =
-        GoogleCredentials.fromStream(credentialsResource.getInputStream());
+            GoogleCredentials.fromStream(
+                    new ByteArrayInputStream(
+                            fixedJson.getBytes(StandardCharsets.UTF_8)
+                    )
+            );
 
-    // Cấu hình Client với thông tin xác thực
+    // Cấu hình Google Translate client
     TranslationServiceSettings settings =
-        TranslationServiceSettings.newBuilder()
-            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-            .build();
+            TranslationServiceSettings.newBuilder()
+                    .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                    .build();
 
-    // Trả về đối tượng Client
     return TranslationServiceClient.create(settings);
   }
 }

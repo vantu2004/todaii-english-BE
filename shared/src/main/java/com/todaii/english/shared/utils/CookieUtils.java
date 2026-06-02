@@ -34,6 +34,7 @@ public class CookieUtils {
          * dùng None khi FE/BE chạy khác domain, mặc dù đang dev và khác domain rồi
          * nhưng nó lại chỉ dùng khi gửi qua HTTPS -> tắt
          */
+        .domain("onrender.com")
         .sameSite("None")
         .build();
   }
@@ -46,6 +47,7 @@ public class CookieUtils {
         .secure(SECURE)
         .path(PATH)
         .maxAge(REFRESH_TOKEN_EXPIRY * 60L)
+        .domain("onrender.com")
         .sameSite("None")
         .build();
   }
@@ -56,6 +58,7 @@ public class CookieUtils {
         .secure(SECURE)
         .path(PATH)
         .maxAge(0)
+        .domain("onrender.com")
         .sameSite("None")
         .build();
   }

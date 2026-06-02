@@ -33,17 +33,14 @@ public class GgTranslateConfig {
 
     // Chuyển JSON → InputStream
     GoogleCredentials credentials =
-            GoogleCredentials.fromStream(
-                    new ByteArrayInputStream(
-                            fixedJson.getBytes(StandardCharsets.UTF_8)
-                    )
-            );
+        GoogleCredentials.fromStream(
+            new ByteArrayInputStream(fixedJson.getBytes(StandardCharsets.UTF_8)));
 
     // Cấu hình Google Translate client
     TranslationServiceSettings settings =
-            TranslationServiceSettings.newBuilder()
-                    .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-                    .build();
+        TranslationServiceSettings.newBuilder()
+            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+            .build();
 
     return TranslationServiceClient.create(settings);
   }

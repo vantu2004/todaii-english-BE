@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,7 @@ import com.google.cloud.translate.v3.TranslationServiceClient;
 import com.google.cloud.translate.v3.TranslationServiceSettings;
 
 @Configuration
+@ConditionalOnProperty(name = {"google.cloud.project-id", "google.credentials.json"})
 public class GgTranslateConfig {
 
   // Lấy JSON credentials từ biến môi trường trên Render
@@ -33,17 +35,14 @@ public class GgTranslateConfig {
 
     // Chuyển JSON → InputStream
     GoogleCredentials credentials =
-            GoogleCredentials.fromStream(
-                    new ByteArrayInputStream(
-                            fixedJson.getBytes(StandardCharsets.UTF_8)
-                    )
-            );
+        GoogleCredentials.fromStream(
+            new ByteArrayInputStream(fixedJson.getBytes(StandardCharsets.UTF_8)));
 
     // Cấu hình Google Translate client
     TranslationServiceSettings settings =
-            TranslationServiceSettings.newBuilder()
-                    .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-                    .build();
+        TranslationServiceSettings.newBuilder()
+            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+            .build();
 
     return TranslationServiceClient.create(settings);
   }

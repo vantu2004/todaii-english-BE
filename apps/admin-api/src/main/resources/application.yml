@@ -84,12 +84,6 @@ cloudinary:
   api-key: ${CLOUDINARY_API_KEY}
   api-secret: ${CLOUDINARY_API_SECRET}
 
-google:
-  cloud:
-    project-id: ${GOOGLE_CLOUD_PROJECT_ID}
-  credentials:
-    json: ${GOOGLE_CREDENTIALS_JSON}
-
 upstash:
   redis-url: ${UPSTASH_REDIS_URL}
   database-id: ${UPSTASH_DB_ID}

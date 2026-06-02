@@ -13,7 +13,7 @@ public class CookieUtils {
   private static final long REFRESH_TOKEN_EXPIRY =
       SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES;
 
-  private static final boolean SECURE = false;
+  private static final boolean SECURE = true;
   private static final String PATH = "/";
 
   public static ResponseCookie createAccessTokenCookie(String token, String userType) {
@@ -21,7 +21,7 @@ public class CookieUtils {
 
     return ResponseCookie.from(name, token)
         // Cookie chỉ được gửi qua HTTP request, JavaScript không thể đọc nó.
-        .httpOnly(true)
+        .httpOnly(false)
         /*
          * Cookie chỉ được gửi qua kết nối HTTPS (bảo mật SSL/TLS), hiện tại đang dev
          * nên đặt false.
@@ -34,7 +34,7 @@ public class CookieUtils {
          * dùng None khi FE/BE chạy khác domain, mặc dù đang dev và khác domain rồi
          * nhưng nó lại chỉ dùng khi gửi qua HTTPS -> tắt
          */
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 
@@ -42,21 +42,21 @@ public class CookieUtils {
     String name = userType + "_" + REFRESH_TOKEN_NAME;
 
     return ResponseCookie.from(name, token)
-        .httpOnly(true)
+        .httpOnly(false)
         .secure(SECURE)
         .path(PATH)
         .maxAge(REFRESH_TOKEN_EXPIRY * 60L)
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 
   public static ResponseCookie removeCookie(String cookieName) {
     return ResponseCookie.from(cookieName, null)
-        .httpOnly(true)
+        .httpOnly(false)
         .secure(SECURE)
         .path(PATH)
         .maxAge(0)
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 }

@@ -3,6 +3,7 @@ package com.todaii.english.infra.client;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.google.cloud.translate.v3.*;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = {"google.cloud.project-id", "google.credentials.json"})
 public class GgTranslateClient implements GgTranslatePort {
   // inject client đã config bên GgTranslateConfig
   private final TranslationServiceClient translationServiceClient;

@@ -13,7 +13,7 @@ public class CookieUtils {
   private static final long REFRESH_TOKEN_EXPIRY =
       SecurityConstants.REFRESH_TOKEN_EXPIRATION_MINUTES;
 
-  private static final boolean SECURE = false;
+  private static final boolean SECURE = true;
   private static final String PATH = "/";
 
   public static ResponseCookie createAccessTokenCookie(String token, String userType) {
@@ -34,7 +34,7 @@ public class CookieUtils {
          * dùng None khi FE/BE chạy khác domain, mặc dù đang dev và khác domain rồi
          * nhưng nó lại chỉ dùng khi gửi qua HTTPS -> tắt
          */
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 
@@ -46,7 +46,7 @@ public class CookieUtils {
         .secure(SECURE)
         .path(PATH)
         .maxAge(REFRESH_TOKEN_EXPIRY * 60L)
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 
@@ -56,7 +56,7 @@ public class CookieUtils {
         .secure(SECURE)
         .path(PATH)
         .maxAge(0)
-        // .sameSite("None")
+        .sameSite("None")
         .build();
   }
 }

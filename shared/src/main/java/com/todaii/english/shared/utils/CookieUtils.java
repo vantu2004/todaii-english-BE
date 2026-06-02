@@ -21,7 +21,7 @@ public class CookieUtils {
 
     return ResponseCookie.from(name, token)
         // Cookie chỉ được gửi qua HTTP request, JavaScript không thể đọc nó.
-        .httpOnly(true)
+        .httpOnly(false)
         /*
          * Cookie chỉ được gửi qua kết nối HTTPS (bảo mật SSL/TLS), hiện tại đang dev
          * nên đặt false.
@@ -42,7 +42,7 @@ public class CookieUtils {
     String name = userType + "_" + REFRESH_TOKEN_NAME;
 
     return ResponseCookie.from(name, token)
-        .httpOnly(true)
+        .httpOnly(false)
         .secure(SECURE)
         .path(PATH)
         .maxAge(REFRESH_TOKEN_EXPIRY * 60L)
@@ -52,7 +52,7 @@ public class CookieUtils {
 
   public static ResponseCookie removeCookie(String cookieName) {
     return ResponseCookie.from(cookieName, null)
-        .httpOnly(true)
+        .httpOnly(false)
         .secure(SECURE)
         .path(PATH)
         .maxAge(0)

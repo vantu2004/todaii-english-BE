@@ -28,7 +28,9 @@ public class QuestionService {
   }
 
   public List<ToeicQuestionDTO> getAllQuestionsByPartNumber(Long testId, Integer partNumber) {
-    return questionRepository.findByTestIdAndPartNumber(testId, partNumber).stream()
+    return questionRepository
+        .findByTestIdAndPartNumberOrderByCreatedAtAsc(testId, partNumber)
+        .stream()
         .map(toeicQuestion -> modelMapper.map(toeicQuestion, ToeicQuestionDTO.class))
         .toList();
   }

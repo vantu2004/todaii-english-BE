@@ -9,5 +9,5 @@ import com.todaii.english.core.entity.toeic.ToeicQuestion;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<ToeicQuestion, Long> {
-  List<ToeicQuestion> findByTestIdAndPartNumber(Long testId, Integer partNumber);
+  List<ToeicQuestion> findByTestIdAndPartNumberOrderByCreatedAtAsc(Long testId, Integer partNumber);
 }

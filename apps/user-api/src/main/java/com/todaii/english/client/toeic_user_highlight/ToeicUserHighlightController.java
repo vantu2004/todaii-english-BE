@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.shared.dto.ToeicUserHighlightDTO;
+import com.todaii.english.shared.dto.toeic.ToeicUserHighlightDTO;
 import com.todaii.english.shared.request.client.ToeicHighlightRequest;
 
 import lombok.RequiredArgsConstructor;

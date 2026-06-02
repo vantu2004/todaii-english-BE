@@ -1,4 +1,4 @@
-package com.todaii.english.shared.dto;
+package com.todaii.english.shared.dto.toeic;
 
 import java.time.LocalDateTime;
 import java.util.List;

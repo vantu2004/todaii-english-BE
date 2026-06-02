@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.shared.dto.ToeicPassageDTO;
+import com.todaii.english.shared.dto.toeic.ToeicPassageDTO;
 import com.todaii.english.shared.request.server.toeic.ToeicPassageRequest;
 
 import lombok.RequiredArgsConstructor;

@@ -12,7 +12,7 @@ import com.todaii.english.core.entity.toeic.ToeicPassage;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.entity.toeic.ToeicTestSession;
 import com.todaii.english.core.entity.toeic.ToeicUserHighlight;
-import com.todaii.english.shared.dto.ToeicUserHighlightDTO;
+import com.todaii.english.shared.dto.toeic.ToeicUserHighlightDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.client.ToeicHighlightRequest;
 

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.entity.toeic.ToeicTest;
-import com.todaii.english.shared.dto.ToeicTestDTO;
+import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;

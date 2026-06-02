@@ -2,8 +2,8 @@ package com.todaii.english.shared.response;
 
 import java.util.List;
 
-import com.todaii.english.shared.dto.ToeicTestSessionDTO;
-import com.todaii.english.shared.dto.ToeicUserAnswerDTO;
+import com.todaii.english.shared.dto.toeic.ToeicTestSessionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicUserAnswerDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -16,7 +16,7 @@ import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.toeic_passage.PassageRepository;
 import com.todaii.english.server.toeic_tag.TagRepository;
 import com.todaii.english.server.toeic_test.TestRepository;
-import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicQuestionDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.Part12Request;
 import com.todaii.english.shared.request.server.toeic.Part34567Request;

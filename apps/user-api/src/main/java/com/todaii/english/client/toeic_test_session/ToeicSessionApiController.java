@@ -11,8 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.security.CustomUserDetails;
-import com.todaii.english.shared.dto.ToeicTestSessionDTO;
-import com.todaii.english.shared.dto.ToeicUserAnswerDTO;
+import com.todaii.english.shared.dto.toeic.ToeicTestSessionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicUserAnswerDTO;
 import com.todaii.english.shared.request.client.AnswerRequest;
 import com.todaii.english.shared.request.client.StartSessionRequest;
 import com.todaii.english.shared.request.client.SubmitSessionRequest;

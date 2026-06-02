@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.shared.dto.ToeicTestDTO;
+import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.response.PagedResponse;
 
 import lombok.RequiredArgsConstructor;

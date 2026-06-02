@@ -5,7 +5,7 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import com.todaii.english.shared.dto.ToeicPassageDTO;
+import com.todaii.english.shared.dto.toeic.ToeicPassageDTO;
 
 import lombok.RequiredArgsConstructor;
 

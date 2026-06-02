@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicQuestionDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,10 +18,10 @@ import lombok.RequiredArgsConstructor;
 public class QuestionApiController {
   private final QuestionService questionService;
 
+  // nếu question thuộc về passage thì trả ToeicPassageDTO, ko thì trả QuestionDTO
   @GetMapping("/question/{questionId}")
-  public ResponseEntity<ToeicQuestionDTO> getQuestionById(@PathVariable Long questionId) {
-    ToeicQuestionDTO toeicQuestionDTO = questionService.getQuestionDTOById(questionId);
-    return ResponseEntity.ok(toeicQuestionDTO);
+  public ResponseEntity<Object> getQuestionById(@PathVariable Long questionId) {
+    return ResponseEntity.ok(questionService.getQuestionDTOById(questionId));
   }
 
   @GetMapping("/test/{testId}/part/{partNumber}/question")

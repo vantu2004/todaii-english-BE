@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.todaii.english.core.entity.toeic.ToeicPassage;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
-import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicQuestionDTO;
 import com.todaii.english.shared.request.server.toeic.Part12Request;
 import com.todaii.english.shared.request.server.toeic.ToeicPassageRequest;
 

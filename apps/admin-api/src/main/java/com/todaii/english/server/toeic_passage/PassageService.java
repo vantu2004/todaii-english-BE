@@ -10,7 +10,7 @@ import com.todaii.english.core.entity.toeic.ToeicPassage;
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.server.toeic_test.TestRepository;
-import com.todaii.english.shared.dto.ToeicPassageDTO;
+import com.todaii.english.shared.dto.toeic.ToeicPassageDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.request.server.toeic.ToeicPassageRequest;
 

@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.shared.dto.ToeicQuestionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicQuestionDTO;
 import com.todaii.english.shared.request.server.toeic.Part12Request;
 import com.todaii.english.shared.request.server.toeic.Part34567Request;
 

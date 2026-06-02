@@ -1,4 +1,4 @@
-package com.todaii.english.shared.dto;
+package com.todaii.english.shared.dto.toeic;
 
 import com.todaii.english.shared.enums.Answer;
 

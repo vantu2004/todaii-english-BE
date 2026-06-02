@@ -1,7 +1,5 @@
 package com.todaii.english.shared.request.client;
 
-import java.util.List;
-
 import jakarta.validation.constraints.NotNull;
 
 import com.todaii.english.shared.enums.ToeicSessionMode;
@@ -18,5 +16,6 @@ public class StartSessionRequest {
   @NotNull(message = "Session mode is required")
   private ToeicSessionMode mode;
 
-  private List<Integer> partsDone;
+  private Integer timeSpent;
+  private String partsDone;
 }

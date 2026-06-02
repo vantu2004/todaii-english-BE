@@ -88,7 +88,7 @@ public class Article {
   @JoinTable(
       name = "article_words",
       joinColumns = @JoinColumn(name = "article_id"),
-      inverseJoinColumns = @JoinColumn(name = "dict_entry_id"))
+      inverseJoinColumns = @JoinColumn(name = "dict_word_id"))
   @Builder.Default
   private Set<DictionaryWord> words = new HashSet<>();
 

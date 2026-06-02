@@ -37,7 +37,7 @@ public class SecurityConfigForAdmin {
   private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
   // tự tìm trên biến môi trường của cloud trước, ko có thì mới tới local
-  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174}")
+  @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174,https://todaii-english-fe.onrender.com/}")
   private String[] allowedOrigins;
 
   @Bean

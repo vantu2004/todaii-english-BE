@@ -8,23 +8,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.entity.toeic.ToeicTag;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/toeic/tag")
+@RequestMapping("/api/v1/toeic/test/{testId}/tag")
 @RequiredArgsConstructor
 public class TagApiController {
   private final TagService tagService;
 
   @GetMapping
-  public ResponseEntity<List<ToeicTag>> getAllTags() {
-    return ResponseEntity.ok().body(tagService.getAllTags());
+  public ResponseEntity<List<ToeicTag>> findAllTagsByTestId(@PathVariable Long testId) {
+    return ResponseEntity.ok().body(tagService.findAllTagsByTestId(testId));
   }
 
-  @GetMapping("/{id}")
-  public ResponseEntity<ToeicTag> getById(@PathVariable Long id) {
-    return ResponseEntity.ok().body(tagService.findById(id));
+  @GetMapping("/{tagId}")
+  public ResponseEntity<List<ToeicQuestion>> findQuestionsByTag(
+      @PathVariable Long testId, @PathVariable Long tagId) {
+    return ResponseEntity.ok().body(tagService.findQuestionsByTag(testId, tagId));
   }
 }

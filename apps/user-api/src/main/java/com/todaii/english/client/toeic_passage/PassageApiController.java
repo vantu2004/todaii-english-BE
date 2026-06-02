@@ -23,10 +23,4 @@ public class PassageApiController {
       @PathVariable Long testId, @PathVariable Integer partNumber) {
     return ResponseEntity.ok(passageService.getPassagesByPartNumber(testId, partNumber));
   }
-
-  @GetMapping("/passage/{passageId}")
-  public ResponseEntity<ToeicPassageDTO> findById(@PathVariable Long passageId) {
-    ToeicPassageDTO toeicPassageDTO = passageService.getPassageDTOById(passageId);
-    return ResponseEntity.ok(toeicPassageDTO);
-  }
 }

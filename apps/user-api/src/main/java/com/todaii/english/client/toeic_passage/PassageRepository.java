@@ -9,5 +9,5 @@ import com.todaii.english.core.entity.toeic.ToeicPassage;
 
 @Repository
 public interface PassageRepository extends JpaRepository<ToeicPassage, Long> {
-  List<ToeicPassage> findByTestIdAndPartNumber(Long testId, Integer partNumber);
+  List<ToeicPassage> findByTestIdAndPartNumberOrderByCreatedAtAsc(Long testId, Integer partNumber);
 }

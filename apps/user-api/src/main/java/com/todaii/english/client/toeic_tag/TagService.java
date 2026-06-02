@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.entity.toeic.ToeicTag;
-import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,13 +14,11 @@ import lombok.RequiredArgsConstructor;
 public class TagService {
   private final TagRepository tagRepository;
 
-  public List<ToeicTag> getAllTags() {
-    return tagRepository.findAll();
+  public List<ToeicTag> findAllTagsByTestId(Long testId) {
+    return tagRepository.findAllTagsByTestId(testId);
   }
 
-  public ToeicTag findById(Long id) {
-    return tagRepository
-        .findById(id)
-        .orElseThrow(() -> new BusinessException(404, "Tag not found"));
+  public List<ToeicQuestion> findQuestionsByTag(Long testId, Long tagId) {
+    return tagRepository.findQuestionsByTag(testId, tagId);
   }
 }

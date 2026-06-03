@@ -28,7 +28,6 @@ public class TestApiController {
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "desc") String direction,
       @RequestParam(required = false) String keyword) {
-
     Page<ToeicTestDTO> testResponses =
         testService.getAllPublishedPaged(page, size, sortBy, direction, keyword);
 
@@ -57,7 +56,6 @@ public class TestApiController {
       @RequestParam(defaultValue = "id") String sortBy,
       @RequestParam(defaultValue = "desc") String direction,
       @RequestParam(required = false) String keyword) {
-
     Page<ToeicTestDTO> testResponses =
         testService.findPublishedByCollectionId(
             collectionId, page, size, sortBy, direction, keyword);

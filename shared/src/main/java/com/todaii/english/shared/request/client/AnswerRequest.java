@@ -10,9 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnswerRequest {
-  @NotNull(message = "User choice is required")
   private Answer userChoice;
-
   private Boolean isMarked;
 
   @NotNull(message = "Question ID is required")

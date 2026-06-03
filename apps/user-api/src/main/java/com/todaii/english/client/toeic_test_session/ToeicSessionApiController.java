@@ -9,8 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.todaii.english.client.security.CustomUserDetails;
+import com.todaii.english.client.UserUtils;
 import com.todaii.english.core.entity.toeic.ToeicTestSession;
+import com.todaii.english.core.entity.toeic.ToeicUserAnswer;
 import com.todaii.english.shared.request.client.AnswerRequest;
 import com.todaii.english.shared.request.client.StartSessionRequest;
 
@@ -23,68 +24,47 @@ import lombok.RequiredArgsConstructor;
 public class ToeicSessionApiController {
   private final ToeicTestSessionService sessionService;
 
+  @GetMapping("/{sessionId}")
+  public ResponseEntity<ToeicTestSession> getSessionDetails(
+      Authentication authentication, @PathVariable Long sessionId) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(sessionService.getToeicTestSession(currentUserId, sessionId));
+  }
+
+  @GetMapping("/history")
+  public ResponseEntity<List<ToeicTestSession>> getSessionHistory(Authentication authentication) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(sessionService.getSessionHistory(currentUserId));
+  }
+
   @PostMapping("/start")
   public ResponseEntity<ToeicTestSession> startSession(
       Authentication authentication, @Valid @RequestBody StartSessionRequest request) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(sessionService.startSession(currentUserId, request));
   }
 
   // hỗ trợ lưu session cho user khi chưa hoàn thành
   @PostMapping("/{sessionId}/answers")
-  public ResponseEntity<Void> saveAnswers(
+  public ResponseEntity<List<ToeicUserAnswer>> saveAnswers(
       Authentication authentication,
       @PathVariable Long sessionId,
       @RequestBody List<@Valid AnswerRequest> requests) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
-    sessionService.saveAnswers(currentUserId, sessionId, requests);
-
-    return ResponseEntity.noContent().build();
+    return ResponseEntity.ok(sessionService.saveAnswers(currentUserId, sessionId, requests));
   }
 
-  //  @PostMapping("/{sessionId}/question/{questionId}/mark")
-  //  public ResponseEntity<ToeicUserAnswerDTO> toggleMark(
-  //      Authentication authentication,
-  //      @PathVariable Long sessionId,
-  //      @PathVariable Long questionId,
-  //      @RequestParam Boolean isMarked) {
-  //    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-  //    Long currentUserId = principal.getUser().getId();
-  //    return ResponseEntity.ok(
-  //        sessionService.toggleMark(currentUserId, sessionId, questionId, isMarked));
-  //  }
-  //
-  //  @PostMapping("/{sessionId}/submit")
-  //  public ResponseEntity<ToeicTestSessionDTO> submitSession(
-  //      Authentication authentication,
-  //      @PathVariable Long sessionId,
-  //      @RequestBody(required = false) SubmitSessionRequest request) {
-  //    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-  //    Long currentUserId = principal.getUser().getId();
-  //    return ResponseEntity.ok(sessionService.submitSession(currentUserId, sessionId, request));
-  //  }
-  //
-  //  @GetMapping("/{sessionId}")
-  //  public ResponseEntity<ToeicSessionDetailsResponse> getSessionDetails(
-  //      Authentication authentication, @PathVariable Long sessionId) {
-  //    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-  //    Long currentUserId = principal.getUser().getId();
-  //    return ResponseEntity.ok(sessionService.getSessionDetails(currentUserId, sessionId));
-  //  }
-  //
-  //  @GetMapping("/history")
-  //  public ResponseEntity<PagedResponse<ToeicTestSessionDTO>> getSessionHistory(
-  //      Authentication authentication,
-  //      @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
-  //          int page,
-  //      @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
-  //          int size) {
-  //    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-  //    Long currentUserId = principal.getUser().getId();
-  //    return ResponseEntity.ok(sessionService.getSessionHistory(currentUserId, page, size));
-  //  }
+  @PostMapping("/{sessionId}/submit")
+  public ResponseEntity<ToeicTestSession> submitSession(
+      Authentication authentication,
+      @PathVariable Long sessionId,
+      @RequestBody List<@Valid AnswerRequest> requests) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(sessionService.submitSession(currentUserId, sessionId, requests));
+  }
 }

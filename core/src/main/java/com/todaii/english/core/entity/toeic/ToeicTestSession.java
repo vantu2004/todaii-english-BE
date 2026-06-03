@@ -73,6 +73,9 @@ public class ToeicTestSession {
   @Column(name = "started_at", nullable = false, updatable = false)
   private LocalDateTime startedAt;
 
+  @Column(name = "stopped_at")
+  private LocalDateTime stoppedAt;
+
   @Column(name = "completed_at")
   private LocalDateTime completedAt;
 
@@ -92,6 +95,5 @@ public class ToeicTestSession {
       orphanRemoval = true,
       fetch = FetchType.LAZY)
   @Builder.Default
-  @JsonIgnore
   private List<ToeicUserAnswer> userAnswers = new ArrayList<>();
 }

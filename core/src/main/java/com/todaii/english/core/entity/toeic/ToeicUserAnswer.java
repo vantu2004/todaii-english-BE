@@ -23,7 +23,7 @@ public class ToeicUserAnswer {
   @Column(name = "user_choice")
   private Answer userChoice;
 
-  private Integer status; // 1: Đúng, 0: Sai, 2: Bỏ qua
+  @Builder.Default private Integer status = 0; // 1: Đúng, 0: Sai, 2: Bỏ qua
 
   @Builder.Default
   @Column(name = "is_marked", nullable = false, columnDefinition = "bit(1) default b'0'")

@@ -24,7 +24,7 @@ public class TagApiController {
     return ResponseEntity.ok().body(tagService.findAllTagsByTestId(testId));
   }
 
-  @GetMapping("/{tagId}")
+  @GetMapping("/{tagId}/question")
   public ResponseEntity<List<ToeicQuestion>> findQuestionsByTag(
       @PathVariable Long testId, @PathVariable Long tagId) {
     return ResponseEntity.ok().body(tagService.findQuestionsByTag(testId, tagId));

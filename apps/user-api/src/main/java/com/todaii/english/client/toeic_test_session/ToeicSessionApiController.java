@@ -62,7 +62,7 @@ public class ToeicSessionApiController {
   public ResponseEntity<ToeicTestSessionDTO> submitSession(
       Authentication authentication,
       @PathVariable Long sessionId,
-      @RequestBody(required = false) List<@Valid AnswerRequest> requests) {
+      @RequestBody List<@Valid AnswerRequest> requests) {
     Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(sessionService.submitSession(currentUserId, sessionId, requests));

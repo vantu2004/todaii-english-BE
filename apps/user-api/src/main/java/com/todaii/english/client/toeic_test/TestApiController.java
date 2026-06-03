@@ -20,7 +20,7 @@ public class TestApiController {
   private final TestService testService;
 
   @GetMapping
-  public ResponseEntity<PagedResponse<ToeicTestDTO>> getAllPublishedPaged(
+  public ResponseEntity<PagedResponse<ToeicTestDTO>> getAllTestsPaged(
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
           int page,
       @RequestParam(defaultValue = "10") @Min(value = 1, message = "Size must be at least 1")
@@ -47,7 +47,7 @@ public class TestApiController {
   }
 
   @GetMapping("/collection/{collectionId}")
-  public ResponseEntity<PagedResponse<ToeicTestDTO>> getPublishedTestsByCollectionId(
+  public ResponseEntity<PagedResponse<ToeicTestDTO>> getAllTestsByCollectionPaged(
       @PathVariable Long collectionId,
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Page must be at least 1")
           int page,
@@ -76,7 +76,7 @@ public class TestApiController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ToeicTestDTO> getById(@PathVariable Long id) {
+  public ResponseEntity<ToeicTestDTO> getTestById(@PathVariable Long id) {
     return ResponseEntity.ok(testService.getPublishedTestDTOById(id));
   }
 }

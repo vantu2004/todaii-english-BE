@@ -8,12 +8,15 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.client.toeic_question.QuestionRepository;
 import com.todaii.english.client.toeic_test.TestRepository;
 import com.todaii.english.client.user.UserRepository;
+import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.entity.toeic.ToeicTestSession;
+import com.todaii.english.core.entity.toeic.ToeicUserAnswer;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.ToeicSessionMode;
 import com.todaii.english.shared.enums.ToeicSessionStatus;
 import com.todaii.english.shared.exceptions.BusinessException;
+import com.todaii.english.shared.request.client.AnswerRequest;
 import com.todaii.english.shared.request.client.StartSessionRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -62,72 +65,55 @@ public class ToeicTestSessionService {
     return sessionRepository.save(session);
   }
 
-  //  @Transactional
-  //  public ToeicUserAnswerDTO saveAnswer(Long userId, Long sessionId, AnswerRequest request) {
-  //    ToeicTestSession session =
-  //        sessionRepository
-  //            .findByIdAndUserId(sessionId, userId)
-  //            .orElseThrow(
-  //                () ->
-  //                    new BusinessException(
-  //                        404, "Test session not found or does not belong to the user"));
-  //
-  //    if (session.getStatus() == ToeicSessionStatus.COMPLETED) {
-  //      throw new BusinessException(400, "Cannot change answers for a completed session");
-  //    }
-  //
-  //    ToeicQuestion question =
-  //        questionRepository
-  //            .findById(request.getQuestionId())
-  //            .orElseThrow(() -> new BusinessException(404, "Question not found"));
-  //
-  //    if (question.getTest() == null
-  //        || !question.getTest().getId().equals(session.getTest().getId())) {
-  //      throw new BusinessException(400, "Question does not belong to this test");
-  //    }
-  //
-  //    ToeicUserAnswer userAnswer =
-  //        userAnswerRepository
-  //            .findBySessionIdAndQuestionId(sessionId, request.getQuestionId())
-  //            .orElse(null);
-  //
-  //    if (userAnswer == null) {
-  //      userAnswer = ToeicUserAnswer.builder().session(session).question(question).build();
-  //    }
-  //
-  //    userAnswer.setUserChoice(request.getUserChoice());
-  //
-  //    if (request.getIsMarked() != null) {
-  //      userAnswer.setIsMarked(request.getIsMarked());
-  //    }
-  //
-  //    // Grade the single answer: 1: Đúng, 0: Sai, 2: Bỏ qua
-  //    if (request.getUserChoice() == null) {
-  //      userAnswer.setStatus(2);
-  //    } else if (request.getUserChoice() == question.getCorrectAns()) {
-  //      userAnswer.setStatus(1);
-  //    } else {
-  //      userAnswer.setStatus(0);
-  //    }
-  //
-  //    userAnswer = userAnswerRepository.save(userAnswer);
-  //    return mapToAnswerDTO(userAnswer);
-  //  }
-  //
-  //  @Transactional
-  //  public List<ToeicUserAnswerDTO> saveAnswers(
-  //      Long userId, Long sessionId, List<AnswerRequest> requests) {
-  //    if (requests == null || requests.isEmpty()) {
-  //      return Collections.emptyList();
-  //    }
-  //
-  //    List<ToeicUserAnswerDTO> results = new ArrayList<>();
-  //    for (AnswerRequest req : requests) {
-  //      results.add(saveAnswer(userId, sessionId, req));
-  //    }
-  //    return results;
-  //  }
-  //
+  public ToeicUserAnswer saveAnswer(Long userId, Long sessionId, AnswerRequest request) {
+    ToeicTestSession session =
+        sessionRepository
+            .findByIdAndUserId(sessionId, userId)
+            .orElseThrow(
+                () ->
+                    new BusinessException(
+                        404, "Test session not found or does not belong to the user"));
+
+    if (session.getStatus() == ToeicSessionStatus.COMPLETED) {
+      throw new BusinessException(400, "Cannot change answers for a completed session");
+    }
+
+    ToeicQuestion question =
+        questionRepository
+            .findById(request.getQuestionId())
+            .orElseThrow(() -> new BusinessException(404, "Question not found"));
+
+    if (question.getTest() == null
+        || !question.getTest().getId().equals(session.getTest().getId())) {
+      throw new BusinessException(400, "Question does not belong to this test");
+    }
+
+    ToeicUserAnswer userAnswer =
+        userAnswerRepository
+            .findBySessionIdAndQuestionId(sessionId, request.getQuestionId())
+            .orElse(new ToeicUserAnswer());
+
+    userAnswer.setUserChoice(request.getUserChoice());
+    userAnswer.setIsMarked(request.getIsMarked());
+    userAnswer.setSession(session);
+    userAnswer.setQuestion(question);
+
+    return userAnswer;
+  }
+
+  public void saveAnswers(Long userId, Long sessionId, List<AnswerRequest> requests) {
+    if (requests == null || requests.isEmpty()) {
+      return;
+    }
+
+    List<ToeicUserAnswer> results = new ArrayList<>();
+    for (AnswerRequest req : requests) {
+      results.add(saveAnswer(userId, sessionId, req));
+    }
+
+    userAnswerRepository.saveAll(results);
+  }
+
   //  @Transactional
   //  public ToeicUserAnswerDTO toggleMark(
   //      Long userId, Long sessionId, Long questionId, Boolean isMarked) {

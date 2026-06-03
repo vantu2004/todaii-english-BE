@@ -19,6 +19,16 @@ public class ToeicUserAnswer {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Enumerated(EnumType.STRING)
+  @Column(name = "user_choice")
+  private Answer userChoice;
+
+  private Integer status; // 1: Đúng, 0: Sai, 2: Bỏ qua
+
+  @Builder.Default
+  @Column(name = "is_marked", nullable = false, columnDefinition = "bit(1) default b'0'")
+  private Boolean isMarked = false;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "session_id", nullable = false)
   @JsonIgnore
@@ -28,15 +38,4 @@ public class ToeicUserAnswer {
   @JoinColumn(name = "question_id", nullable = false)
   @JsonIgnore
   private ToeicQuestion question;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "user_choice")
-  private Answer userChoice;
-
-  @Column(nullable = false)
-  private Integer status; // 1: Đúng, 0: Sai, 2: Bỏ qua
-
-  @Builder.Default
-  @Column(name = "is_marked", nullable = false, columnDefinition = "bit(1) default b'0'")
-  private Boolean isMarked = false;
 }

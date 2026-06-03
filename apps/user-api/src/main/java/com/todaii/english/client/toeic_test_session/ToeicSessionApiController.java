@@ -1,5 +1,7 @@
 package com.todaii.english.client.toeic_test_session;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.toeic.ToeicTestSession;
+import com.todaii.english.shared.request.client.AnswerRequest;
 import com.todaii.english.shared.request.client.StartSessionRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -29,16 +32,20 @@ public class ToeicSessionApiController {
     return ResponseEntity.ok(sessionService.startSession(currentUserId, request));
   }
 
-  //  @PostMapping("/{sessionId}/answers")
-  //  public ResponseEntity<List<ToeicUserAnswerDTO>> saveAnswers(
-  //      Authentication authentication,
-  //      @PathVariable Long sessionId,
-  //      @RequestBody List<@Valid AnswerRequest> requests) {
-  //    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-  //    Long currentUserId = principal.getUser().getId();
-  //    return ResponseEntity.ok(sessionService.saveAnswers(currentUserId, sessionId, requests));
-  //  }
-  //
+  // hỗ trợ lưu session cho user khi chưa hoàn thành
+  @PostMapping("/{sessionId}/answers")
+  public ResponseEntity<Void> saveAnswers(
+      Authentication authentication,
+      @PathVariable Long sessionId,
+      @RequestBody List<@Valid AnswerRequest> requests) {
+    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    Long currentUserId = principal.getUser().getId();
+
+    sessionService.saveAnswers(currentUserId, sessionId, requests);
+
+    return ResponseEntity.noContent().build();
+  }
+
   //  @PostMapping("/{sessionId}/question/{questionId}/mark")
   //  public ResponseEntity<ToeicUserAnswerDTO> toggleMark(
   //      Authentication authentication,

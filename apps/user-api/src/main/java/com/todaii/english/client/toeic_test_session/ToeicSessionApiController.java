@@ -10,8 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.core.entity.toeic.ToeicTestSession;
-import com.todaii.english.core.entity.toeic.ToeicUserAnswer;
+import com.todaii.english.shared.dto.toeic.ToeicTestSessionDTO;
+import com.todaii.english.shared.dto.toeic.ToeicUserAnswerDTO;
 import com.todaii.english.shared.request.client.AnswerRequest;
 import com.todaii.english.shared.request.client.StartSessionRequest;
 
@@ -25,31 +25,31 @@ public class ToeicSessionApiController {
   private final ToeicTestSessionService sessionService;
 
   @GetMapping("/{sessionId}")
-  public ResponseEntity<ToeicTestSession> getSessionDetails(
+  public ResponseEntity<ToeicTestSessionDTO> getSessionDetails(
       Authentication authentication, @PathVariable Long sessionId) {
     Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
-    return ResponseEntity.ok(sessionService.getToeicTestSession(currentUserId, sessionId));
+    return ResponseEntity.ok(sessionService.getSessionDetailsDto(currentUserId, sessionId));
   }
 
   @GetMapping("/history")
-  public ResponseEntity<List<ToeicTestSession>> getSessionHistory(Authentication authentication) {
+  public ResponseEntity<List<ToeicTestSessionDTO>> getSessionHistory(
+      Authentication authentication) {
     Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(sessionService.getSessionHistory(currentUserId));
   }
 
   @PostMapping("/start")
-  public ResponseEntity<ToeicTestSession> startSession(
+  public ResponseEntity<ToeicTestSessionDTO> startSession(
       Authentication authentication, @Valid @RequestBody StartSessionRequest request) {
     Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(sessionService.startSession(currentUserId, request));
   }
 
-  // hỗ trợ lưu session cho user khi chưa hoàn thành
   @PostMapping("/{sessionId}/answers")
-  public ResponseEntity<List<ToeicUserAnswer>> saveAnswers(
+  public ResponseEntity<List<ToeicUserAnswerDTO>> saveAnswers(
       Authentication authentication,
       @PathVariable Long sessionId,
       @RequestBody List<@Valid AnswerRequest> requests) {
@@ -59,10 +59,10 @@ public class ToeicSessionApiController {
   }
 
   @PostMapping("/{sessionId}/submit")
-  public ResponseEntity<ToeicTestSession> submitSession(
+  public ResponseEntity<ToeicTestSessionDTO> submitSession(
       Authentication authentication,
       @PathVariable Long sessionId,
-      @RequestBody List<@Valid AnswerRequest> requests) {
+      @RequestBody(required = false) List<@Valid AnswerRequest> requests) {
     Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(sessionService.submitSession(currentUserId, sessionId, requests));

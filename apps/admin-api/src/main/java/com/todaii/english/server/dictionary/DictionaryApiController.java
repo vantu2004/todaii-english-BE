@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.service.DictionaryService;
 import com.todaii.english.server.AdminUtils;
+import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.response.DictionaryApiResponse;
 import com.todaii.english.shared.response.PagedResponse;
 import com.todaii.english.shared.response.TodaiiEnglishResponse;
@@ -41,7 +42,9 @@ public class DictionaryApiController {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
     return ResponseEntity.ok()
-        .body(dictionaryService.searchByTodaiiDictionary(currentAdminId, word, page, size));
+        .body(
+            dictionaryService.searchByTodaiiDictionary(
+                currentAdminId, ActorType.ADMIN, word, page, size));
   }
 
   @GetMapping("/free-dict")
@@ -50,7 +53,7 @@ public class DictionaryApiController {
       @RequestParam @NotBlank(message = "Word must not be blank") String word) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
     DictionaryApiResponse[] dictionaryApiResponses =
-        dictionaryService.searchByFreeDictionaryApi(currentAdminId, word);
+        dictionaryService.searchByFreeDictionaryApi(currentAdminId, ActorType.ADMIN, word);
 
     return ResponseEntity.ok(dictionaryApiResponses);
   }
@@ -102,7 +105,8 @@ public class DictionaryApiController {
       @RequestParam @NotBlank(message = "Word must not be blank") String word) {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
-    return ResponseEntity.ok(dictionaryService.getAiSuggestions(word, currentAdminId));
+    return ResponseEntity.ok(
+        dictionaryService.getAiSuggestions(word, currentAdminId, ActorType.ADMIN));
   }
 
   @GetMapping("/top-words")

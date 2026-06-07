@@ -40,11 +40,12 @@ public class DictionaryService {
   private final ObjectMapper objectMapper;
 
   public TodaiiEnglishResponse searchByTodaiiDictionary(
-      Long currentAdminId, String word, int page, int size) {
-    return searchWord(currentAdminId, word, page, size);
+      Long userId, ActorType actorType, String word, int page, int size) {
+    return searchWord(userId, actorType, word, page, size);
   }
 
-  public DictionaryApiResponse[] searchByFreeDictionaryApi(Long currentAdminId, String word) {
+  public DictionaryApiResponse[] searchByFreeDictionaryApi(
+      Long userId, ActorType actorType, String word) {
     DictionaryApiResponse[] dictionaryApiResponses = dictionaryPort.lookupFreeDictionaryApi(word);
     if (dictionaryApiResponses != null && dictionaryApiResponses.length > 0) {
       redisRankingPort.incrementWordSearchCount(word);
@@ -52,7 +53,7 @@ public class DictionaryService {
 
     UsageStatistic dictionaryStatistic =
         usageStatisticPort.createDictionaryStatistic(
-            currentAdminId, ActorType.ADMIN, UsageType.DICTIONARY_API_REQUEST);
+            userId, actorType, UsageType.DICTIONARY_API_REQUEST);
     usageStatisticPort.createUsageStatistic(dictionaryStatistic);
 
     return dictionaryApiResponses;
@@ -128,13 +129,13 @@ public class DictionaryService {
     dictionaryRepository.delete(existingEntity);
   }
 
-  public List<String> getAiSuggestions(String word, Long currentAdminId) {
-    return dictionaryPort.getAiSuggestions(word, currentAdminId, ActorType.ADMIN);
+  public List<String> getAiSuggestions(String word, Long userId, ActorType actorType) {
+    return dictionaryPort.getAiSuggestions(word, userId, actorType);
   }
 
   // Luồng tìm kiếm chính (Orchestration Flow)
   private TodaiiEnglishResponse searchWord(
-      Long currentAdminId, String rawWord, int page, int size) {
+      Long userId, ActorType actorType, String rawWord, int page, int size) {
     String word = rawWord.trim().toLowerCase();
 
     // TH1: có trong redis
@@ -165,7 +166,7 @@ public class DictionaryService {
     // TH3: jsonData null nên call todaii api để lấy
     log.info("Cache Miss & DB Miss. Calling External API for word: {}", word);
     TodaiiEnglishResponse todaiiEnglishResponse =
-        getTodaiiEnglishResponse(currentAdminId, word, page, size);
+        getTodaiiEnglishResponse(userId, actorType, word, page, size);
 
     jsonData = convertObjectToJson(todaiiEnglishResponse);
 
@@ -181,7 +182,7 @@ public class DictionaryService {
   }
 
   private TodaiiEnglishResponse getTodaiiEnglishResponse(
-      Long currentAdminId, String word, int page, int size) {
+      Long userId, ActorType actorType, String word, int page, int size) {
     TodaiiEnglishResponse todaiiEnglishResponse =
         dictionaryPort.lookupTodaiiDictionaryApi(word, page, size);
 
@@ -192,7 +193,7 @@ public class DictionaryService {
 
     UsageStatistic dictionaryStatistic =
         usageStatisticPort.createDictionaryStatistic(
-            currentAdminId, ActorType.ADMIN, UsageType.TODAII_DICT_REQUEST);
+            userId, actorType, UsageType.TODAII_DICT_REQUEST);
     usageStatisticPort.createUsageStatistic(dictionaryStatistic);
 
     return todaiiEnglishResponse;

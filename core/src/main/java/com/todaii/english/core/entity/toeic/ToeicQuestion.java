@@ -35,19 +35,19 @@ public class ToeicQuestion extends MediaUrl {
 
   @Column(name = "option_a", columnDefinition = "MEDIUMTEXT")
   @Builder.Default
-  private String optionA = "A. ";
+  private String optionA = "<None>";
 
   @Column(name = "option_b", columnDefinition = "MEDIUMTEXT")
   @Builder.Default
-  private String optionB = "B. ";
+  private String optionB = "<None>";
 
   @Column(name = "option_c", columnDefinition = "MEDIUMTEXT")
   @Builder.Default
-  private String optionC = "C. ";
+  private String optionC = "<None>";
 
   @Column(name = "option_d", columnDefinition = "MEDIUMTEXT")
   @Builder.Default
-  private String optionD = "D. ";
+  private String optionD = "<None>";
 
   @Enumerated(EnumType.STRING)
   @Column(name = "correct_ans", nullable = false)

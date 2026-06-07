@@ -48,20 +48,20 @@ public class NotebookService {
     return roots;
   }
 
-  public NotebookItem createItem(Long userId, NotebookRequest req) {
+  public void createItem(Long userId, NotebookRequest req) {
     NotebookItem item = new NotebookItem();
     item.setName(req.getName());
     item.setType(req.getType());
     item.setParentId(req.getParentId());
     item.setUser(User.builder().id(userId).build());
 
-    return notebookRepository.save(item);
+    notebookRepository.save(item);
   }
 
-  public NotebookItem rename(Long userId, Long id, String newName) {
+  public void rename(Long userId, Long id, String newName) {
     NotebookItem item = getOwned(userId, id);
     item.setName(newName);
-    return notebookRepository.save(item);
+    notebookRepository.save(item);
   }
 
   public void deleteItem(Long userId, Long id) {

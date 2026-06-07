@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.core.entity.NotebookItem;
 import com.todaii.english.shared.request.client.NotebookRequest;
 import com.todaii.english.shared.response.NotebookNode;
 
@@ -27,19 +26,19 @@ public class NotebookApiController {
   }
 
   @PostMapping
-  public ResponseEntity<NotebookItem> create(
+  public ResponseEntity<Void> create(
       Authentication authentication, @Valid @RequestBody NotebookRequest notebookRequest) {
-    return ResponseEntity.status(201)
-        .body(
-            notebookService.createItem(
-                UserUtils.getCurrentUserId(authentication), notebookRequest));
+    notebookService.createItem(UserUtils.getCurrentUserId(authentication), notebookRequest);
+
+    return ResponseEntity.noContent().build();
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<NotebookItem> rename(
+  public ResponseEntity<Void> rename(
       Authentication authentication, @PathVariable Long id, @RequestParam String name) {
-    return ResponseEntity.ok(
-        notebookService.rename(UserUtils.getCurrentUserId(authentication), id, name));
+    notebookService.rename(UserUtils.getCurrentUserId(authentication), id, name);
+
+    return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("/{id}")

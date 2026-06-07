@@ -23,7 +23,9 @@ import com.todaii.english.shared.enums.CefrLevel;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -62,6 +64,8 @@ public class ArticleService {
 
     // mỗi truy cập tính 1 lượt view
     article.setViews(article.getViews() + 1);
+
+    log.info("List words: {}", article.getWords());
 
     return articleRepository.save(article);
   }

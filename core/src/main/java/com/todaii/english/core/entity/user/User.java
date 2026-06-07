@@ -25,7 +25,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 public class User implements JwtPrincipal {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,7 +104,11 @@ public class User implements JwtPrincipal {
   @JsonIgnore
   private Set<Video> savedVideos = new HashSet<>();
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(
+      mappedBy = "user",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
   @Builder.Default
   @JsonIgnore
   private Set<NotebookItem> notebookItems = new HashSet<>();

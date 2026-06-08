@@ -35,13 +35,13 @@ public class NoteDictService {
     return new ArrayList<>(notebookItem.getWords());
   }
 
-  public void addEntry(Long userId, Long noteId, Long entryId) {
+  public void addEntry(Long userId, Long noteId, String word) {
     NotebookItem notebookItem = getOwned(userId, noteId);
 
     DictionaryWord dictionaryWord =
         dictionaryRepository
-            .findById(entryId)
-            .orElseThrow(() -> new BusinessException(404, "Dictionary entry not found"));
+            .findByWord(word)
+            .orElseThrow(() -> new BusinessException(404, "Dictionary word not found"));
 
     notebookItem.getWords().add(dictionaryWord);
 

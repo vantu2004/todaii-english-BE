@@ -7,7 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 public interface CloudinaryPort {
   String uploadImage(String base64Image, String folderName);
 
-  String uploadFile(MultipartFile multipartFile, String foldername) throws IOException;
+  String uploadFile(MultipartFile multipartFile, String folderName) throws IOException;
+
+  String uploadTtsFile(byte[] audio, String folderName) throws IOException;
 
   void deleteFile(String fileUrl);
 }

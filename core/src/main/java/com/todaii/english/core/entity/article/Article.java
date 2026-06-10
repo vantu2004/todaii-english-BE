@@ -53,6 +53,9 @@ public class Article {
   @Column(name = "image_url", length = 1024)
   private String imageUrl;
 
+  @Column(name = "audio_url", length = 1024)
+  private String audioUrl;
+
   // Thời điểm bài báo được xuất bản (từ NewsAPI hoặc admin nhập)
   @Column(name = "published_at")
   private LocalDateTime publishedAt;

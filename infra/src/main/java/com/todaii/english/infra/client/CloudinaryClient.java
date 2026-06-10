@@ -42,12 +42,13 @@ public class CloudinaryClient implements CloudinaryPort {
   }
 
   @Override
-  public String uploadFile(MultipartFile multipartFile, String folderName) {
-    try {
-      return upload(multipartFile.getBytes(), folderName, "auto");
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  public String uploadFile(MultipartFile multipartFile, String folderName) throws IOException {
+    return upload(multipartFile.getBytes(), folderName, "auto");
+  }
+
+  @Override
+  public String uploadTtsFile(byte[] audio, String folderName) throws IOException {
+    return upload(audio, folderName, "video");
   }
 
   @Override

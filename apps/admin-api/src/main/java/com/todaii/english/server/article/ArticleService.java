@@ -1,7 +1,10 @@
 package com.todaii.english.server.article;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -15,9 +18,7 @@ import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.article.ArticleParagraph;
-import com.todaii.english.core.port.NewsApiPort;
-import com.todaii.english.core.port.UsageStatisticPort;
-import com.todaii.english.core.port.VocabExtractionPort;
+import com.todaii.english.core.port.*;
 import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.server.AdminUtils;
 import com.todaii.english.server.topic.TopicRepository;
@@ -38,6 +39,8 @@ public class ArticleService {
   private final DictionaryRepository dictionaryRepository;
   private final UsageStatisticPort usageStatisticPort;
   private final VocabExtractionPort vocabExtractionPort;
+  private final TtsPort ttsPort;
+  private final CloudinaryPort cloudinaryPort;
 
   public NewsApiResponse fetchFromNewsApi(
       Long currentAdminId, String query, int pageSize, int page, String sortBy) {
@@ -164,5 +167,31 @@ public class ArticleService {
     article.getWords().clear();
 
     return articleRepository.save(article);
+  }
+
+  public Article uploadTtsFile(Long currentAdminId, Long articleId) throws IOException {
+    Article article = findById(articleId);
+    Set<ArticleParagraph> paragraphs = article.getParagraphs();
+    if (paragraphs == null || paragraphs.isEmpty()) {
+      throw new BusinessException(204, "Article has no paragraphs");
+    }
+
+    String text =
+        article.getParagraphs().stream()
+            .map(ArticleParagraph::getTextEn)
+            .filter(Objects::nonNull)
+            .collect(Collectors.joining("\n"));
+
+    byte[] ttsBytes = ttsPort.call(text);
+
+    String ttsUrl = cloudinaryPort.uploadTtsFile(ttsBytes, "article");
+
+    article.setAudioUrl(ttsUrl);
+    Article savedArticle = articleRepository.save(article);
+
+    usageStatisticPort.createUsageStatistic(
+        usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
+
+    return savedArticle;
   }
 }

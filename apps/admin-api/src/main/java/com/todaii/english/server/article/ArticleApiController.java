@@ -1,5 +1,6 @@
 package com.todaii.english.server.article;
 
+import java.io.IOException;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -179,5 +180,13 @@ public class ArticleApiController {
   @DeleteMapping("/{articleId}/word")
   public ResponseEntity<Article> removeAllWordsFromArticle(@PathVariable Long articleId) {
     return ResponseEntity.ok(articleService.removeAllWordsFromArticle(articleId));
+  }
+
+  @PostMapping("/{articleId}/tts")
+  public ResponseEntity<Article> uploadTtsFile(
+      Authentication authentication, @PathVariable Long articleId) throws IOException {
+    Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
+
+    return ResponseEntity.ok().body(articleService.uploadTtsFile(currentAdminId, articleId));
   }
 }

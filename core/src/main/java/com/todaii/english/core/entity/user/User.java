@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.core.entity.NotebookItem;
 import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.security.JwtPrincipal;
 import com.todaii.english.shared.enums.UserStatus;
@@ -103,6 +104,15 @@ public class User implements JwtPrincipal {
   @Builder.Default
   @JsonIgnore
   private Set<Video> savedVideos = new HashSet<>();
+
+  @ManyToMany
+  @JoinTable(
+      name = "test_users",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "test_id"))
+  @Builder.Default
+  @JsonIgnore
+  private Set<ToeicTest> savedTests = new HashSet<>();
 
   @OneToMany(
       mappedBy = "user",

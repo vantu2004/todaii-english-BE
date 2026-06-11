@@ -2,7 +2,9 @@ package com.todaii.english.core.entity.toeic;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -14,6 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.core.entity.admin.Admin;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.enums.TestStatus;
 import com.todaii.english.shared.enums.TestType;
 
@@ -87,4 +90,9 @@ public class ToeicTest extends MediaUrl {
   @JoinColumn(name = "updated_by", insertable = false)
   @JsonIgnore
   private Admin updatedBy;
+
+  @ManyToMany(mappedBy = "savedTests", fetch = FetchType.LAZY)
+  @JsonIgnore
+  @Builder.Default
+  private Set<User> users = new HashSet<>();
 }

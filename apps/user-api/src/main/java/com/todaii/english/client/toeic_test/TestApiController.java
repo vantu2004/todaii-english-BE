@@ -4,9 +4,11 @@ import jakarta.validation.constraints.Min;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.todaii.english.client.UserUtils;
 import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.response.PagedResponse;
 
@@ -78,5 +80,14 @@ public class TestApiController {
   @GetMapping("/{id}")
   public ResponseEntity<ToeicTestDTO> getTestById(@PathVariable Long id) {
     return ResponseEntity.ok(testService.getPublishedTestDTOById(id));
+  }
+
+  // check test có đc lưu bởi user ko
+  @GetMapping("/{testId}/is-saved")
+  public ResponseEntity<Boolean> isSavedByUser(
+      Authentication authentication, @PathVariable Long testId) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(testService.isSavedByUser(testId, currentUserId));
   }
 }

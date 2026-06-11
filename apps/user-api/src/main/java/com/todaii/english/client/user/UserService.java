@@ -1,5 +1,7 @@
 package com.todaii.english.client.user;
 
+import static com.todaii.english.core.entity.article.ArticleParagraph_.article;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -9,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.todaii.english.client.article.ArticleRepository;
+import com.todaii.english.client.toeic_test.TestRepository;
 import com.todaii.english.client.video.VideoRepository;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
+import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
 import com.todaii.english.core.port.CloudinaryPort;
@@ -41,6 +45,7 @@ public class UserService {
   private final ModelMapper modelMapper;
   private final ArticleRepository articleRepository;
   private final VideoRepository videoRepository;
+  private final TestRepository testRepository;
   private final CloudinaryPort cloudinaryPort;
   private final UsageStatisticPort usageStatisticPort;
 
@@ -182,20 +187,20 @@ public class UserService {
     this.userRepository.save(user);
   }
 
+  private User findById(Long id) {
+    return this.userRepository
+        .findById(id)
+        .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+  }
+
   public UserDTO getUserById(Long id) {
-    User user =
-        this.userRepository
-            .findById(id)
-            .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+    User user = findById(id);
 
     return modelMapper.map(user, UserDTO.class);
   }
 
   public UserDTO updateProfile(Long currentUserId, UpdateProfileRequest request) {
-    User user =
-        this.userRepository
-            .findById(currentUserId)
-            .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+    User user = findById(currentUserId);
 
     // Xử lý đổi mật khẩu
     if (StringUtils.hasText(request.getNewPassword())) {
@@ -230,10 +235,7 @@ public class UserService {
   }
 
   public void toggleSavedArticle(Long currentUserId, Long articleId) {
-    User user =
-        userRepository
-            .findById(currentUserId)
-            .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+    User user = findById(currentUserId);
 
     Article article =
         articleRepository
@@ -252,10 +254,7 @@ public class UserService {
   }
 
   public void toggleSavedVideo(Long currentUserId, Long videoId) {
-    User user =
-        userRepository
-            .findById(currentUserId)
-            .orElseThrow(() -> new BusinessException(UserErrorCode.USER_NOT_FOUND));
+    User user = findById(currentUserId);
 
     Video video =
         videoRepository
@@ -268,6 +267,25 @@ public class UserService {
       savedVideos.remove(video);
     } else {
       savedVideos.add(video);
+    }
+
+    userRepository.save(user);
+  }
+
+  public void toggleSavedTest(Long currentUserId, Long testId) {
+    User user = findById(currentUserId);
+
+    ToeicTest toeicTest =
+        testRepository
+            .findById(testId)
+            .orElseThrow(() -> new BusinessException(404, "Toeic test not found"));
+
+    Set<ToeicTest> savedTests = user.getSavedTests();
+
+    if (savedTests.contains(toeicTest)) {
+      savedTests.remove(toeicTest);
+    } else {
+      savedTests.add(toeicTest);
     }
 
     userRepository.save(user);

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.todaii.english.client.security.CustomUserDetails;
+import com.todaii.english.client.UserUtils;
 import com.todaii.english.shared.dto.UserDTO;
 import com.todaii.english.shared.request.UpdateProfileRequest;
 
@@ -26,8 +26,7 @@ public class UserApiController {
   // Spring Security sẽ tự động inject authentication khi xử lý request
   @GetMapping("/me")
   public ResponseEntity<UserDTO> getProfile(Authentication authentication) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(userService.getUserById(currentUserId));
   }
@@ -36,8 +35,7 @@ public class UserApiController {
   public ResponseEntity<UserDTO> updateProfile(
       Authentication authentication,
       @Valid @RequestBody UpdateProfileRequest updateProfileRequest) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(userService.updateProfile(currentUserId, updateProfileRequest));
   }
@@ -46,8 +44,7 @@ public class UserApiController {
   @PutMapping("/article/{articleId}")
   public ResponseEntity<Void> toggleSavedArticle(
       Authentication authentication, @PathVariable Long articleId) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     userService.toggleSavedArticle(currentUserId, articleId);
 
@@ -58,10 +55,20 @@ public class UserApiController {
   @PutMapping("/video/{videoId}")
   public ResponseEntity<Void> toggleSavedVideo(
       Authentication authentication, @PathVariable Long videoId) {
-    CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
-    Long currentUserId = principal.getUser().getId();
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
 
     userService.toggleSavedVideo(currentUserId, videoId);
+
+    return ResponseEntity.ok().build();
+  }
+
+  // xử lý lưu/bỏ lưu test
+  @PutMapping("/test/{testId}")
+  public ResponseEntity<Void> toggleSavedTest(
+      Authentication authentication, @PathVariable Long testId) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    userService.toggleSavedTest(currentUserId, testId);
 
     return ResponseEntity.ok().build();
   }

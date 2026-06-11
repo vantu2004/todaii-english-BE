@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.todaii.english.client.user.UserRepository;
 import com.todaii.english.core.entity.toeic.ToeicTest;
+import com.todaii.english.core.entity.user.User;
 import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.exceptions.BusinessException;
 
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class TestService {
   private final ModelMapper modelMapper;
   private final TestRepository testRepository;
+  private final UserRepository userRepository;
 
   public Page<ToeicTestDTO> getAllPublishedPaged(
       int page, int size, String sortBy, String direction, String keyword) {
@@ -46,5 +49,14 @@ public class TestService {
             .findPublishedById(id)
             .orElseThrow(() -> new BusinessException(404, "TOEIC test not found"));
     return modelMapper.map(test, ToeicTestDTO.class);
+  }
+
+  public Boolean isSavedByUser(Long testId, Long userId) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new BusinessException(404, "User not found"));
+
+    return user.getSavedTests().stream().anyMatch(t -> t.getId().equals(testId));
   }
 }

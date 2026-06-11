@@ -1,5 +1,8 @@
 package com.todaii.english.client.toeic_test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,5 +61,17 @@ public class TestService {
             .orElseThrow(() -> new BusinessException(404, "User not found"));
 
     return user.getSavedTests().stream().anyMatch(t -> t.getId().equals(testId));
+  }
+
+  public List<ToeicTestDTO> getSavedTestsByUserId(Long currentUserId) {
+    User user =
+        userRepository
+            .findById(currentUserId)
+            .orElseThrow(() -> new BusinessException(404, "User not found"));
+
+    return user.getSavedTests().stream()
+        .map(toeicTest -> modelMapper.map(toeicTest, ToeicTestDTO.class))
+        .distinct()
+        .collect(Collectors.toList());
   }
 }

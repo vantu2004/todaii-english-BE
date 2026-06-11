@@ -1,5 +1,7 @@
 package com.todaii.english.client.toeic_test;
 
+import java.util.List;
+
 import jakarta.validation.constraints.Min;
 
 import org.springframework.data.domain.Page;
@@ -80,6 +82,14 @@ public class TestApiController {
   @GetMapping("/{id}")
   public ResponseEntity<ToeicTestDTO> getTestById(@PathVariable Long id) {
     return ResponseEntity.ok(testService.getPublishedTestDTOById(id));
+  }
+
+  // lấy danh sách tests đc lưu bởi user
+  @GetMapping("/saved")
+  public ResponseEntity<List<ToeicTestDTO>> getSavedTestsByUserId(Authentication authentication) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(testService.getSavedTestsByUserId(currentUserId));
   }
 
   // check test có đc lưu bởi user ko

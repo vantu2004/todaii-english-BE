@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -182,11 +183,21 @@ public class ArticleApiController {
     return ResponseEntity.ok(articleService.removeAllWordsFromArticle(articleId));
   }
 
-  @PostMapping("/{articleId}/tts")
+  @GetMapping("/{articleId}/tts")
   public ResponseEntity<Article> uploadTtsFile(
       Authentication authentication, @PathVariable Long articleId) throws IOException {
     Long currentAdminId = AdminUtils.getCurrentAdminId(authentication);
 
     return ResponseEntity.ok().body(articleService.uploadTtsFile(currentAdminId, articleId));
+  }
+
+  @DeleteMapping("/{articleId}/tts")
+  public ResponseEntity<Article> deleteLocation(
+      @PathVariable Long articleId,
+      @RequestParam
+          @NotBlank(message = "File url must not be blank")
+          @URL(message = "The URL must be in the correct format.")
+          String fileUrl) {
+    return ResponseEntity.ok().body(articleService.deleteTtsFile(articleId, fileUrl));
   }
 }

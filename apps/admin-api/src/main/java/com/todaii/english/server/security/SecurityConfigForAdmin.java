@@ -149,8 +149,7 @@ public class SecurityConfigForAdmin {
             "/api/v1/toeic/**",
             "/api/v1/comments/**",
             "/api/v1/reports/**",
-            "/api/v1/cloudinary/file/**",
-            "/api/v1/tts/**")
+            "/api/v1/cloudinary/file/**")
         .hasAnyAuthority(AdminAuthorities.SUPER_AND_CONTENT)
 
         // Tất cả các request khác phải authenticated

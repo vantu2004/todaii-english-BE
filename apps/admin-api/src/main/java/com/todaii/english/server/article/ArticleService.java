@@ -173,7 +173,7 @@ public class ArticleService {
     Article article = findById(articleId);
     Set<ArticleParagraph> paragraphs = article.getParagraphs();
     if (paragraphs == null || paragraphs.isEmpty()) {
-      throw new BusinessException(204, "Article has no paragraphs");
+      throw new BusinessException(400, "Article has no paragraphs");
     }
 
     String text =
@@ -191,6 +191,17 @@ public class ArticleService {
 
     usageStatisticPort.createUsageStatistic(
         usageStatisticPort.createCloudinaryStatistic(currentAdminId, ActorType.ADMIN));
+
+    return savedArticle;
+  }
+
+  public Article deleteTtsFile(Long articleId, String fileUrl) {
+    Article article = findById(articleId);
+    article.setAudioUrl(null);
+
+    Article savedArticle = articleRepository.save(article);
+
+    cloudinaryPort.deleteFile(fileUrl);
 
     return savedArticle;
   }

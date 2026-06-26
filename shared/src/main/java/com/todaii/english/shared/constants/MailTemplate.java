@@ -474,4 +474,200 @@ public class MailTemplate {
 			</body>
 			</html>
 			""";
+
+  public static final String STREAK_RISK_TEMPLATE =
+      """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Keep Your Streak Alive!</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #f59e0b; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">🔥 Streak in Danger!</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Your active study streak of <strong>{streak} days</strong> is about to end today! Don't let your hard work go to waste.</p>
+
+			                            <div style="background-color: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 25px 0;">
+			                                <p style="color: #b45309; margin: 0; font-size: 16px; font-weight: 600;">Just 5 minutes of study today will keep your streak alive!</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Consistency is the key to mastering English. Spend a few minutes reading an article, watching a video, or answering practice questions now.</p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="#" style="background-color: #f59e0b; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Resume Learning Now</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+  public static final String CHURN_ALERT_TEMPLATE =
+      """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>We Miss You!</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #6366f1; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">✨ We Miss You, {name}!</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">It has been <strong>{daysInactive} days</strong> since your last study session. We want to help you stay on track to reach your goals.</p>
+
+			                            <div style="background-color: #eef2ff; border-left: 4px solid #6366f1; padding: 20px; margin: 25px 0; border-radius: 4px;">
+			                                <p style="margin: 0 0 5px 0; color: #4338ca; font-weight: bold; font-size: 14px;">YOUR TARGET:</p>
+			                                <p style="margin: 0; color: #1e1b4b; font-size: 20px; font-weight: bold;">TOEIC {targetScore}</p>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Every small step counts towards your success. Don't worry about starting big - even a brief daily review can make a huge difference in your score retention.</p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="#" style="background-color: #6366f1; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Come Back & Study</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+  public static final String EXAM_COUNTDOWN_TEMPLATE =
+      """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Your Exam is Approaching!</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #3b82f6; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">⏰ The Countdown is On!</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Your registered TOEIC exam is just <strong>{daysLeft} days</strong> away!</p>
+
+			                            <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; padding: 20px; margin: 25px 0; border-radius: 6px; text-align: center;">
+			                                <span style="font-size: 14px; color: #1d4ed8; font-weight: 600; display: block; margin-bottom: 5px;">DAYS REMAINING</span>
+			                                <span style="font-size: 48px; font-weight: bold; color: #1d4ed8; display: block; line-height: 1;">{daysLeft}</span>
+			                                <span style="font-size: 14px; color: #60a5fa; display: block; margin-top: 10px;">Target Score: <strong>TOEIC {targetScore}</strong></span>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Now is the perfect time to review your weaknesses and take full practice tests to build your confidence and pacing.</p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="#" style="background-color: #3b82f6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Start Final Prep</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
+
+  public static final String STUDY_PLAN_TEMPLATE =
+      """
+			<!DOCTYPE html>
+			<html>
+			<head>
+			    <meta charset="UTF-8">
+			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+			    <title>Your AI Personalized Study Plan</title>
+			</head>
+			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
+			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
+			        <tr>
+			            <td align="center">
+			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+			                    <tr>
+			                        <td style="background-color: #8b5cf6; padding: 30px; text-align: center;">
+			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">📋 Your Personalized AI Study Plan</h1>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="padding: 40px 30px;">
+			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Our AI coach has analyzed your learning performance and generated a tailored study plan for the next 2 days to optimize your prep.</p>
+
+			                            <div style="background-color: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 6px; padding: 25px; margin: 25px 0;">
+			                                <h3 style="color: #7c3aed; margin-top: 0; margin-bottom: 15px; font-size: 18px;">Your Plan Details:</h3>
+			                                <div style="color: #4b5563; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">{planContent}</div>
+			                            </div>
+
+			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Follow this plan to focus on your weakest areas and maximize your score efficiency!</p>
+
+			                            <div style="text-align: center; margin: 35px 0;">
+			                                <a href="#" style="background-color: #8b5cf6; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Open Study Dashboard</a>
+			                            </div>
+			                        </td>
+			                    </tr>
+			                    <tr>
+			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
+			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
+			                        </td>
+			                    </tr>
+			                </table>
+			            </td>
+			        </tr>
+			    </table>
+			</body>
+			</html>
+			""";
 }

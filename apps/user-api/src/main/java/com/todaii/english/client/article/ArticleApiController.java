@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.client.learning.RecommendationService;
+import com.todaii.english.client.learning.service.RecommendationService;
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.DictionaryWord_;

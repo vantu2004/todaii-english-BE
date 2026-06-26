@@ -1,4 +1,4 @@
-package com.todaii.english.client.learning;
+package com.todaii.english.client.learning.service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.todaii.english.client.learning.repository.DailyStudyLogRepository;
 import com.todaii.english.client.user.UserRepository;
 import com.todaii.english.core.entity.learning.DailyStudyLog;
 import com.todaii.english.core.entity.user.User;

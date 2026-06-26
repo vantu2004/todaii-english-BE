@@ -1,4 +1,4 @@
-package com.todaii.english.client.learning;
+package com.todaii.english.client.learning.controller;
 
 import java.util.Map;
 
@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
+import com.todaii.english.client.learning.service.StudyLogService;
 import com.todaii.english.shared.enums.StudyItemType;
 
 import lombok.RequiredArgsConstructor;

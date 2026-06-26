@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
-import com.todaii.english.client.learning.RecommendationService;
+import com.todaii.english.client.learning.service.RecommendationService;
 import com.todaii.english.shared.dto.learning.TestRecommendationDTO;
 import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.response.PagedResponse;

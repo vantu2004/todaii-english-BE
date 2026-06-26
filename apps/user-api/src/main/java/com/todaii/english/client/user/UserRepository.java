@@ -1,5 +1,7 @@
 package com.todaii.english.client.user;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("SELECT u FROM User u WHERE u.id = ?1 AND u.isDeleted = false")
   public Optional<User> findById(Long id);
+
+  // Streak Risk: user hôm nay chưa học nhưng đang có streak > 0
+  List<User> findByCurrentStreakGreaterThanAndLastStudyDateBefore(int streak, LocalDate date);
+
+  // Churn Alert: user bỏ học đúng N ngày
+  List<User> findByLastStudyDate(LocalDate date);
 }

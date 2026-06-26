@@ -1,6 +1,7 @@
 package com.todaii.english.core.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.todaii.english.core.port.SmtpSenderPort;
@@ -58,6 +59,48 @@ public class SmtpService {
   public void accountUpdatedNotice(String to, String name) {
     String subject = "Your account has been updated.";
     String content = MailTemplate.ACCOUNT_UPDATED_BY_ADMIN_TEMPLATE.replace("{name}", name);
+    this.smtpSenderPort.send(to, subject, content);
+  }
+
+  @Async
+  public void sendStreakRiskEmail(String to, String name, int streak) {
+    String subject = "Keep your streak alive! 🔥";
+    String content =
+        MailTemplate.STREAK_RISK_TEMPLATE
+            .replace("{name}", name)
+            .replace("{streak}", String.valueOf(streak));
+    this.smtpSenderPort.send(to, subject, content);
+  }
+
+  @Async
+  public void sendChurnAlertEmail(String to, String name, int targetScore, long daysInactive) {
+    String subject = "We miss you! Let's get back to learning ✨";
+    String content =
+        MailTemplate.CHURN_ALERT_TEMPLATE
+            .replace("{name}", name)
+            .replace("{targetScore}", String.valueOf(targetScore))
+            .replace("{daysInactive}", String.valueOf(daysInactive));
+    this.smtpSenderPort.send(to, subject, content);
+  }
+
+  @Async
+  public void sendExamCountdownEmail(String to, String name, int targetScore, long daysLeft) {
+    String subject = "Only " + daysLeft + " days left until your TOEIC exam! ⏰";
+    String content =
+        MailTemplate.EXAM_COUNTDOWN_TEMPLATE
+            .replace("{name}", name)
+            .replace("{targetScore}", String.valueOf(targetScore))
+            .replace("{daysLeft}", String.valueOf(daysLeft));
+    this.smtpSenderPort.send(to, subject, content);
+  }
+
+  @Async
+  public void sendStudyPlanEmail(String to, String name, String planContent) {
+    String subject = "Your Personalized AI Study Plan is Ready! 📋";
+    String content =
+        MailTemplate.STUDY_PLAN_TEMPLATE
+            .replace("{name}", name)
+            .replace("{planContent}", planContent);
     this.smtpSenderPort.send(to, subject, content);
   }
 }

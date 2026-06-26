@@ -4,12 +4,11 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
@@ -17,7 +16,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.todaii.english.core.entity.user.User;
-import com.todaii.english.shared.enums.NotificationType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,36 +24,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "notifications")
+@Table(name = "ai_study_plans")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification {
+public class AiStudyPlan {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, length = 255)
-  private String title;
-
-  @Column(nullable = false, length = 512)
-  private String content;
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false, length = 64)
-  private NotificationType type;
-
-  @Column(name = "is_read")
-  @Builder.Default
-  private Boolean isRead = false;
+  @Lob
+  @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
+  private String content; // Markdown content từ AI
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
-  // quan hệ 1 chiều
   @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)

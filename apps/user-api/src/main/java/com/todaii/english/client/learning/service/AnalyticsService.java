@@ -1,4 +1,4 @@
-package com.todaii.english.client.learning;
+package com.todaii.english.client.learning.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.todaii.english.client.learning.repository.UserLearningProfileRepository;
 import com.todaii.english.client.toeic_test_session.ToeicTestSessionRepository;
 import com.todaii.english.client.toeic_test_session.ToeicUserAnswerRepository;
 import com.todaii.english.core.entity.learning.UserLearningProfile;

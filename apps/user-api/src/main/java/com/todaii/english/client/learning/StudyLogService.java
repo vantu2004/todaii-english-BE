@@ -1,6 +1,8 @@
 package com.todaii.english.client.learning;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +20,30 @@ public class StudyLogService {
   private final DailyStudyLogRepository dailyStudyLogRepository;
   private final UserRepository userRepository;
 
+  public Map<String, Object> getStreakInfo(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow();
+
+    LocalDate today = LocalDate.now();
+    DailyStudyLog log = dailyStudyLogRepository.findByUserIdAndDate(userId, today).orElse(null);
+
+    Map<String, Object> streakInfo = new HashMap<>();
+    streakInfo.put("currentStreak", user.getCurrentStreak() != null ? user.getCurrentStreak() : 0);
+    streakInfo.put("longestStreak", user.getLongestStreak() != null ? user.getLongestStreak() : 0);
+    streakInfo.put(
+        "todayStudyMinutes",
+        log != null && log.getTotalStudyMinutes() != null ? log.getTotalStudyMinutes() : 0);
+
+    return streakInfo;
+  }
+
   @Transactional
   public void pingStudyTime(Long userId) {
     LocalDate today = LocalDate.now();
+
     DailyStudyLog log = getOrCreateDailyLog(userId, today);
     log.setTotalStudyMinutes(
         (log.getTotalStudyMinutes() != null ? log.getTotalStudyMinutes() : 0) + 5);
+
     dailyStudyLogRepository.save(log);
 
     updateUserStreak(userId, today);
@@ -94,6 +114,7 @@ public class StudyLogService {
     }
 
     user.setLastStudyDate(today);
+
     userRepository.save(user);
   }
 }

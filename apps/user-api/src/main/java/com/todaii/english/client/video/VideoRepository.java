@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.todaii.english.core.entity.DictionaryWord;
@@ -59,4 +60,19 @@ public interface VideoRepository
 			    ORDER BY d.word ASC
 			""")
   public Page<DictionaryWord> findPagedWordsByVideoId(Long id, Pageable pageable);
+
+  // Recommend: Lấy ngẫu nhiên N video theo CEFR level
+  @Query(
+      value =
+          "SELECT * FROM videos v WHERE v.enabled = true AND v.cefr_level = :cefrLevel ORDER BY"
+              + " RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Video> findRandomByCefrLevel(
+      @Param("cefrLevel") String cefrLevel, @Param("limit") int limit);
+
+  // Recommend fallback: Lấy ngẫu nhiên N video bất kỳ
+  @Query(
+      value = "SELECT * FROM videos v WHERE v.enabled = true ORDER BY RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Video> findRandomVideos(@Param("limit") int limit);
 }

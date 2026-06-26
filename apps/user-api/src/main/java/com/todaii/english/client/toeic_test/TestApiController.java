@@ -11,6 +11,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
+import com.todaii.english.client.learning.RecommendationService;
+import com.todaii.english.shared.dto.learning.TestRecommendationDTO;
 import com.todaii.english.shared.dto.toeic.ToeicTestDTO;
 import com.todaii.english.shared.response.PagedResponse;
 
@@ -22,6 +24,15 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/toeic/test")
 public class TestApiController {
   private final TestService testService;
+  private final RecommendationService recommendationService;
+
+  // gợi ý tests dựa trên điểm yếu của user
+  @GetMapping("/recommend")
+  public ResponseEntity<TestRecommendationDTO> recommendTests(Authentication authentication) {
+    Long userId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(recommendationService.recommendTests(userId));
+  }
 
   @GetMapping
   public ResponseEntity<PagedResponse<ToeicTestDTO>> getAllTestsPaged(

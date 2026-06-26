@@ -12,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.todaii.english.client.UserUtils;
+import com.todaii.english.client.learning.RecommendationService;
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.DictionaryWord_;
@@ -29,8 +31,15 @@ public class VideoApiController {
   private static final String SORT_DIRECTION = "asc";
 
   private final VideoService videoService;
+  private final RecommendationService recommendationService;
 
-  // lấy n video gần đây nhất
+  // gợi ý videos theo CEFR level của user
+  @GetMapping("/recommend")
+  public ResponseEntity<List<Video>> recommendVideos(Authentication authentication) {
+    Long userId = UserUtils.getCurrentUserId(authentication);
+    return ResponseEntity.ok(recommendationService.recommendVideos(userId));
+  }
+
   @GetMapping("/latest")
   public ResponseEntity<List<Video>> getLatest(
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1")

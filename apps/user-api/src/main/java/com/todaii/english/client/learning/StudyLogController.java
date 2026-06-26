@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class StudyLogController {
   private final StudyLogService studyLogService;
 
-  @GetMapping
+  @GetMapping("/streak-info")
   public ResponseEntity<Map<String, Object>> getStreakInfo(Authentication authentication) {
     Long userId = UserUtils.getCurrentUserId(authentication);
 

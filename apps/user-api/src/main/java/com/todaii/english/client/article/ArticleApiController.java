@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.todaii.english.client.UserUtils;
+import com.todaii.english.client.learning.RecommendationService;
 import com.todaii.english.client.security.CustomUserDetails;
 import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.DictionaryWord_;
@@ -34,8 +36,16 @@ public class ArticleApiController {
   private static final String SORT_DIRECTION = "asc";
 
   private final ArticleService articleService;
+  private final RecommendationService recommendationService;
 
-  // lấy n articles gần đây nhất
+  // gợi ý articles theo CEFR level của user
+  @GetMapping("/recommend")
+  public ResponseEntity<List<Article>> recommendArticles(Authentication authentication) {
+    Long userId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(recommendationService.recommendArticles(userId));
+  }
+
   @GetMapping("/latest")
   public ResponseEntity<List<Article>> getLatestArticles(
       @RequestParam(defaultValue = "1") @Min(value = 1, message = "Size must be at least 1")

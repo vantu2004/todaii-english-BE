@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.todaii.english.core.entity.DictionaryWord;
@@ -94,4 +95,19 @@ public interface ArticleRepository
 
   @Query("SELECT DISTINCT a.sourceName FROM Article a WHERE a.enabled = true")
   public List<String> findAllDistinctSourceNames();
+
+  // Recommend: Lấy ngẫu nhiên N article theo CEFR level
+  @Query(
+      value =
+          "SELECT * FROM articles a WHERE a.enabled = true AND a.cefr_level = :cefrLevel ORDER BY"
+              + " RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Article> findRandomByCefrLevel(
+      @Param("cefrLevel") String cefrLevel, @Param("limit") int limit);
+
+  // Recommend fallback: Lấy ngẫu nhiên N article bất kỳ
+  @Query(
+      value = "SELECT * FROM articles a WHERE a.enabled = true ORDER BY RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Article> findRandomArticles(@Param("limit") int limit);
 }

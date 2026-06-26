@@ -1,5 +1,6 @@
 package com.todaii.english.core.entity.user;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -86,6 +87,17 @@ public class User implements JwtPrincipal {
 
   @Column(name = "deleted_at")
   private LocalDateTime deletedAt;
+
+  @Column(name = "current_streak")
+  @Builder.Default
+  private Integer currentStreak = 0;
+
+  @Column(name = "longest_streak")
+  @Builder.Default
+  private Integer longestStreak = 0;
+
+  @Column(name = "last_study_date")
+  private LocalDate lastStudyDate;
 
   @ManyToMany
   @JoinTable(

@@ -20,6 +20,10 @@ public class NotificationService {
     return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
   }
 
+  public long getUnreadCount(Long userId) {
+    return notificationRepository.countByUserIdAndIsReadFalse(userId);
+  }
+
   @Transactional
   public void markAsRead(Long notificationId, Long userId) {
     Notification notification =
@@ -32,10 +36,7 @@ public class NotificationService {
     }
 
     notification.setIsRead(true);
-    notificationRepository.save(notification);
-  }
 
-  public long getUnreadCount(Long userId) {
-    return notificationRepository.countByUserIdAndIsReadFalse(userId);
+    notificationRepository.save(notification);
   }
 }

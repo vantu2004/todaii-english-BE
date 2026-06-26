@@ -1,7 +1,6 @@
 package com.todaii.english.client.learning.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,7 +26,15 @@ public class NotificationController {
   public ResponseEntity<List<Notification>> getNotifications(Authentication authentication) {
     Long userId = UserUtils.getCurrentUserId(authentication);
     List<Notification> notifications = notificationService.getNotifications(userId);
+
     return ResponseEntity.ok(notifications);
+  }
+
+  @GetMapping("/unread-count")
+  public ResponseEntity<Long> getUnreadCount(Authentication authentication) {
+    Long userId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(notificationService.getUnreadCount(userId));
   }
 
   @PutMapping("/{id}/read")
@@ -37,13 +44,5 @@ public class NotificationController {
     notificationService.markAsRead(id, userId);
 
     return ResponseEntity.ok().build();
-  }
-
-  @GetMapping("/unread-count")
-  public ResponseEntity<Map<String, Long>> getUnreadCount(Authentication authentication) {
-    Long userId = UserUtils.getCurrentUserId(authentication);
-    long count = notificationService.getUnreadCount(userId);
-
-    return ResponseEntity.ok(Map.of("unreadCount", count));
   }
 }

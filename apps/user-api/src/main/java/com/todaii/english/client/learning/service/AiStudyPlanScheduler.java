@@ -51,8 +51,10 @@ public class AiStudyPlanScheduler {
   @Transactional
   public void generateAiStudyPlans() {
     log.info("⏰ Starting AI Study Plan generation job...");
+
     List<UserLearningProfile> activeProfiles =
         userLearningProfileRepository.findByTargetScoreGreaterThan(0);
+
     log.info("Found {} active profiles for AI study plan generation.", activeProfiles.size());
 
     for (UserLearningProfile profile : activeProfiles) {
@@ -145,6 +147,7 @@ public class AiStudyPlanScheduler {
             e);
       }
     }
+
     log.info("AI Study Plan generation job finished.");
   }
 }

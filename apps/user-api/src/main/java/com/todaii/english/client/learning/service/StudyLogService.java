@@ -28,10 +28,10 @@ public class StudyLogService {
     DailyStudyLog log = dailyStudyLogRepository.findByUserIdAndDate(userId, today).orElse(null);
 
     Map<String, Object> streakInfo = new HashMap<>();
-    streakInfo.put("currentStreak", user.getCurrentStreak() != null ? user.getCurrentStreak() : 0);
-    streakInfo.put("longestStreak", user.getLongestStreak() != null ? user.getLongestStreak() : 0);
+    streakInfo.put("current_streak", user.getCurrentStreak() != null ? user.getCurrentStreak() : 0);
+    streakInfo.put("longest_streak", user.getLongestStreak() != null ? user.getLongestStreak() : 0);
     streakInfo.put(
-        "todayStudyMinutes",
+        "today_study_minutes",
         log != null && log.getTotalStudyMinutes() != null ? log.getTotalStudyMinutes() : 0);
 
     return streakInfo;

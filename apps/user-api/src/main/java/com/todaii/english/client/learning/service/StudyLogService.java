@@ -1,9 +1,8 @@
 package com.todaii.english.client.learning.service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +10,8 @@ import com.todaii.english.client.learning.repository.DailyStudyLogRepository;
 import com.todaii.english.client.user.UserRepository;
 import com.todaii.english.core.entity.learning.DailyStudyLog;
 import com.todaii.english.core.entity.user.User;
+import com.todaii.english.shared.dto.learning.DailyStudyLogDTO;
+import com.todaii.english.shared.dto.learning.StreakInfoDTO;
 import com.todaii.english.shared.enums.StudyItemType;
 
 import lombok.RequiredArgsConstructor;
@@ -20,21 +21,20 @@ import lombok.RequiredArgsConstructor;
 public class StudyLogService {
   private final DailyStudyLogRepository dailyStudyLogRepository;
   private final UserRepository userRepository;
+  private final ModelMapper modelMapper;
 
-  public Map<String, Object> getStreakInfo(Long userId) {
+  public StreakInfoDTO getStreakInfo(Long userId) {
     User user = userRepository.findById(userId).orElseThrow();
 
     LocalDate today = LocalDate.now();
     DailyStudyLog log = dailyStudyLogRepository.findByUserIdAndDate(userId, today).orElse(null);
 
-    Map<String, Object> streakInfo = new HashMap<>();
-    streakInfo.put("current_streak", user.getCurrentStreak() != null ? user.getCurrentStreak() : 0);
-    streakInfo.put("longest_streak", user.getLongestStreak() != null ? user.getLongestStreak() : 0);
-    streakInfo.put(
-        "today_study_minutes",
-        log != null && log.getTotalStudyMinutes() != null ? log.getTotalStudyMinutes() : 0);
+    StreakInfoDTO streakInfoDTO = new StreakInfoDTO();
+    streakInfoDTO.setCurrentStreak(user.getCurrentStreak());
+    streakInfoDTO.setLongestStreak(user.getLongestStreak());
+    streakInfoDTO.setDailyStudyLog(modelMapper.map(log, DailyStudyLogDTO.class));
 
-    return streakInfo;
+    return streakInfoDTO;
   }
 
   @Transactional

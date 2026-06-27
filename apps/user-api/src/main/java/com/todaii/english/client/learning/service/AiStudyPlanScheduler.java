@@ -26,6 +26,7 @@ import com.todaii.english.infra.service.AiFallbackService;
 import com.todaii.english.shared.dto.learning.PartAccuracyDTO;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.NotificationType;
+import com.todaii.english.shared.enums.UserStatus;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,10 @@ public class AiStudyPlanScheduler {
 
     for (UserLearningProfile profile : activeProfiles) {
       User user = profile.getUser();
-      if (user == null || Boolean.TRUE.equals(user.getIsDeleted())) {
+      if (!(user != null
+          && !Boolean.TRUE.equals(user.getIsDeleted())
+          && Boolean.TRUE.equals(user.getEnabled())
+          && user.getStatus() == UserStatus.ACTIVE)) {
         continue;
       }
 

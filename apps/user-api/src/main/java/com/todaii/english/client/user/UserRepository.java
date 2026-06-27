@@ -25,7 +25,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   // Streak Risk: user hôm nay chưa học nhưng đang có streak > 0
   List<User> findByCurrentStreakGreaterThanAndLastStudyDateBefore(int streak, LocalDate date);
-
-  // Churn Alert: user bỏ học đúng N ngày
-  List<User> findByLastStudyDate(LocalDate date);
 }

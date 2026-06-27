@@ -523,55 +523,6 @@ public class MailTemplate {
 			</html>
 			""";
 
-  public static final String CHURN_ALERT_TEMPLATE =
-      """
-			<!DOCTYPE html>
-			<html>
-			<head>
-			    <meta charset="UTF-8">
-			    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-			    <title>We Miss You!</title>
-			</head>
-			<body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f4f7; color: #333333;">
-			    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f7; padding: 40px 0;">
-			        <tr>
-			            <td align="center">
-			                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
-			                    <tr>
-			                        <td style="background-color: #6366f1; padding: 30px; text-align: center;">
-			                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">✨ We Miss You, {name}!</h1>
-			                        </td>
-			                    </tr>
-			                    <tr>
-			                        <td style="padding: 40px 30px;">
-			                            <p style="color: #333333; font-size: 18px; font-weight: bold; margin-bottom: 20px;">Hello {name},</p>
-			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">It has been <strong>{daysInactive} days</strong> since your last study session. We want to help you stay on track to reach your goals.</p>
-
-			                            <div style="background-color: #eef2ff; border-left: 4px solid #6366f1; padding: 20px; margin: 25px 0; border-radius: 4px;">
-			                                <p style="margin: 0 0 5px 0; color: #4338ca; font-weight: bold; font-size: 14px;">YOUR TARGET:</p>
-			                                <p style="margin: 0; color: #1e1b4b; font-size: 20px; font-weight: bold;">TOEIC {targetScore}</p>
-			                            </div>
-
-			                            <p style="color: #666666; font-size: 16px; line-height: 1.6;">Every small step counts towards your success. Don't worry about starting big - even a brief daily review can make a huge difference in your score retention.</p>
-
-			                            <div style="text-align: center; margin: 35px 0;">
-			                                <a href="#" style="background-color: #6366f1; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Come Back & Study</a>
-			                            </div>
-			                        </td>
-			                    </tr>
-			                    <tr>
-			                        <td style="background-color: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #eeeeee;">
-			                            <p style="color: #999999; font-size: 12px; margin: 0;">&copy; 2025 Todaii English. All rights reserved.</p>
-			                        </td>
-			                    </tr>
-			                </table>
-			            </td>
-			        </tr>
-			    </table>
-			</body>
-			</html>
-			""";
-
   public static final String EXAM_COUNTDOWN_TEMPLATE =
       """
 			<!DOCTYPE html>

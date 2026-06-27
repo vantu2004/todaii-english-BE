@@ -73,17 +73,6 @@ public class SmtpService {
   }
 
   @Async
-  public void sendChurnAlertEmail(String to, String name, int targetScore, long daysInactive) {
-    String subject = "We miss you! Let's get back to learning ✨";
-    String content =
-        MailTemplate.CHURN_ALERT_TEMPLATE
-            .replace("{name}", name)
-            .replace("{targetScore}", String.valueOf(targetScore))
-            .replace("{daysInactive}", String.valueOf(daysInactive));
-    this.smtpSenderPort.send(to, subject, content);
-  }
-
-  @Async
   public void sendExamCountdownEmail(String to, String name, int targetScore, long daysLeft) {
     String subject = "Only " + daysLeft + " days left until your TOEIC exam! ⏰";
     String content =

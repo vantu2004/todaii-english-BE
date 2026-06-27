@@ -28,8 +28,7 @@ public class UserLearningProfileController {
 
   @PutMapping
   public ResponseEntity<UserLearningProfileDTO> updateProfile(
-      Authentication authentication,
-      @Valid @RequestBody UpdateLearningProfileRequest request) {
+      Authentication authentication, @Valid @RequestBody UpdateLearningProfileRequest request) {
     Long userId = UserUtils.getCurrentUserId(authentication);
 
     return ResponseEntity.ok(userLearningProfileService.updateProfile(userId, request));

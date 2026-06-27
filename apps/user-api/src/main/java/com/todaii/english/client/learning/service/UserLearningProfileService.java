@@ -22,7 +22,8 @@ public class UserLearningProfileService {
 
   @Transactional(readOnly = true)
   public UserLearningProfileDTO getProfile(Long userId) {
-    return modelMapper.map(getOrCreateProfile(userId), UserLearningProfileDTO.class);
+    return modelMapper.map(
+        userLearningProfileRepository.findByUserId(userId), UserLearningProfileDTO.class);
   }
 
   @Transactional

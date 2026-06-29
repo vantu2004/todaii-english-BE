@@ -125,6 +125,8 @@ public class SecurityConfigForUser {
     // Lưu ý: Thứ tự ưu tiên từ trên xuống dưới
     auth
         // 1. Công khai hoàn toàn
+        .requestMatchers("/api/v1/cronjob/**")
+        .permitAll()
         .requestMatchers("/api/v1/auth/**")
         .permitAll()
         .requestMatchers("/api/v1/dictionary/**")

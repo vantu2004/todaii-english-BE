@@ -131,7 +131,7 @@ public class AiStudyPlanScheduler {
             planContent.length() > 100 ? planContent.substring(0, 97) + "..." : planContent;
         Notification notification =
             Notification.builder()
-                .title("📋 Kế hoạch học mới!")
+                .title("Kế hoạch học mới!")
                 .content("Kế hoạch học tập 2 ngày tới thiết kế bởi AI đã sẵn sàng: " + previewText)
                 .type(NotificationType.PLAN_READY)
                 .user(user)

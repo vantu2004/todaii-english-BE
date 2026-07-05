@@ -1,6 +1,8 @@
 package com.todaii.english.client.learning.service;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,14 @@ public class StudyLogService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
 
+  public List<DailyStudyLogDTO> getAllDailyStudyLogs(Long userId) {
+    List<DailyStudyLog> dailyStudyLogs = dailyStudyLogRepository.findByUserId(userId);
+
+    return dailyStudyLogs.stream()
+        .map(log -> modelMapper.map(log, DailyStudyLogDTO.class))
+        .collect(Collectors.toList());
+  }
+
   public StreakInfoDTO getStreakInfo(Long userId) {
     User user = userRepository.findById(userId).orElseThrow();
 
@@ -32,7 +42,10 @@ public class StudyLogService {
     StreakInfoDTO streakInfoDTO = new StreakInfoDTO();
     streakInfoDTO.setCurrentStreak(user.getCurrentStreak());
     streakInfoDTO.setLongestStreak(user.getLongestStreak());
-    streakInfoDTO.setDailyStudyLog(modelMapper.map(log, DailyStudyLogDTO.class));
+
+    // FIX TẠI ĐÂY: Nếu log khác null thì mới map, ngược lại thì gán null thẳng luôn
+    DailyStudyLogDTO logDTO = (log != null) ? modelMapper.map(log, DailyStudyLogDTO.class) : null;
+    streakInfoDTO.setDailyStudyLog(logDTO);
 
     return streakInfoDTO;
   }
@@ -73,6 +86,7 @@ public class StudyLogService {
             (log.getVocabDecksLearnedCount() != null ? log.getVocabDecksLearnedCount() : 0) + 1);
         break;
     }
+
     dailyStudyLogRepository.save(log);
 
     updateUserStreak(userId, today);

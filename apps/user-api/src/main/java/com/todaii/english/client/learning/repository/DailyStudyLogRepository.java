@@ -11,6 +11,8 @@ import com.todaii.english.core.entity.learning.DailyStudyLog;
 
 @Repository
 public interface DailyStudyLogRepository extends JpaRepository<DailyStudyLog, Long> {
+  List<DailyStudyLog> findByUserId(Long userId);
+
   Optional<DailyStudyLog> findByUserIdAndDate(Long userId, LocalDate date);
 
   List<DailyStudyLog> findByUserIdAndDateBetween(

@@ -58,7 +58,7 @@ public class StudyReminderScheduler {
 
         Notification notification =
             Notification.builder()
-                .title("🔥 Cảnh báo mất Streak!")
+                .title("Cảnh báo mất Streak!")
                 .content(
                     "Học ngay 5 phút để bảo vệ chuỗi "
                         + user.getCurrentStreak()
@@ -117,7 +117,7 @@ public class StudyReminderScheduler {
 
           Notification notification =
               Notification.builder()
-                  .title("⏰ Đếm ngược ngày thi TOEIC!")
+                  .title("Đếm ngược ngày thi TOEIC!")
                   .content(
                       "Chỉ còn "
                           + milestone

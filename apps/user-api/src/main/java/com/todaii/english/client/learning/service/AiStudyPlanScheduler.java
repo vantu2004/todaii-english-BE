@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.todaii.english.client.UserUtils;
 import com.todaii.english.client.learning.repository.AiStudyPlanRepository;
 import com.todaii.english.client.learning.repository.DailyStudyLogRepository;
 import com.todaii.english.client.learning.repository.NotificationRepository;
@@ -44,8 +45,11 @@ public class AiStudyPlanScheduler {
   private final SmtpService smtpService;
   private final ObjectMapper objectMapper;
 
-  @Value("classpath:/promptTemplates/systemPromptAiCoachTemplate.st")
+  @Value("classpath:/promptTemplates/learning/systemPromptAiCoachTemplate.st")
   private Resource systemPromptAiCoachTemplate;
+
+  @Value("classpath:/promptTemplates/learning/userPromptAiCoachTemplate.st")
+  private Resource userPromptAiCoachTemplate;
 
   /** Chạy lúc 07:00 sáng, mỗi 2 ngày 1 lần. */
   @Scheduled(cron = "0 0 7 */2 * *")
@@ -106,20 +110,22 @@ public class AiStudyPlanScheduler {
                     client
                         .prompt()
                         .system(
-                            promptSystemSpec ->
-                                promptSystemSpec
-                                    .text(systemPromptAiCoachTemplate)
+                            promptSystemSpec -> promptSystemSpec.text(systemPromptAiCoachTemplate))
+                        .user(
+                            promptUserSpec ->
+                                promptUserSpec
+                                    .text(userPromptAiCoachTemplate)
                                     .param("target_score", String.valueOf(targetScore))
                                     .param("current_score", String.valueOf(currentScore))
                                     .param("exam_date", examDateStr)
                                     .param("streak", String.valueOf(streak))
                                     .param("avg_minutes", String.valueOf(avgMinutes))
                                     .param("weak_parts_json", weakPartsJson))
-                        .user("Hãy tạo kế hoạch học tập chi tiết cho tôi dựa trên thông tin trên.")
                         .call()
                         .chatResponse());
 
         String planContent = response.getResult().getOutput().getText();
+        String htmlPlanContent = UserUtils.toHtml(planContent);
 
         // 3. Kết quả AI trả về (Markdown string):
         // a. Lưu vào bảng ai_study_plans để user xem lại.
@@ -127,12 +133,10 @@ public class AiStudyPlanScheduler {
         aiStudyPlanRepository.save(studyPlan);
 
         // b. Tạo Notification in-app (type = PLAN_READY)
-        String previewText =
-            planContent.length() > 100 ? planContent.substring(0, 97) + "..." : planContent;
         Notification notification =
             Notification.builder()
                 .title("Kế hoạch học mới!")
-                .content("Kế hoạch học tập 2 ngày tới thiết kế bởi AI đã sẵn sàng: " + previewText)
+                .content(planContent)
                 .type(NotificationType.PLAN_READY)
                 .user(user)
                 .isRead(false)
@@ -140,7 +144,7 @@ public class AiStudyPlanScheduler {
         notificationRepository.save(notification);
 
         // c. Gửi email qua smtpService.sendStudyPlanEmail(email, name, planContent) với @Async.
-        smtpService.sendStudyPlanEmail(user.getEmail(), user.getDisplayName(), planContent);
+        smtpService.sendStudyPlanEmail(user.getEmail(), user.getDisplayName(), htmlPlanContent);
 
       } catch (Exception e) {
         log.error(

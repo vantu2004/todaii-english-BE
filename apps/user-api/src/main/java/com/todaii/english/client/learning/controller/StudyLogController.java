@@ -1,11 +1,14 @@
 package com.todaii.english.client.learning.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.todaii.english.client.UserUtils;
 import com.todaii.english.client.learning.service.StudyLogService;
+import com.todaii.english.shared.dto.learning.DailyStudyLogDTO;
 import com.todaii.english.shared.dto.learning.StreakInfoDTO;
 import com.todaii.english.shared.enums.StudyItemType;
 
@@ -16,6 +19,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudyLogController {
   private final StudyLogService studyLogService;
+
+  @GetMapping
+  public ResponseEntity<List<DailyStudyLogDTO>> getAllDailyStudyLogs(
+      Authentication authentication) {
+    Long userId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(studyLogService.getAllDailyStudyLogs(userId));
+  }
 
   @GetMapping("/streak-info")
   public ResponseEntity<StreakInfoDTO> getStreakInfo(Authentication authentication) {

@@ -5,8 +5,7 @@ Thông tin học viên
 - Exam date: {exam_date}
 - Streak: {streak}
 - Avg study minutes: {avg_minutes}
-- Weak parts:
-{weak_parts_json}
+- Weak parts:{weak_parts_json}
 
 Hãy tạo kế hoạch học tập cá nhân hóa cho 2 ngày tới.
 

@@ -2,16 +2,7 @@ package com.todaii.english.core.entity.learning;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -40,8 +31,9 @@ public class Notification {
   @Column(nullable = false, length = 255)
   private String title;
 
-  @Column(nullable = false, length = 512)
-  private String content;
+  @Lob
+  @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
+  private String content; // Markdown content từ AI
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false, length = 64)

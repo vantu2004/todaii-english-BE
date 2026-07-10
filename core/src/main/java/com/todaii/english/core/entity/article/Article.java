@@ -64,6 +64,9 @@ public class Article {
   @Column(name = "cefr_level", length = 32)
   private CefrLevel cefrLevel;
 
+  @Column(name = "estimated_reading_time")
+  private Integer estimatedReadingTime;
+
   @Builder.Default private Integer views = 0;
 
   @Builder.Default private Boolean enabled = false;

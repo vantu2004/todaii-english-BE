@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.todaii.english.client.toeic_question.QuestionRepository;
+import com.todaii.english.client.toeic_question.ToeicQuestionRepository;
 import com.todaii.english.client.toeic_test.TestRepository;
 import com.todaii.english.client.user.UserRepository;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
@@ -33,7 +33,7 @@ public class ToeicTestSessionService {
   private final ToeicUserAnswerRepository userAnswerRepository;
   private final UserRepository userRepository;
   private final TestRepository testRepository;
-  private final QuestionRepository questionRepository;
+  private final ToeicQuestionRepository questionRepository;
   private final ModelMapper modelMapper;
 
   public ToeicTestSession getToeicTestSession(Long userId, Long sessionId) {

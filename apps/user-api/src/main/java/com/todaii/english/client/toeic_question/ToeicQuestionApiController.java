@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/toeic")
-public class QuestionApiController {
-  private final QuestionService questionService;
+public class ToeicQuestionApiController {
+  private final ToeicQuestionService questionService;
 
   // nếu question thuộc về passage thì trả ToeicPassageDTO, ko thì trả QuestionDTO
   @GetMapping("/question/{questionId}")

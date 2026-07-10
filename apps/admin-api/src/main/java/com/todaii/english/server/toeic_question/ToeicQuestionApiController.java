@@ -21,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/api/v1/toeic")
-public class QuestionApiController {
-  private final QuestionService questionService;
+public class ToeicQuestionApiController {
+  private final ToeicQuestionService questionService;
 
   // ----- DÙNG CHUNG -----
 

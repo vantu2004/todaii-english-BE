@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.todaii.english.client.toeic_passage.PassageRepository;
-import com.todaii.english.client.toeic_question.QuestionRepository;
+import com.todaii.english.client.toeic_question.ToeicQuestionRepository;
 import com.todaii.english.client.toeic_test_session.ToeicTestSessionRepository;
 import com.todaii.english.core.entity.toeic.ToeicPassage;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class ToeicUserHighlightService {
   private final ToeicUserHighlightRepository highlightRepository;
   private final ToeicTestSessionRepository sessionRepository;
-  private final QuestionRepository questionRepository;
+  private final ToeicQuestionRepository questionRepository;
   private final PassageRepository passageRepository;
 
   @Transactional

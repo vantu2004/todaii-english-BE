@@ -25,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionService {
-  private final QuestionRepository questionRepository;
+public class ToeicQuestionService {
+  private final ToeicQuestionRepository questionRepository;
   private final CloudinaryPort cloudinaryPort;
   private final ModelMapper modelMapper;
   private final TestRepository testRepository;

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
 
 @Repository
-public interface QuestionRepository extends JpaRepository<ToeicQuestion, Long> {
+public interface ToeicQuestionRepository extends JpaRepository<ToeicQuestion, Long> {
   List<ToeicQuestion> findByTestIdAndPartNumberOrderByCreatedAtAsc(Long testId, Integer partNumber);
 }

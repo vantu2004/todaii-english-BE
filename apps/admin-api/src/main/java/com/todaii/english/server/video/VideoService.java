@@ -1,8 +1,11 @@
 package com.todaii.english.server.video;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
@@ -37,7 +40,9 @@ import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VideoService {
@@ -75,6 +80,17 @@ public class VideoService {
       // Thay height bất kỳ thành 100%
       embedHtml = embedHtml.replaceAll("height=\"\\d+\"", "height=\"100%\"");
 
+      String videoId = extractVideoId(youtubeUrl);
+      Integer estimatedWatchTime = null;
+      if (videoId != null) {
+        try {
+          String durationIso = youtubeDataApiV3Port.getVideoDuration(videoId);
+          estimatedWatchTime = parseIso8601Duration(durationIso);
+        } catch (Exception e) {
+          log.warn("Failed to fetch duration in import: {}", e.getMessage());
+        }
+      }
+
       return VideoDTO.builder()
           .title(title)
           .authorName(authorName)
@@ -85,6 +101,7 @@ public class VideoService {
           .videoUrl(youtubeUrl)
           .cefrLevel(CefrLevel.A1)
           .topicIds(null)
+          .estimatedWatchTime(estimatedWatchTime)
           .build();
 
     } catch (HttpClientErrorException e) {
@@ -149,6 +166,14 @@ public class VideoService {
       throw new BusinessException(404, "One or more topics not found");
     }
 
+    String videoId = extractVideoId(videoDTO.getVideoUrl());
+    if (videoId == null) {
+      throw new BusinessException(400, "Invalid YouTube video URL");
+    }
+    String durationIso = youtubeDataApiV3Port.getVideoDuration(videoId);
+    int estimatedWatchTime = parseIso8601Duration(durationIso);
+    video.setEstimatedWatchTime(estimatedWatchTime);
+
     video.setTopics(topics);
     return videoRepository.save(video);
   }
@@ -167,6 +192,14 @@ public class VideoService {
       throw new BusinessException(404, "One or more topics not found");
     }
     existingVideo.setTopics(topics);
+
+    String videoId = extractVideoId(videoDTO.getVideoUrl());
+    if (videoId == null) {
+      throw new BusinessException(400, "Invalid YouTube video URL");
+    }
+    String durationIso = youtubeDataApiV3Port.getVideoDuration(videoId);
+    int estimatedWatchTime = parseIso8601Duration(durationIso);
+    existingVideo.setEstimatedWatchTime(estimatedWatchTime);
 
     return videoRepository.save(existingVideo);
   }
@@ -237,5 +270,34 @@ public class VideoService {
     video.getWords().clear();
 
     return videoRepository.save(video);
+  }
+
+  private String extractVideoId(String youtubeUrl) {
+    if (youtubeUrl == null || youtubeUrl.isBlank()) {
+      return null;
+    }
+
+    Pattern pattern = Pattern.compile(
+            "(?:v=|youtu\\.be/|embed/)([A-Za-z0-9_-]{11})"
+    );
+    Matcher matcher = pattern.matcher(youtubeUrl);
+    if (matcher.find()) {
+      return matcher.group(1);
+    }
+
+    return null;
+  }
+
+  private int parseIso8601Duration(String isoDuration) {
+    if (isoDuration == null || isoDuration.isBlank()) {
+      return 0;
+    }
+    try {
+      Duration duration = Duration.parse(isoDuration);
+      return (int) duration.toSeconds();
+    } catch (Exception e) {
+      log.error("Failed to parse ISO 8601 duration: {}", isoDuration, e);
+      return 0;
+    }
   }
 }

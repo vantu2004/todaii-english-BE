@@ -10,6 +10,7 @@ import com.todaii.english.core.port.YoutubeDataApiV3Port;
 import com.todaii.english.shared.constants.ApiUrl;
 import com.todaii.english.shared.exceptions.BusinessException;
 import com.todaii.english.shared.response.YoutubeSearchResponse;
+import com.todaii.english.shared.response.YoutubeVideoDetailsResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,23 @@ public class YoutubeDataApiV3Client implements YoutubeDataApiV3Port {
     } catch (Exception e) {
       log.error("Failed to fetch data from YouTube API: {}", e.getMessage(), e);
       throw e;
+    }
+  }
+
+  @Override
+  public String getVideoDuration(String videoId) {
+    String url = String.format(ApiUrl.YOUTUBE_DATA_API_V3_VIDEO_DETAILS, videoId, youtubeApiKey);
+    try {
+      ResponseEntity<YoutubeVideoDetailsResponse> response =
+          restTemplate.getForEntity(url, YoutubeVideoDetailsResponse.class);
+      YoutubeVideoDetailsResponse body = response.getBody();
+      if (body != null && body.getItems() != null && !body.getItems().isEmpty()) {
+        return body.getItems().getFirst().getContentDetails().getDuration();
+      }
+      throw new BusinessException(404, "YouTube video metadata items are empty");
+    } catch (Exception e) {
+      log.error("Failed to fetch video duration from YouTube API: {}", e.getMessage(), e);
+      throw new BusinessException(400, "Failed to fetch video duration: " + e.getMessage());
     }
   }
 

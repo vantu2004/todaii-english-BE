@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class QuestionService {
-  private final QuestionRepository questionRepository;
+public class ToeicQuestionService {
+  private final ToeicQuestionRepository questionRepository;
   private final ModelMapper modelMapper;
 
   public ToeicQuestion findById(Long questionId) {

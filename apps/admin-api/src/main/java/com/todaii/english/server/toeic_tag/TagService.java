@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import com.todaii.english.core.entity.toeic.ToeicQuestion;
 import com.todaii.english.core.entity.toeic.ToeicTag;
 import com.todaii.english.server.AdminUtils;
-import com.todaii.english.server.toeic_question.QuestionRepository;
+import com.todaii.english.server.toeic_question.ToeicQuestionRepository;
 import com.todaii.english.shared.exceptions.BusinessException;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TagService {
   private final TagRepository tagRepository;
-  private final QuestionRepository questionRepository;
+  private final ToeicQuestionRepository questionRepository;
 
   public List<ToeicTag> getAllTags() {
     return tagRepository.findAll();

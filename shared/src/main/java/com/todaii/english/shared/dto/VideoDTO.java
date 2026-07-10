@@ -58,6 +58,8 @@ public class VideoDTO {
   @NotNull(message = "CEFR level is required")
   private CefrLevel cefrLevel;
 
+  private Integer estimatedWatchTime;
+
   @NotEmpty(message = "At least one topic ID is required")
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private Set<Long> topicIds;

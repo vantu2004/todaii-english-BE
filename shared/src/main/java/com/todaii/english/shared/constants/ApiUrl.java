@@ -15,6 +15,8 @@ public class ApiUrl {
       "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=%d&type=video&key=%s";
   public static final String YOUTUBE_DATA_API_V3_PLAYLIST =
       "https://www.googleapis.com/youtube/v3/search?part=snippet&q=%s&maxResults=%d&type=playlist&key=%s";
+  public static final String YOUTUBE_DATA_API_V3_VIDEO_DETAILS =
+      "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=%s&key=%s";
 
   public static final String UPSTASH_STAT_URL = "https://api.upstash.com/v2/redis/stats/%s";
 }

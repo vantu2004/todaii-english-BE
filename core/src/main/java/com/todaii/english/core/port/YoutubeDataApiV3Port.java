@@ -4,4 +4,6 @@ import com.todaii.english.shared.response.YoutubeSearchResponse;
 
 public interface YoutubeDataApiV3Port {
   YoutubeSearchResponse fetchFromYoutube(String keyword, String type, int size);
+
+  String getVideoDuration(String videoId);
 }

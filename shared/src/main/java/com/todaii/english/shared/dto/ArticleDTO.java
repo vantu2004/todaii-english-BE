@@ -27,6 +27,7 @@ public class ArticleDTO {
   private LocalDateTime publishedAt;
   private CefrLevel cefrLevel;
   private Integer views;
+  private Integer estimatedReadingTime;
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

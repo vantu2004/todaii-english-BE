@@ -58,6 +58,9 @@ public class Video {
   @Column(name = "cefr_level", length = 32, nullable = false)
   private CefrLevel cefrLevel;
 
+  @Column(name = "estimated_watch_time")
+  private Integer estimatedWatchTime;
+
   @Builder.Default private Boolean enabled = false;
 
   @CreationTimestamp

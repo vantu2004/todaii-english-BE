@@ -46,9 +46,13 @@ public class YoutubeDataApiV3Client implements YoutubeDataApiV3Port {
       ResponseEntity<YoutubeVideoDetailsResponse> response =
           restTemplate.getForEntity(url, YoutubeVideoDetailsResponse.class);
       YoutubeVideoDetailsResponse body = response.getBody();
+
+      log.info("Youtube video details response: {}", body.toString());
+
       if (body != null && body.getItems() != null && !body.getItems().isEmpty()) {
         return body.getItems().getFirst().getContentDetails().getDuration();
       }
+
       throw new BusinessException(404, "YouTube video metadata items are empty");
     } catch (Exception e) {
       log.error("Failed to fetch video duration from YouTube API: {}", e.getMessage(), e);

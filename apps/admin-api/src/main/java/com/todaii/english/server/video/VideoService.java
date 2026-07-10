@@ -277,9 +277,7 @@ public class VideoService {
       return null;
     }
 
-    Pattern pattern = Pattern.compile(
-            "(?:v=|youtu\\.be/|embed/)([A-Za-z0-9_-]{11})"
-    );
+    Pattern pattern = Pattern.compile("(?:v=|youtu\\.be/|embed/)([A-Za-z0-9_-]{11})");
     Matcher matcher = pattern.matcher(youtubeUrl);
     if (matcher.find()) {
       return matcher.group(1);

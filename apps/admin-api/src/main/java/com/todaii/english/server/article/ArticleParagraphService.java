@@ -34,9 +34,10 @@ public class ArticleParagraphService {
   private Resource userPromptTranslateParaTemplate;
 
   public List<ArticleParagraph> getByArticleId(Long articleId) {
-    Article article = articleRepository
-        .findById(articleId)
-        .orElseThrow(() -> new BusinessException(404, "Article not found"));
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new BusinessException(404, "Article not found"));
     return article.getParagraphs().stream()
         .sorted(Comparator.comparing(ArticleParagraph::getParaOrder))
         .toList();
@@ -47,9 +48,10 @@ public class ArticleParagraphService {
 
     // update
     if (request.getId() != null) {
-      paragraph = articleParagraphRepository
-          .findById(request.getId())
-          .orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
+      paragraph =
+          articleParagraphRepository
+              .findById(request.getId())
+              .orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
 
       // kiểm tra paragraph thuộc articleId
       if (!paragraph.getArticle().getId().equals(articleId)) {
@@ -58,9 +60,10 @@ public class ArticleParagraphService {
     }
     // create
     else {
-      Article article = articleRepository
-          .findById(articleId)
-          .orElseThrow(() -> new BusinessException(404, "Article not found"));
+      Article article =
+          articleRepository
+              .findById(articleId)
+              .orElseThrow(() -> new BusinessException(404, "Article not found"));
 
       paragraph = new ArticleParagraph();
       paragraph.setArticle(article);
@@ -77,23 +80,27 @@ public class ArticleParagraphService {
   public String translateParagraph(Long currentAdminId, String textEn) {
     // Truyền logic prompt dưới dạng Lambda Function để bên kia tự gán Chatclient
     // cho chạy
-    ChatResponse response = aiFallbackService.executeWithFallback(
-        currentAdminId,
-        ActorType.ADMIN,
-        client -> client
-            .prompt()
-            .user(
-                req -> req.text(userPromptTranslateParaTemplate).param("input_text", textEn))
-            .call()
-            .chatResponse());
+    ChatResponse response =
+        aiFallbackService.executeWithFallback(
+            currentAdminId,
+            ActorType.ADMIN,
+            client ->
+                client
+                    .prompt()
+                    .user(
+                        req ->
+                            req.text(userPromptTranslateParaTemplate).param("input_text", textEn))
+                    .call()
+                    .chatResponse());
 
     return response.getResult().getOutput().getText();
   }
 
   public void delete(Long id) {
-    ArticleParagraph paragraph = articleParagraphRepository
-        .findById(id)
-        .orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
+    ArticleParagraph paragraph =
+        articleParagraphRepository
+            .findById(id)
+            .orElseThrow(() -> new BusinessException(404, "Paragraph not found"));
     Long articleId = paragraph.getArticle().getId();
     articleParagraphRepository.delete(paragraph);
 
@@ -101,18 +108,20 @@ public class ArticleParagraphService {
   }
 
   public void recalculateArticleEstimatedReadingTime(Long articleId) {
-    Article article = articleRepository
-        .findById(articleId)
-        .orElseThrow(() -> new BusinessException(404, "Article not found"));
+    Article article =
+        articleRepository
+            .findById(articleId)
+            .orElseThrow(() -> new BusinessException(404, "Article not found"));
 
     List<ArticleParagraph> paragraphs = articleParagraphRepository.findByArticleId(articleId);
     if (paragraphs.isEmpty()) {
       article.setEstimatedReadingTime(0);
     } else {
-      String textEn = paragraphs.stream()
-          .map(ArticleParagraph::getTextEn)
-          .filter(Objects::nonNull)
-          .collect(Collectors.joining("\n"));
+      String textEn =
+          paragraphs.stream()
+              .map(ArticleParagraph::getTextEn)
+              .filter(Objects::nonNull)
+              .collect(Collectors.joining("\n"));
 
       String trimmed = textEn.trim();
       int wordCount = trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;

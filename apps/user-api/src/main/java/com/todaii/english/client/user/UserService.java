@@ -5,6 +5,7 @@ import static com.todaii.english.core.entity.article.ArticleParagraph_.article;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,13 @@ import org.springframework.util.StringUtils;
 import com.todaii.english.client.article.ArticleRepository;
 import com.todaii.english.client.toeic_test.TestRepository;
 import com.todaii.english.client.video.VideoRepository;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.UsageStatistic;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.port.UsageStatisticPort;
 import com.todaii.english.core.security.PasswordHasher;
@@ -48,6 +51,7 @@ public class UserService {
   private final TestRepository testRepository;
   private final CloudinaryPort cloudinaryPort;
   private final UsageStatisticPort usageStatisticPort;
+  private final DictionaryRepository dictionaryRepository;
 
   public UserDTO createUser(RegisterRequest request) {
     if (this.userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -289,5 +293,31 @@ public class UserService {
     }
 
     userRepository.save(user);
+  }
+
+  public void toggleLearnedWord(Long currentUserId, Long wordId) {
+    User user = findById(currentUserId);
+
+    DictionaryWord word =
+        dictionaryRepository
+            .findById(wordId)
+            .orElseThrow(() -> new BusinessException(404, "Word not found"));
+
+    Set<DictionaryWord> learnedWords = user.getLearnedWords();
+
+    if (learnedWords.contains(word)) {
+      learnedWords.remove(word);
+    } else {
+      learnedWords.add(word);
+    }
+
+    userRepository.save(user);
+  }
+
+  public Set<Long> getLearnedWordIds(Long currentUserId) {
+    User user = findById(currentUserId);
+    return user.getLearnedWords().stream()
+        .map(DictionaryWord::getId)
+        .collect(Collectors.toSet());
   }
 }

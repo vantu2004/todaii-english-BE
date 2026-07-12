@@ -1,5 +1,7 @@
 package com.todaii.english.client.user;
 
+import java.util.Set;
+
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -71,5 +73,24 @@ public class UserApiController {
     userService.toggleSavedTest(currentUserId, testId);
 
     return ResponseEntity.ok().build();
+  }
+
+  // xử lý học/bỏ học từ vựng
+  @PutMapping("/learned-word/{wordId}")
+  public ResponseEntity<Void> toggleLearnedWord(
+      Authentication authentication, @PathVariable Long wordId) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    userService.toggleLearnedWord(currentUserId, wordId);
+
+    return ResponseEntity.ok().build();
+  }
+
+  // lấy danh sách id từ vựng đã học
+  @GetMapping("/learned-words")
+  public ResponseEntity<Set<Long>> getLearnedWordIds(Authentication authentication) {
+    Long currentUserId = UserUtils.getCurrentUserId(authentication);
+
+    return ResponseEntity.ok(userService.getLearnedWordIds(currentUserId));
   }
 }

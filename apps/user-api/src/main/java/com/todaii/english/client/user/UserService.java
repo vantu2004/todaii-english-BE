@@ -20,9 +20,9 @@ import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.toeic.ToeicTest;
 import com.todaii.english.core.entity.user.User;
 import com.todaii.english.core.entity.video.Video;
-import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.core.port.CloudinaryPort;
 import com.todaii.english.core.port.UsageStatisticPort;
+import com.todaii.english.core.repository.DictionaryRepository;
 import com.todaii.english.core.security.PasswordHasher;
 import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.shared.dto.UserDTO;
@@ -316,8 +316,6 @@ public class UserService {
 
   public Set<Long> getLearnedWordIds(Long currentUserId) {
     User user = findById(currentUserId);
-    return user.getLearnedWords().stream()
-        .map(DictionaryWord::getId)
-        .collect(Collectors.toSet());
+    return user.getLearnedWords().stream().map(DictionaryWord::getId).collect(Collectors.toSet());
   }
 }

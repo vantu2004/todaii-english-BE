@@ -110,4 +110,28 @@ public interface ArticleRepository
       value = "SELECT * FROM articles a WHERE a.enabled = true ORDER BY RAND() LIMIT :limit",
       nativeQuery = true)
   List<Article> findRandomArticles(@Param("limit") int limit);
+
+  // Recommend: Lấy ngẫu nhiên N article theo CEFR, loại bỏ article đã completed bởi user
+  @Query(
+      value =
+          "SELECT a.* FROM articles a WHERE a.enabled = true AND a.cefr_level = :cefrLevel"
+              + " AND a.id NOT IN (SELECT cp.content_id FROM content_progress cp"
+              + " WHERE cp.user_id = :userId AND cp.content_type = 'ARTICLE'"
+              + " AND cp.completed = true)"
+              + " ORDER BY RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Article> findRandomByCefrLevelExcludeCompleted(
+      @Param("userId") Long userId,
+      @Param("cefrLevel") String cefrLevel,
+      @Param("limit") int limit);
+
+  // Lấy articles user đang học dở (có progress, chưa completed)
+  @Query(
+      value =
+          "SELECT a.* FROM articles a INNER JOIN content_progress cp"
+              + " ON a.id = cp.content_id AND cp.content_type = 'ARTICLE'"
+              + " WHERE a.enabled = true AND cp.user_id = :userId AND cp.completed = false"
+              + " ORDER BY cp.updated_at DESC LIMIT :limit",
+      nativeQuery = true)
+  List<Article> findInProgressByUser(@Param("userId") Long userId, @Param("limit") int limit);
 }

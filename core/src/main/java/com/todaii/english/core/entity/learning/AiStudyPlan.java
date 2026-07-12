@@ -1,16 +1,10 @@
 package com.todaii.english.core.entity.learning;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -35,16 +29,17 @@ public class AiStudyPlan {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Lob
-  @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
-  private String content; // Markdown content từ AI
-
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt;
 
   @JsonIgnore
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
+
+  @OneToMany(mappedBy = "studyPlan", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("planDate ASC")
+  @Builder.Default
+  private List<StudyPlanTask> tasks = new ArrayList<>();
 }

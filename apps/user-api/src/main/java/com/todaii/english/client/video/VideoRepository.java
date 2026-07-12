@@ -75,4 +75,28 @@ public interface VideoRepository
       value = "SELECT * FROM videos v WHERE v.enabled = true ORDER BY RAND() LIMIT :limit",
       nativeQuery = true)
   List<Video> findRandomVideos(@Param("limit") int limit);
+
+  // Recommend: Lấy ngẫu nhiên N video theo CEFR, loại bỏ video đã completed bởi user
+  @Query(
+      value =
+          "SELECT v.* FROM videos v WHERE v.enabled = true AND v.cefr_level = :cefrLevel"
+              + " AND v.id NOT IN (SELECT cp.content_id FROM content_progress cp"
+              + " WHERE cp.user_id = :userId AND cp.content_type = 'VIDEO'"
+              + " AND cp.completed = true)"
+              + " ORDER BY RAND() LIMIT :limit",
+      nativeQuery = true)
+  List<Video> findRandomByCefrLevelExcludeCompleted(
+      @Param("userId") Long userId,
+      @Param("cefrLevel") String cefrLevel,
+      @Param("limit") int limit);
+
+  // Lấy videos user đang xem dở (có progress, chưa completed)
+  @Query(
+      value =
+          "SELECT v.* FROM videos v INNER JOIN content_progress cp"
+              + " ON v.id = cp.content_id AND cp.content_type = 'VIDEO'"
+              + " WHERE v.enabled = true AND cp.user_id = :userId AND cp.completed = false"
+              + " ORDER BY cp.updated_at DESC LIMIT :limit",
+      nativeQuery = true)
+  List<Video> findInProgressByUser(@Param("userId") Long userId, @Param("limit") int limit);
 }

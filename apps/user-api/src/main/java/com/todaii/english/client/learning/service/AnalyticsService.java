@@ -118,15 +118,21 @@ public class AnalyticsService {
     String trend = "STABLE";
 
     if (orderedSessions.size() >= 2) {
-      int oldest = orderedSessions.get(0).getTotalScore();
-      int newest = orderedSessions.get(orderedSessions.size() - 1).getTotalScore();
-      int diff = newest - oldest;
+      int totalChange = 0;
 
-      trendBonus = (int) Math.round(diff * 0.5);
+      for (int i = 1; i < orderedSessions.size(); i++) {
+        int previous = orderedSessions.get(i - 1).getTotalScore();
+        int current = orderedSessions.get(i).getTotalScore();
+        totalChange += (current - previous);
+      }
 
-      if (diff > 0) {
+      double averageSlope = (double) totalChange / (orderedSessions.size() - 1);
+
+      trendBonus = (int) Math.round(averageSlope * 0.5);
+
+      if (averageSlope > 0) {
         trend = "IMPROVING";
-      } else if (diff < 0) {
+      } else if (averageSlope < 0) {
         trend = "DECLINING";
       }
     }

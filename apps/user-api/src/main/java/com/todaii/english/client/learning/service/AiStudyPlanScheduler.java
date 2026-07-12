@@ -83,7 +83,6 @@ public class AiStudyPlanScheduler {
 
   /** Chạy lúc 07:00 sáng, mỗi 2 ngày 1 lần. */
   @Scheduled(cron = "0 0 7 */2 * *")
-  //   @Scheduled(cron = "0 * * * * *")
   @Transactional
   public void generateAiStudyPlans() {
     log.info("⏰ Starting AI Study Plan generation job...");
@@ -127,75 +126,22 @@ public class AiStudyPlanScheduler {
     Long userId = user.getId();
 
     // 1. Thu thập thông tin học tập của user
-    // a. Lấy dữ liệu Weakness
-    List<PartAccuracyDTO> weakness = analyticsService.getWeaknessAnalysis(userId);
-    List<PartAccuracyDTO> weakParts =
-        weakness.stream()
-            .filter(p -> p.getTotal() > 0)
-            .sorted((a, b) -> Double.compare(a.getAccuracy(), b.getAccuracy()))
-            .limit(2)
-            .collect(Collectors.toList());
+    List<PartAccuracyDTO> weakParts = getWeakParts(userId);
     String weakPartsJson = objectMapper.writeValueAsString(weakParts);
-
-    // Tìm weakest part
     Integer weakestPart = weakParts.isEmpty() ? null : weakParts.get(0).getPart();
 
-    // b. Lấy currentStreak
+    double avgMinutes = calculateAvgMinutes(userId);
     int streak = user.getCurrentStreak() != null ? user.getCurrentStreak() : 0;
-
-    // c. Lấy avgMinutes
-    LocalDate today = LocalDate.now();
-    LocalDate startDate = today.minusDays(6);
-    List<DailyStudyLog> logs =
-        dailyStudyLogRepository.findByUserIdAndDateBetween(userId, startDate, today);
-    int totalMinutes = logs.stream().mapToInt(DailyStudyLog::getTotalStudyMinutes).sum();
-    double avgMinutes = Math.round((totalMinutes / 7.0) * 10.0) / 10.0;
-
     int currentScore = profile.getCurrentScore() != null ? profile.getCurrentScore() : 0;
-    int targetScore = profile.getTargetScore();
-    String examDateStr =
-        profile.getExamDate() != null ? profile.getExamDate().toString() : "Chưa đăng ký";
-
     CefrLevel cefrLevel = RecommendationService.getCefrLevel(currentScore);
 
-    // Xác định 2 ngày của plan
     LocalDate planDate1 = LocalDate.now();
     LocalDate planDate2 = planDate1.plusDays(1);
 
     // 2. Khởi tạo tools và gọi AI
-    StudyPlanTools tools =
-        new StudyPlanTools(
-            userId,
-            cefrLevel.name(),
-            weakestPart,
-            articleRepository,
-            videoRepository,
-            vocabDeckRepository,
-            testRepository);
-
+    StudyPlanTools tools = createStudyPlanTools(userId, cefrLevel.name(), weakestPart);
     ChatResponse response =
-        aiFallbackService.executeWithFallback(
-            userId,
-            ActorType.USER,
-            client ->
-                client
-                    .prompt()
-                    .system(promptSystemSpec -> promptSystemSpec.text(systemPromptAiCoachTemplate))
-                    .user(
-                        promptUserSpec ->
-                            promptUserSpec
-                                .text(userPromptAiCoachTemplate)
-                                .param("target_score", String.valueOf(targetScore))
-                                .param("current_score", String.valueOf(currentScore))
-                                .param("exam_date", examDateStr)
-                                .param("streak", String.valueOf(streak))
-                                .param("avg_minutes", String.valueOf(avgMinutes))
-                                .param("weak_parts_json", weakPartsJson)
-                                .param("plan_date_1", planDate1.toString())
-                                .param("plan_date_2", planDate2.toString()))
-                    .tools(tools)
-                    .call()
-                    .chatResponse());
+        callAiCoachService(profile, streak, avgMinutes, weakPartsJson, planDate1, planDate2, tools);
 
     String rawContent = response.getResult().getOutput().getText();
     log.info("AI raw response: {}", rawContent);
@@ -203,26 +149,95 @@ public class AiStudyPlanScheduler {
     String cleanJson = cleanAiResponse(rawContent);
     AiPlanJson planJson = objectMapper.readValue(cleanJson, AiPlanJson.class);
 
-    // 3. Save AiStudyPlan container
+    // 3. Lưu AiStudyPlan container và các tasks tương ứng
+    savePlanAndTasks(user, planJson, planDate1, planDate2);
+  }
+
+  private List<PartAccuracyDTO> getWeakParts(Long userId) {
+    List<PartAccuracyDTO> weakness = analyticsService.getWeaknessAnalysis(userId);
+
+    return weakness.stream()
+        .filter(p -> p.getTotal() > 0)
+        .sorted((a, b) -> Double.compare(a.getAccuracy(), b.getAccuracy()))
+        .limit(2)
+        .collect(Collectors.toList());
+  }
+
+  private double calculateAvgMinutes(Long userId) {
+    LocalDate today = LocalDate.now();
+    LocalDate startDate = today.minusDays(6);
+    List<DailyStudyLog> logs =
+        dailyStudyLogRepository.findByUserIdAndDateBetween(userId, startDate, today);
+    int totalMinutes = logs.stream().mapToInt(DailyStudyLog::getTotalStudyMinutes).sum();
+
+    return Math.round((totalMinutes / 7.0) * 10.0) / 10.0;
+  }
+
+  private StudyPlanTools createStudyPlanTools(
+      Long userId, String cefrLevelName, Integer weakestPart) {
+    return new StudyPlanTools(
+        userId,
+        cefrLevelName,
+        weakestPart,
+        articleRepository,
+        videoRepository,
+        vocabDeckRepository,
+        testRepository);
+  }
+
+  private ChatResponse callAiCoachService(
+      UserLearningProfile profile,
+      int streak,
+      double avgMinutes,
+      String weakPartsJson,
+      LocalDate planDate1,
+      LocalDate planDate2,
+      StudyPlanTools tools) {
+
+    Long userId = profile.getUser().getId();
+    int currentScore = profile.getCurrentScore() != null ? profile.getCurrentScore() : 0;
+    String examDateStr =
+        profile.getExamDate() != null ? profile.getExamDate().toString() : "Chưa đăng ký";
+
+    return aiFallbackService.executeWithFallback(
+        userId,
+        ActorType.USER,
+        client ->
+            client
+                .prompt()
+                .system(promptSystemSpec -> promptSystemSpec.text(systemPromptAiCoachTemplate))
+                .user(
+                    promptUserSpec ->
+                        promptUserSpec
+                            .text(userPromptAiCoachTemplate)
+                            .param("target_score", String.valueOf(profile.getTargetScore()))
+                            .param("current_score", String.valueOf(currentScore))
+                            .param("exam_date", examDateStr)
+                            .param("streak", String.valueOf(streak))
+                            .param("avg_minutes", String.valueOf(avgMinutes))
+                            .param("weak_parts_json", weakPartsJson)
+                            .param("plan_date_1", planDate1.toString())
+                            .param("plan_date_2", planDate2.toString()))
+                .tools(tools)
+                .call()
+                .chatResponse());
+  }
+
+  private void savePlanAndTasks(
+      User user, AiPlanJson planJson, LocalDate planDate1, LocalDate planDate2) {
     AiStudyPlan studyPlan = AiStudyPlan.builder().user(user).build();
     studyPlan = aiStudyPlanRepository.save(studyPlan);
 
-    // 4. Map & Save tasks
     List<StudyPlanTask> tasks = new ArrayList<>();
     if (planJson.getTasks() != null) {
       for (AiTaskJson tJson : planJson.getTasks()) {
-        LocalDate pDate;
-        try {
-          pDate = LocalDate.parse(tJson.getPlan_date());
-        } catch (Exception e) {
-          pDate = tJson.getPlan_date().contains("2") ? planDate2 : planDate1;
-        }
+        LocalDate pDate = parsePlanDate(tJson.getPlan_date(), planDate1, planDate2);
 
         StudyPlanTaskType type;
         try {
           type = StudyPlanTaskType.valueOf(tJson.getTask_type());
         } catch (Exception e) {
-          continue; // Bỏ qua task nếu không đúng type
+          continue; // Bỏ qua task nếu không đúng type hợp lệ
         }
 
         StudyPlanTask task =
@@ -243,6 +258,14 @@ public class AiStudyPlanScheduler {
     }
     studyPlanTaskRepository.saveAll(tasks);
     studyPlan.setTasks(tasks);
+  }
+
+  private LocalDate parsePlanDate(String planDateStr, LocalDate planDate1, LocalDate planDate2) {
+    try {
+      return LocalDate.parse(planDateStr);
+    } catch (Exception e) {
+      return planDateStr != null && planDateStr.contains("2") ? planDate2 : planDate1;
+    }
   }
 
   private String cleanAiResponse(String rawText) {

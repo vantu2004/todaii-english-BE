@@ -126,8 +126,8 @@ public class ArticleParagraphService {
       String trimmed = textEn.trim();
       int wordCount = trimmed.isEmpty() ? 0 : trimmed.split("\\s+").length;
 
-      // mặc định wpm là 150, tuy nhiên đơn vị là phút nn phải x60 để convert sang giây
-      int estimatedTime = (int) Math.ceil((double) wordCount * 60 / 150);
+      // mặc định wpm là 120, tuy nhiên đơn vị là phút nên phải x60 để convert sang giây
+      int estimatedTime = (int) Math.ceil((double) wordCount * 60 / 120);
 
       article.setEstimatedReadingTime(estimatedTime);
     }

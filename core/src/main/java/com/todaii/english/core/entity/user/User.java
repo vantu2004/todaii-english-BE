@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.todaii.english.core.entity.DictionaryWord;
 import com.todaii.english.core.entity.NotebookItem;
 import com.todaii.english.core.entity.article.Article;
 import com.todaii.english.core.entity.toeic.ToeicTest;
@@ -125,6 +126,15 @@ public class User implements JwtPrincipal {
   @Builder.Default
   @JsonIgnore
   private Set<ToeicTest> savedTests = new HashSet<>();
+
+  @ManyToMany
+  @JoinTable(
+      name = "user_learned_words",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "word_id"))
+  @Builder.Default
+  @JsonIgnore
+  private Set<DictionaryWord> learnedWords = new HashSet<>();
 
   @OneToMany(
       mappedBy = "user",

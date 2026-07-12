@@ -82,14 +82,4 @@ public class SmtpService {
             .replace("{daysLeft}", String.valueOf(daysLeft));
     this.smtpSenderPort.send(to, subject, content);
   }
-
-  @Async
-  public void sendStudyPlanEmail(String to, String name, String planContent) {
-    String subject = "Your Personalized AI Study Plan is Ready! 📋";
-    String content =
-        MailTemplate.STUDY_PLAN_TEMPLATE
-            .replace("{name}", name)
-            .replace("{planContent}", planContent);
-    this.smtpSenderPort.send(to, subject, content);
-  }
 }

@@ -3,7 +3,6 @@ package com.todaii.english.client.learning.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.ai.chat.model.ChatResponse;
@@ -17,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.todaii.english.client.article.ArticleRepository;
 import com.todaii.english.client.learning.repository.AiStudyPlanRepository;
 import com.todaii.english.client.learning.repository.DailyStudyLogRepository;
-import com.todaii.english.client.learning.repository.NotificationRepository;
 import com.todaii.english.client.learning.repository.StudyPlanTaskRepository;
 import com.todaii.english.client.learning.repository.UserLearningProfileRepository;
 import com.todaii.english.client.toeic_test.TestRepository;
@@ -25,16 +23,13 @@ import com.todaii.english.client.video.VideoRepository;
 import com.todaii.english.client.vocabulary.VocabDeckRepository;
 import com.todaii.english.core.entity.learning.AiStudyPlan;
 import com.todaii.english.core.entity.learning.DailyStudyLog;
-import com.todaii.english.core.entity.learning.Notification;
 import com.todaii.english.core.entity.learning.StudyPlanTask;
 import com.todaii.english.core.entity.learning.UserLearningProfile;
 import com.todaii.english.core.entity.user.User;
-import com.todaii.english.core.service.SmtpService;
 import com.todaii.english.infra.service.AiFallbackService;
 import com.todaii.english.shared.dto.learning.PartAccuracyDTO;
 import com.todaii.english.shared.enums.ActorType;
 import com.todaii.english.shared.enums.CefrLevel;
-import com.todaii.english.shared.enums.NotificationType;
 import com.todaii.english.shared.enums.StudyPlanTaskType;
 import com.todaii.english.shared.enums.UserStatus;
 
@@ -51,7 +46,6 @@ public class AiStudyPlanScheduler {
   private final UserLearningProfileRepository userLearningProfileRepository;
   private final DailyStudyLogRepository dailyStudyLogRepository;
   private final AiStudyPlanRepository aiStudyPlanRepository;
-  private final NotificationRepository notificationRepository;
   private final StudyPlanTaskRepository studyPlanTaskRepository;
   private final ArticleRepository articleRepository;
   private final VideoRepository videoRepository;
@@ -59,7 +53,6 @@ public class AiStudyPlanScheduler {
   private final TestRepository testRepository;
   private final AnalyticsService analyticsService;
   private final AiFallbackService aiFallbackService;
-  private final SmtpService smtpService;
   private final ObjectMapper objectMapper;
 
   @Value("classpath:/promptTemplates/learning/systemPromptAiCoachTemplate.st")
@@ -250,9 +243,6 @@ public class AiStudyPlanScheduler {
     }
     studyPlanTaskRepository.saveAll(tasks);
     studyPlan.setTasks(tasks);
-
-    // 5. Send notifications
-    sendNotifications(user, studyPlan);
   }
 
   private String cleanAiResponse(String rawText) {
@@ -267,65 +257,5 @@ public class AiStudyPlanScheduler {
       rawText = rawText.substring(0, rawText.length() - 3);
     }
     return rawText.trim();
-  }
-
-  private void sendNotifications(User user, AiStudyPlan plan) {
-    // a. Tạo Notification in-app (type = PLAN_READY)
-    StringBuilder md = new StringBuilder();
-    md.append("Kế hoạch học tập 2 ngày mới của bạn:\n\n");
-    Map<LocalDate, List<StudyPlanTask>> grouped =
-        plan.getTasks().stream().collect(Collectors.groupingBy(StudyPlanTask::getPlanDate));
-    grouped.keySet().stream()
-        .sorted()
-        .forEach(
-            date -> {
-              md.append("**Ngày ").append(date.toString()).append("**:\n");
-              for (StudyPlanTask task : grouped.get(date)) {
-                md.append("- [")
-                    .append(task.getTaskType().name())
-                    .append("] ")
-                    .append(task.getTitle())
-                    .append("\n");
-              }
-              md.append("\n");
-            });
-    String planSummary = md.toString();
-
-    Notification notification =
-        Notification.builder()
-            .title("Kế hoạch học mới!")
-            .content(planSummary)
-            .type(NotificationType.PLAN_READY)
-            .user(user)
-            .isRead(false)
-            .build();
-    notificationRepository.save(notification);
-
-    // b. Gửi email
-    StringBuilder html = new StringBuilder();
-    html.append("<h2>Kế hoạch học tập 2 ngày mới của bạn</h2>");
-    grouped.keySet().stream()
-        .sorted()
-        .forEach(
-            date -> {
-              html.append("<h3>Ngày ").append(date.toString()).append("</h3><ul>");
-              for (StudyPlanTask task : grouped.get(date)) {
-                html.append("<li><strong>[")
-                    .append(task.getTaskType().name())
-                    .append("]</strong> ")
-                    .append(task.getTitle())
-                    .append(" (")
-                    .append(task.getEstimatedMinutes())
-                    .append(" phút)");
-                if (task.getDescription() != null) {
-                  html.append("<br/><em>").append(task.getDescription()).append("</em>");
-                }
-                html.append("</li>");
-              }
-              html.append("</ul>");
-            });
-    String htmlPlanContent = html.toString();
-
-    smtpService.sendStudyPlanEmail(user.getEmail(), user.getDisplayName(), htmlPlanContent);
   }
 }

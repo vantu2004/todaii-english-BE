@@ -66,7 +66,7 @@ public class StudyPlanTools {
                     a.getId(),
                     a.getTitle(),
                     a.getCefrLevel() != null ? a.getCefrLevel().name() : null,
-                    a.getEstimatedReadingTime(),
+                    (int) Math.ceil(a.getEstimatedReadingTime() / 60.0),
                     false))
         .toList();
   }
@@ -91,7 +91,7 @@ public class StudyPlanTools {
                     a.getId(),
                     a.getTitle(),
                     a.getCefrLevel() != null ? a.getCefrLevel().name() : null,
-                    a.getEstimatedReadingTime(),
+                    (int) Math.ceil(a.getEstimatedReadingTime() / 60.0),
                     true))
         .toList();
   }
@@ -119,7 +119,7 @@ public class StudyPlanTools {
                     v.getId(),
                     v.getTitle(),
                     v.getCefrLevel() != null ? v.getCefrLevel().name() : null,
-                    v.getEstimatedWatchTime(),
+                    (int) Math.ceil(v.getEstimatedWatchTime() / 60.0),
                     false))
         .toList();
   }
@@ -142,7 +142,7 @@ public class StudyPlanTools {
                     v.getId(),
                     v.getTitle(),
                     v.getCefrLevel() != null ? v.getCefrLevel().name() : null,
-                    v.getEstimatedWatchTime(),
+                    (int) Math.ceil(v.getEstimatedWatchTime() / 60.0),
                     true))
         .toList();
   }
@@ -176,7 +176,7 @@ public class StudyPlanTools {
       return 1;
     }
 
-    int totalSeconds = words.size() * 25;
+    int totalSeconds = words.size() * 15;
     return Math.max(1, (int) Math.ceil(totalSeconds / 60.0));
   }
 

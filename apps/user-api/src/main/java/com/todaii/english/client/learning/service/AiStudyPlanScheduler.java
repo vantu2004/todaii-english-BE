@@ -82,8 +82,8 @@ public class AiStudyPlanScheduler {
   }
 
   /** Chạy lúc 07:00 sáng, mỗi 2 ngày 1 lần. */
-  // @Scheduled(cron = "0 0 7 */2 * *")
-  @Scheduled(cron = "0 * * * * *")
+  @Scheduled(cron = "0 0 7 */2 * *")
+  //   @Scheduled(cron = "0 * * * * *")
   @Transactional
   public void generateAiStudyPlans() {
     log.info("⏰ Starting AI Study Plan generation job...");

@@ -149,7 +149,8 @@ public class SecurityConfigForUser {
             "/api/v1/video/saved",
             "/api/v1/video/*/is-saved",
             "/api/v1/notebook/**",
-            "/api/v1/toeic/highlights/**")
+            "/api/v1/toeic/highlights/**",
+            "/api/v1/progress/**")
         .hasAuthority("USER")
         .requestMatchers(HttpMethod.POST, "/api/v1/comments", "/api/v1/comments/*/report")
         .hasAuthority("USER")
